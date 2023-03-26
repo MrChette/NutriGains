@@ -22,8 +22,10 @@ public class Recipe {
 	
 	@Column(name="name", unique = true, nullable = false)
     private String name;
-	@Column(name="foods_id", unique=false, nullable = false)
-    private List<Long> food_Id;
+	
+	@ManyToOne
+	@JoinColumn(name = "food_id", nullable = false)
+	private Food food;
 
     @ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
@@ -34,50 +36,61 @@ public class Recipe {
 		super();
 	}
 
-	public Recipe(long id, String name, List<Long> food_Id, User user) {
+
+	public Recipe(long id, String name, Food food, User user) {
 		super();
 		this.id = id;
 		this.name = name;
-		this.food_Id = food_Id;
+		this.food = food;
 		this.user = user;
 	}
+
 
 	public long getId() {
 		return id;
 	}
 
+
 	public void setId(long id) {
 		this.id = id;
 	}
+
 
 	public String getName() {
 		return name;
 	}
 
+
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	public List<Long> getFood_Id() {
-		return food_Id;
+
+	public Food getFood() {
+		return food;
 	}
 
-	public void setFood_Id(List<Long> food_Id) {
-		this.food_Id = food_Id;
+
+	public void setFood(Food food) {
+		this.food = food;
 	}
+
 
 	public User getUser() {
 		return user;
 	}
 
+
 	public void setUser(User user) {
 		this.user = user;
 	}
 
+
 	@Override
 	public String toString() {
-		return "Recipe [id=" + id + ", name=" + name + ", food_Id=" + food_Id + ", user=" + user + "]";
+		return "Recipe [id=" + id + ", name=" + name + ", food=" + food + ", user=" + user + "]";
 	}
+
 	
 	
 

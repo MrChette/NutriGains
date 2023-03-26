@@ -20,8 +20,9 @@ public class Meal {
 	@Column(name="id")
 	private long id;
 	
-	@Column(name="idRecipe", unique=false, nullable = true)
-	private long idRecipe;
+	@ManyToOne
+	@JoinColumn(name = "recipe_id", nullable = false)
+	private Recipe recipe;
 	
 	@Column(name="idFood_list", unique=false, nullable = true)
 	private List<Long> idFoodList;
@@ -37,10 +38,10 @@ public class Meal {
 		super();
 	}
 
-	public Meal(long id, long idRecipe, List<Long> idFoodList, Date date, User user) {
+	public Meal(long id, Recipe recipe, List<Long> idFoodList, Date date, User user) {
 		super();
 		this.id = id;
-		this.idRecipe = idRecipe;
+		this.recipe = recipe;
 		this.idFoodList = idFoodList;
 		this.date = date;
 		this.user = user;
@@ -54,12 +55,12 @@ public class Meal {
 		this.id = id;
 	}
 
-	public long getIdRecipe() {
-		return idRecipe;
+	public Recipe getRecipe() {
+		return recipe;
 	}
 
-	public void setIdRecipe(long idRecipe) {
-		this.idRecipe = idRecipe;
+	public void setRecipe(Recipe recipe) {
+		this.recipe = recipe;
 	}
 
 	public List<Long> getIdFoodList() {
@@ -88,9 +89,11 @@ public class Meal {
 
 	@Override
 	public String toString() {
-		return "Meal [id=" + id + ", idRecipe=" + idRecipe + ", idFoodList=" + idFoodList + ", date=" + date + ", user="
+		return "Meal [id=" + id + ", recipe=" + recipe + ", idFoodList=" + idFoodList + ", date=" + date + ", user="
 				+ user + "]";
 	}
+
+	
 
 	
 	

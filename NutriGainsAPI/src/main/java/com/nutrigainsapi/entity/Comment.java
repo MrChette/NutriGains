@@ -31,11 +31,11 @@ public class Comment {
 		super();
 	}
 
-	public Comment(long id, long recipeId, long userId, long comment) {
+	public Comment(long id, Recipe recipe, User user, long comment) {
 		super();
 		this.id = id;
-		this.recipeId = recipeId;
-		this.userId = userId;
+		this.recipe = recipe;
+		this.user = user;
 		this.comment = comment;
 	}
 
@@ -47,20 +47,20 @@ public class Comment {
 		this.id = id;
 	}
 
-	public long getRecipeId() {
-		return recipeId;
+	public Recipe getRecipe() {
+		return recipe;
 	}
 
-	public void setRecipeId(long recipeId) {
-		this.recipeId = recipeId;
+	public void setRecipe(Recipe recipe) {
+		this.recipe = recipe;
 	}
 
-	public long getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUserId(long userId) {
-		this.userId = userId;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public long getComment() {
@@ -73,14 +73,8 @@ public class Comment {
 
 	@Override
 	public String toString() {
-		return "Comment [id=" + id + ", recipeId=" + recipeId + ", userId=" + userId + ", comment=" + comment + "]";
-	}
-	
-	
-	
-	
-	
-	
+		return "Comment [id=" + id + ", recipe=" + recipe + ", user=" + user + ", comment=" + comment + "]";
+	}	
 	
 
 }

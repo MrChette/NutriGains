@@ -26,6 +26,15 @@ public class User {
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	private List<Food> foods = new ArrayList<>();
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+	private List<Meal> meals = new ArrayList<>();
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+	private List<Comment> comment = new ArrayList<>();
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+	private List<Recipe> recipes = new ArrayList<>();
 
 	public User() {
 		super();

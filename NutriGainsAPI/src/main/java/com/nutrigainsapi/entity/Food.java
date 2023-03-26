@@ -1,5 +1,9 @@
 package com.nutrigainsapi.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 
 @Entity
@@ -31,6 +36,9 @@ public class Food {
 	private double sugar;
 	@Column(name="salt", unique=false, nullable = false)
 	private double salt;
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "food")
+	private List<Recipe> recipes = new ArrayList<>();
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
