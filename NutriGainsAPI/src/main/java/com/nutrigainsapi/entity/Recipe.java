@@ -22,26 +22,21 @@ public class Recipe {
 	
 	@Column(name="name", unique = true, nullable = false)
     private String name;
-	
-	@ManyToOne
-	@JoinColumn(name = "food_id", nullable = false)
-	private Food food;
 
     @ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
-    
+
 
 	public Recipe() {
 		super();
 	}
 
 
-	public Recipe(long id, String name, Food food, User user) {
+	public Recipe(long id, String name, User user) {
 		super();
 		this.id = id;
 		this.name = name;
-		this.food = food;
 		this.user = user;
 	}
 
@@ -66,16 +61,6 @@ public class Recipe {
 	}
 
 
-	public Food getFood() {
-		return food;
-	}
-
-
-	public void setFood(Food food) {
-		this.food = food;
-	}
-
-
 	public User getUser() {
 		return user;
 	}
@@ -88,11 +73,12 @@ public class Recipe {
 
 	@Override
 	public String toString() {
-		return "Recipe [id=" + id + ", name=" + name + ", food=" + food + ", user=" + user + "]";
+		return "Recipe [id=" + id + ", name=" + name + ", user=" + user + "]";
 	}
 
-	
-	
+
+
+
 
 	
 

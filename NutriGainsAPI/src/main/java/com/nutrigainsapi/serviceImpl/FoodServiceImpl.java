@@ -1,9 +1,7 @@
 package com.nutrigainsapi.serviceImpl;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -11,61 +9,63 @@ import org.springframework.stereotype.Service;
 import com.nutrigainsapi.entity.Food;
 import com.nutrigainsapi.model.FoodModel;
 import com.nutrigainsapi.repository.FoodRepository;
-import com.nutrigainsapi.service.FoodService;
+import com.nutrigainsapi.service.GenericService;
 
 
 @Service("foodServiceImpl")
-public class FoodServiceImpl implements FoodService{
+public class FoodServiceImpl implements GenericService<Food,FoodModel,Long>{
 	
 	@Autowired
 	@Qualifier("foodRepository")
 	private FoodRepository foodRepository;
 
 	@Override
-	public Food addFood(FoodModel foodModel) {
-		return foodRepository.save(transform(foodModel));
+	public Food addEntity(FoodModel model) {
+		// TODO Auto-generated method stub
+		return null;
 	}
-	
+
 	@Override
-	public Food updateFood(FoodModel foodModel) {
-		return foodRepository.save(transform(foodModel));
-	}
-	
-	@Override
-	public boolean removeFood(long id) {
-		if(foodRepository.findById(id)!=null) {
-			foodRepository.deleteById(id);
-			return true;
-		}
+	public boolean removeEntity(Long id) {
+		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public Food findFoodById(long id) {
-		return foodRepository.findById(id);
+	public Food updateEntity(FoodModel model) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public FoodModel finfCategoryByIdModel(long id) {
-		return transform(foodRepository.findById(id));
+	public Food findEntityById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public Food transform(FoodModel foodModel) {
-		ModelMapper modelMapper = new ModelMapper();
-		return modelMapper.map(foodModel, Food.class);
+	public FoodModel findModelById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public FoodModel transform(Food food) {
-		ModelMapper modelMapper = new ModelMapper();
-		return modelMapper.map(food, FoodModel.class);
+	public Food transform(FoodModel model) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public List<FoodModel> listAllFood() {
-		return foodRepository.findAll().stream()
-				.map(c->transform(c)).collect(Collectors.toList());
+	public FoodModel transformToModel(Food entity) {
+		// TODO Auto-generated method stub
+		return null;
 	}
+
+	@Override
+	public List<FoodModel> listAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

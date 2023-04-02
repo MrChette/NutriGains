@@ -38,7 +38,7 @@ public class Food {
 	private double salt;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "food")
-	private List<Recipe> recipes = new ArrayList<>();
+	private List<RecipeList> recipes = new ArrayList<>();
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)

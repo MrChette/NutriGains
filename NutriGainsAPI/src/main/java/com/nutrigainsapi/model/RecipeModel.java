@@ -6,17 +6,17 @@ public class RecipeModel {
 	
 	private long id;
 	private String name;
-	private List<Long> idFoods;
+	private long idUser;
 	
 	public RecipeModel() {
 		super();
 	}
 
-	public RecipeModel(long id, String name, List<Long> idFoods) {
+	public RecipeModel(long id, String name, long idUser) {
 		super();
 		this.id = id;
 		this.name = name;
-		this.idFoods = idFoods;
+		this.idUser = idUser;
 	}
 
 	public long getId() {
@@ -35,19 +35,19 @@ public class RecipeModel {
 		this.name = name;
 	}
 
-	public List<Long> getIdFoods() {
-		return idFoods;
+	public long getIdUser() {
+		return idUser;
 	}
 
-	public void setIdFoods(List<Long> idFoods) {
-		this.idFoods = idFoods;
+	public void setIdUser(long idUser) {
+		this.idUser = idUser;
 	}
 
 	@Override
 	public String toString() {
-		return "RecipeModel [id=" + id + ", name=" + name + ", idFoods=" + idFoods + "]";
+		return "RecipeModel [id=" + id + ", name=" + name + ", idUser=" + idUser + "]";
 	}
-	
+
 	
 	
 	

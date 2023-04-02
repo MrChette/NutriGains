@@ -11,27 +11,22 @@ import org.springframework.stereotype.Service;
 import com.nutrigainsapi.entity.Comment;
 import com.nutrigainsapi.model.CommentModel;
 import com.nutrigainsapi.repository.CommentRepository;
-import com.nutrigainsapi.service.CommentService;
+import com.nutrigainsapi.service.GenericService;
 
 @Service("commentServiceImpl")
-public class CommentServiceImpl implements CommentService {
+public class CommentServiceImpl implements GenericService<Comment,CommentModel,Long> {
 	
 	@Autowired
-	@Qualifier
+	@Qualifier("commentRepository")
 	private CommentRepository commentRepository;
 
 	@Override
-	public Comment addComment(CommentModel commentModel) {
-		return commentRepository.save(transform(commentModel));
-	}
-	
-	@Override
-	public Comment updateComment(CommentModel commentModel) {
-		return commentRepository.save(transform(commentModel));
+	public Comment addEntity(CommentModel model) {
+		return commentRepository.save(transform(model));
 	}
 
 	@Override
-	public boolean removeComment(long id) {
+	public boolean removeEntity(Long id) {
 		if(commentRepository.findById(id)!=null) {
 			commentRepository.deleteById(id);
 			return true;
@@ -39,33 +34,40 @@ public class CommentServiceImpl implements CommentService {
 		return false;
 	}
 
-
 	@Override
-	public Comment findCommentById(long id) {
-		return commentRepository.findById(id);
+	public Comment updateEntity(CommentModel model) {
+		return commentRepository.save(transform(model));
 	}
 
 	@Override
-	public CommentModel findCommentByIdModel(long id) {
-		return transform(commentRepository.findById(id));
+	public Comment findEntityById(Long id) {
+		return commentRepository.findById(id).orElse(null);
 	}
 
 	@Override
-	public Comment transform(CommentModel commentModel) {
+	public CommentModel findModelById(Long id) {
+		return transformToModel(commentRepository.findById(id).orElse(null));
+	}
+
+	@Override
+	public Comment transform(CommentModel model) {
 		ModelMapper modelMapper = new ModelMapper();
-		return modelMapper.map(commentModel, Comment.class);
+		return modelMapper.map(model, Comment.class);
 	}
 
 	@Override
-	public CommentModel transform(Comment comment) {
+	public CommentModel transformToModel(Comment entity) {
 		ModelMapper modelMapper = new ModelMapper();
-		return modelMapper.map(comment, CommentModel.class);
+		return modelMapper.map(entity, CommentModel.class);
 	}
 
 	@Override
-	public List<CommentModel> listAllComment() {
+	public List<CommentModel> listAll() {
 		return commentRepository.findAll().stream()
-				.map(c->transform(c)).collect(Collectors.toList());
+				.map(c->transformToModel(c)).collect(Collectors.toList());
 	}
+
+
+	
 
 }
