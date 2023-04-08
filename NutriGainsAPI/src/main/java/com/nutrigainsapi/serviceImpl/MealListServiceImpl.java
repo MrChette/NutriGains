@@ -6,16 +6,19 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import com.nutrigainsapi.entity.MealList;
 import com.nutrigainsapi.model.MealListModel;
 import com.nutrigainsapi.repository.MealListRepository;
 import com.nutrigainsapi.service.GenericService;
 
+
+@Service("mealListServiceImpl")
 public class MealListServiceImpl implements GenericService<MealList,MealListModel,Long> {
 	
 	@Autowired
-	@Qualifier
+	@Qualifier("mealListRepository")
 	private MealListRepository mealListRepository;
 
 	@Override

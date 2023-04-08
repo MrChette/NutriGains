@@ -22,6 +22,8 @@ public class Food {
 	@Column(name="id")
 	private long id;
 	
+	@Column(name="barcode", unique = true, nullable = true)
+	private long barcode;
 	@Column(name="name", unique = true, nullable = false)
 	private String name;
 	@Column(name="kcal", unique=false, nullable = false)
@@ -48,10 +50,11 @@ public class Food {
 		super();
 	}
 
-	public Food(long id, String name, double kcal, double protein, double fat, double carbohydrates, double sugar,
-			double salt, User user) {
+	public Food(long id, long barcode, String name, double kcal, double protein, double fat, double carbohydrates,
+			double sugar, double salt, List<RecipeList> recipes, User user) {
 		super();
 		this.id = id;
+		this.barcode = barcode;
 		this.name = name;
 		this.kcal = kcal;
 		this.protein = protein;
@@ -59,6 +62,7 @@ public class Food {
 		this.carbohydrates = carbohydrates;
 		this.sugar = sugar;
 		this.salt = salt;
+		this.recipes = recipes;
 		this.user = user;
 	}
 
@@ -68,6 +72,14 @@ public class Food {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public long getBarcode() {
+		return barcode;
+	}
+
+	public void setBarcode(long barcode) {
+		this.barcode = barcode;
 	}
 
 	public String getName() {
@@ -126,6 +138,14 @@ public class Food {
 		this.salt = salt;
 	}
 
+	public List<RecipeList> getRecipes() {
+		return recipes;
+	}
+
+	public void setRecipes(List<RecipeList> recipes) {
+		this.recipes = recipes;
+	}
+
 	public User getUser() {
 		return user;
 	}
@@ -136,9 +156,12 @@ public class Food {
 
 	@Override
 	public String toString() {
-		return "Food [id=" + id + ", name=" + name + ", kcal=" + kcal + ", protein=" + protein + ", fat=" + fat
-				+ ", carbohydrates=" + carbohydrates + ", sugar=" + sugar + ", salt=" + salt + ", user=" + user + "]";
+		return "Food [id=" + id + ", barcode=" + barcode + ", name=" + name + ", kcal=" + kcal + ", protein=" + protein
+				+ ", fat=" + fat + ", carbohydrates=" + carbohydrates + ", sugar=" + sugar + ", salt=" + salt
+				+ ", recipes=" + recipes + ", user=" + user + "]";
 	}
+
+	
 
 
 }

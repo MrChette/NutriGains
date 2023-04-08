@@ -6,12 +6,14 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import com.nutrigainsapi.entity.RecipeList;
 import com.nutrigainsapi.model.RecipeListModel;
 import com.nutrigainsapi.repository.RecipeListRepository;
 import com.nutrigainsapi.service.GenericService;
 
+@Service("recipeListServiceImpl")
 public class RecipeListServiceImpl implements GenericService<RecipeList,RecipeListModel,Long> {
 
 	

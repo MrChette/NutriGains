@@ -1,23 +1,21 @@
 package com.nutrigainsapi.model;
 
-import java.util.List;
+import java.util.Date;
 
 public class MealModel {
 	
 	private long id;
-	private long idRecipe;
-	private List<Long> idFoodList;
+	private Date date;
 	private long idUser;
 	
 	public MealModel() {
 		super();
 	}
 
-	public MealModel(long id, long idRecipe, List<Long> idFoodList, long idUser) {
+	public MealModel(long id, Date date, long idUser) {
 		super();
 		this.id = id;
-		this.idRecipe = idRecipe;
-		this.idFoodList = idFoodList;
+		this.date = date;
 		this.idUser = idUser;
 	}
 
@@ -29,20 +27,12 @@ public class MealModel {
 		this.id = id;
 	}
 
-	public long getIdRecipe() {
-		return idRecipe;
+	public Date getDate() {
+		return date;
 	}
 
-	public void setIdRecipe(long idRecipe) {
-		this.idRecipe = idRecipe;
-	}
-
-	public List<Long> getIdFoodList() {
-		return idFoodList;
-	}
-
-	public void setIdFoodList(List<Long> idFoodList) {
-		this.idFoodList = idFoodList;
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 	public long getIdUser() {
@@ -55,9 +45,12 @@ public class MealModel {
 
 	@Override
 	public String toString() {
-		return "MealModel [id=" + id + ", idRecipe=" + idRecipe + ", idFoodList=" + idFoodList + ", idUser=" + idUser
-				+ "]";
+		return "MealModel [id=" + id + ", date=" + date + ", idUser=" + idUser + "]";
 	}
+
+	
+
+	
 	
 	
 	

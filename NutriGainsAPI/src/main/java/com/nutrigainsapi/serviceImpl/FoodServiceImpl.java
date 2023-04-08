@@ -1,7 +1,9 @@
 package com.nutrigainsapi.serviceImpl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -21,50 +23,49 @@ public class FoodServiceImpl implements GenericService<Food,FoodModel,Long>{
 
 	@Override
 	public Food addEntity(FoodModel model) {
-		// TODO Auto-generated method stub
-		return null;
+		return foodRepository.save(transform(model));
 	}
 
 	@Override
 	public boolean removeEntity(Long id) {
-		// TODO Auto-generated method stub
+		if(foodRepository.findById(id)!=null) {
+			foodRepository.deleteById(id);
+			return true;
+		}
 		return false;
 	}
 
 	@Override
 	public Food updateEntity(FoodModel model) {
-		// TODO Auto-generated method stub
-		return null;
+		return foodRepository.save(transform(model));
 	}
 
 	@Override
 	public Food findEntityById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return foodRepository.findById(id).orElse(null);
 	}
 
 	@Override
 	public FoodModel findModelById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return transformToModel(foodRepository.findById(id).orElse(null));
 	}
 
 	@Override
 	public Food transform(FoodModel model) {
-		// TODO Auto-generated method stub
-		return null;
+		ModelMapper mp = new ModelMapper();
+		return mp.map(model, Food.class);
 	}
 
 	@Override
 	public FoodModel transformToModel(Food entity) {
-		// TODO Auto-generated method stub
-		return null;
+		ModelMapper mp = new ModelMapper();
+		return mp.map(entity, FoodModel.class);
 	}
 
 	@Override
 	public List<FoodModel> listAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return foodRepository.findAll().stream()
+				.map(c->transformToModel(c)).collect(Collectors.toList());
 	}
 
 

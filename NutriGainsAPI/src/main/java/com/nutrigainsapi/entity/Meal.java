@@ -1,6 +1,6 @@
 package com.nutrigainsapi.entity;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -10,6 +10,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 
 @Entity
@@ -20,7 +22,8 @@ public class Meal {
 	@Column(name="id")
 	private long id;
 	
-	@Column(name="date", unique=false, nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="date", unique=false, nullable = false,columnDefinition = "DATETIME")
 	private Date date;
 	
 	@ManyToOne

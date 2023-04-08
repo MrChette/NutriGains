@@ -3,6 +3,7 @@ package com.nutrigainsapi.model;
 public class FoodModel {
 	
 	private long id;
+	private long barcode;
 	private String name;
 	private double kcal;
 	private double protein;
@@ -18,10 +19,11 @@ public class FoodModel {
 	}
 
 
-	public FoodModel(long id, String name, double kcal, double protein, double fat, double carbohydrates, double sugar,
-			double salt, long idUser) {
+	public FoodModel(long id, long barcode, String name, double kcal, double protein, double fat, double carbohydrates,
+			double sugar, double salt, long idUser) {
 		super();
 		this.id = id;
+		this.barcode = barcode;
 		this.name = name;
 		this.kcal = kcal;
 		this.protein = protein;
@@ -40,6 +42,16 @@ public class FoodModel {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+
+	public long getBarcode() {
+		return barcode;
+	}
+
+
+	public void setBarcode(long barcode) {
+		this.barcode = barcode;
 	}
 
 
@@ -125,10 +137,12 @@ public class FoodModel {
 
 	@Override
 	public String toString() {
-		return "FoodModel [id=" + id + ", name=" + name + ", kcal=" + kcal + ", protein=" + protein + ", fat=" + fat
-				+ ", carbohydrates=" + carbohydrates + ", sugar=" + sugar + ", salt=" + salt + ", idUser=" + idUser
-				+ "]";
+		return "FoodModel [id=" + id + ", barcode=" + barcode + ", name=" + name + ", kcal=" + kcal + ", protein="
+				+ protein + ", fat=" + fat + ", carbohydrates=" + carbohydrates + ", sugar=" + sugar + ", salt=" + salt
+				+ ", idUser=" + idUser + "]";
 	}
+
+
 	
 	
 	

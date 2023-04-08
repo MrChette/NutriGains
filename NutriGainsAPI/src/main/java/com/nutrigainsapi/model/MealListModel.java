@@ -3,8 +3,8 @@ package com.nutrigainsapi.model;
 public class MealListModel {
 	
 	private long id;
-	private long idRecipe;
-	private long idFood;
+	private Long idRecipe;
+    private Long idFood;
 	private long idMeal;
 	
 	public MealListModel() {
@@ -12,12 +12,11 @@ public class MealListModel {
 	}
 
 	public MealListModel(long id, long idRecipe, long idFood, long idMeal) {
-		super();
-		this.id = id;
-		this.idRecipe = idRecipe;
-		this.idFood = idFood;
-		this.idMeal = idMeal;
-	}
+        this.id = id;
+        this.idRecipe = (idRecipe == 0) ? null : idRecipe;
+        this.idFood = (idFood == 0) ? null : idFood;
+        this.idMeal = idMeal;
+    }
 
 	public long getId() {
 		return id;
@@ -27,19 +26,19 @@ public class MealListModel {
 		this.id = id;
 	}
 
-	public long getIdRecipe() {
+	public Long getIdRecipe() {
 		return idRecipe;
 	}
 
-	public void setIdRecipe(long idRecipe) {
+	public void setIdRecipe(Long idRecipe) {
 		this.idRecipe = idRecipe;
 	}
 
-	public long getIdFood() {
+	public Long getIdFood() {
 		return idFood;
 	}
 
-	public void setIdFood(long idFood) {
+	public void setIdFood(Long idFood) {
 		this.idFood = idFood;
 	}
 
@@ -55,6 +54,7 @@ public class MealListModel {
 	public String toString() {
 		return "MealListModel [id=" + id + ", idRecipe=" + idRecipe + ", idFood=" + idFood + ", idMeal=" + idMeal + "]";
 	}
+
 	
 	
 	
