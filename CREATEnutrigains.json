@@ -1,0 +1,303 @@
+{
+	"info": {
+		"_postman_id": "9c3b4d0a-e0c0-4ed9-87bd-d2e1697d45d2",
+		"name": "NutrigainsApi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"nacho\",\r\n    \"password\":\"qwerty\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "nacho",
+							"type": "default"
+						},
+						{
+							"key": "password",
+							"value": "qwerty",
+							"type": "default"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Base Recipe",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzb2Z0dGVrSldUIiwic3ViIjoibmFjaG8iLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNjgwOTk0MDQ4LCJleHAiOjE2ODA5OTQ2NDh9.Z3flvzJh1HNzORj5SBs3sh6jdKyKUHyx-n2jJZI3K3c7rgejd5aJoH7iQO5YL4VgUm9Fb5Yn_57ptgGZO6h-lg",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Receta1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/user/1/newrecipe",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"user",
+						"1",
+						"newrecipe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Food",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzb2Z0dGVrSldUIiwic3ViIjoibmFjaG8iLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNjgwOTk0MDQ4LCJleHAiOjE2ODA5OTQ2NDh9.Z3flvzJh1HNzORj5SBs3sh6jdKyKUHyx-n2jJZI3K3c7rgejd5aJoH7iQO5YL4VgUm9Fb5Yn_57ptgGZO6h-lg",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"coacola\",\r\n    \"kcal\":190.0,\r\n    \"protein\":100,\r\n    \"fat\":100,\r\n    \"carbohydrates\":400,\r\n    \"sugar\":90,\r\n    \"salt\":10\r\n\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/user/1/newfood",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"user",
+						"1",
+						"newfood"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add food to recipe",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzb2Z0dGVrSldUIiwic3ViIjoibmFjaG8iLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNjgwOTk0MDQ4LCJleHAiOjE2ODA5OTQ2NDh9.Z3flvzJh1HNzORj5SBs3sh6jdKyKUHyx-n2jJZI3K3c7rgejd5aJoH7iQO5YL4VgUm9Fb5Yn_57ptgGZO6h-lg",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/user/foodtorecipe/1/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"user",
+						"foodtorecipe",
+						"1",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Meal",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzb2Z0dGVrSldUIiwic3ViIjoibmFjaG8iLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNjgwOTk0MDQ4LCJleHAiOjE2ODA5OTQ2NDh9.Z3flvzJh1HNzORj5SBs3sh6jdKyKUHyx-n2jJZI3K3c7rgejd5aJoH7iQO5YL4VgUm9Fb5Yn_57ptgGZO6h-lg",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/user/1/newmeal",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"user",
+						"1",
+						"newmeal"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add FOOD to MEAL",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzb2Z0dGVrSldUIiwic3ViIjoibmFjaG8iLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNjgwOTk0MDQ4LCJleHAiOjE2ODA5OTQ2NDh9.Z3flvzJh1HNzORj5SBs3sh6jdKyKUHyx-n2jJZI3K3c7rgejd5aJoH7iQO5YL4VgUm9Fb5Yn_57ptgGZO6h-lg",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/user/foodtomeal/1/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"user",
+						"foodtomeal",
+						"1",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add RECIPE to MEAL",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzb2Z0dGVrSldUIiwic3ViIjoibmFjaG8iLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNjgwOTk0MDQ4LCJleHAiOjE2ODA5OTQ2NDh9.Z3flvzJh1HNzORj5SBs3sh6jdKyKUHyx-n2jJZI3K3c7rgejd5aJoH7iQO5YL4VgUm9Fb5Yn_57ptgGZO6h-lg",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/user/recipetomeal/1/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"user",
+						"recipetomeal",
+						"1",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create COMMENT",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJzb2Z0dGVrSldUIiwic3ViIjoibmFjaG8iLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNjgxMDA2NDQyLCJleHAiOjE2ODEwMDcwNDJ9.xlv5173WS9xjShSb6dHA5YIN6430rUkbFtq4fITh-5zm1Hp_pM6jDZ-Mlws--wvA61iDXUTXPZF5C0okLg1Xyg",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"comment\":\"Me ha gustado mucho, facil de hacer\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/user/newcomment/1/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"user",
+						"newcomment",
+						"1",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
