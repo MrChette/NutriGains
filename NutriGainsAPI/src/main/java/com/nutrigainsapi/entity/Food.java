@@ -23,7 +23,7 @@ public class Food {
 	private long id;
 	
 	@Column(name="barcode", unique = true, nullable = true)
-	private long barcode;
+	private Long barcode;
 	@Column(name="name", unique = true, nullable = false)
 	private String name;
 	@Column(name="kcal", unique=false, nullable = false)
@@ -50,7 +50,7 @@ public class Food {
 		super();
 	}
 
-	public Food(long id, long barcode, String name, double kcal, double protein, double fat, double carbohydrates,
+	public Food(long id, Long barcode, String name, double kcal, double protein, double fat, double carbohydrates,
 			double sugar, double salt, List<RecipeList> recipes, User user) {
 		super();
 		this.id = id;
@@ -74,11 +74,11 @@ public class Food {
 		this.id = id;
 	}
 
-	public long getBarcode() {
+	public Long getBarcode() {
 		return barcode;
 	}
 
-	public void setBarcode(long barcode) {
+	public void setBarcode(Long barcode) {
 		this.barcode = barcode;
 	}
 
@@ -161,6 +161,7 @@ public class Food {
 				+ ", recipes=" + recipes + ", user=" + user + "]";
 	}
 
+	
 	
 
 

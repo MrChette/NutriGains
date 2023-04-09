@@ -3,7 +3,7 @@ package com.nutrigainsapi.model;
 public class FoodModel {
 	
 	private long id;
-	private long barcode;
+	private Long barcode;
 	private String name;
 	private double kcal;
 	private double protein;
@@ -19,11 +19,11 @@ public class FoodModel {
 	}
 
 
-	public FoodModel(long id, long barcode, String name, double kcal, double protein, double fat, double carbohydrates,
+	public FoodModel(long id, Long barcode, String name, double kcal, double protein, double fat, double carbohydrates,
 			double sugar, double salt, long idUser) {
 		super();
 		this.id = id;
-		this.barcode = barcode;
+		this.barcode = (barcode == 0 ) ? null : barcode;
 		this.name = name;
 		this.kcal = kcal;
 		this.protein = protein;
@@ -45,12 +45,12 @@ public class FoodModel {
 	}
 
 
-	public long getBarcode() {
+	public Long getBarcode() {
 		return barcode;
 	}
 
 
-	public void setBarcode(long barcode) {
+	public void setBarcode(Long barcode) {
 		this.barcode = barcode;
 	}
 

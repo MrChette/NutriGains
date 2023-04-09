@@ -1,11 +1,17 @@
 package com.nutrigainsapi.controller;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,8 +33,41 @@ public class RestFood {
 	public ResponseEntity<?> createFood(@PathVariable (name="id", required = true) long id,
 			@RequestBody FoodModel foodModel){
 		foodModel.setIdUser(id);
+		System.out.println(foodModel);
 		foodService.addEntity(foodModel);
 		return ResponseEntity.status(HttpStatus.CREATED).body(foodModel);
 	}
+	
+	//Actualizar alimento
+	@PutMapping("/user/editfood/{idfood}")
+	public ResponseEntity<?> editFood(@PathVariable(name="idfood",required = true)long idfood,
+			@RequestBody FoodModel foodModel){
+		boolean exist = foodService.findEntityById(idfood)!=null;
+		if(exist) {
+			FoodModel fm = foodService.findModelById(idfood);
+			
+			Class<?> claseObjeto2 = foodModel.getClass();
+			Set<String> camposExcluidos = new HashSet<>(Arrays.asList("id", "idUser"));
+			Field[] campos = claseObjeto2.getDeclaredFields();
+			for (Field campo : campos) {
+			    campo.setAccessible(true);
+			    if (!camposExcluidos.contains(campo.getName())) {
+			        try {
+			            Object valor = campo.get(foodModel);
+			            campo.set(fm, valor);
+			        } catch (IllegalAccessException e) {
+			            e.printStackTrace();
+			        }
+			    }
+			}
+			
+			foodService.updateEntity(fm);
+			return ResponseEntity.ok(fm);
+		}
+		else
+			return ResponseEntity.noContent().build();
+		
+	}
+	
 
 }

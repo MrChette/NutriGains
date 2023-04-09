@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,7 +29,22 @@ public class RestRecipe {
 			@RequestBody RecipeModel recipeModel){
 		recipeModel.setIdUser(id);
 		recipeService.addEntity(recipeModel);
-		return ResponseEntity.status(HttpStatus.CREATED).body(recipeModel);
+	return ResponseEntity.status(HttpStatus.CREATED).body(recipeModel);
+	}
+	
+	//Actualizar una receta (nombre)
+	@PutMapping("/user/editrecipe/{idrecipe}")
+	public ResponseEntity<?> editRecipe(@PathVariable(name="idrecipe",required=true) long idrecipe,
+			@RequestBody RecipeModel recipemodel){
+		boolean exist = recipeService.findEntityById(idrecipe)!=null;
+		if(exist) {
+			RecipeModel rp = recipeService.findModelById(idrecipe);
+			rp.setName(recipemodel.getName());
+			recipeService.updateEntity(rp);
+			return ResponseEntity.ok(rp);
+		}
+		else
+			return ResponseEntity.noContent().build();
 	}
 
 }
