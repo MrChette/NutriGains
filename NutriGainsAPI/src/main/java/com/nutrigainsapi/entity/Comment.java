@@ -25,13 +25,13 @@ public class Comment {
 	private User user;
 	
 	@Column(name="comment",unique=false,nullable=false)
-	private long comment;
+	private String comment;
 
 	public Comment() {
 		super();
 	}
 
-	public Comment(long id, Recipe recipe, User user, long comment) {
+	public Comment(long id, Recipe recipe, User user, String comment) {
 		super();
 		this.id = id;
 		this.recipe = recipe;
@@ -63,18 +63,20 @@ public class Comment {
 		this.user = user;
 	}
 
-	public long getComment() {
+	public String getComment() {
 		return comment;
 	}
 
-	public void setComment(long comment) {
+	public void setComment(String comment) {
 		this.comment = comment;
 	}
 
 	@Override
 	public String toString() {
 		return "Comment [id=" + id + ", recipe=" + recipe + ", user=" + user + ", comment=" + comment + "]";
-	}	
+	}
+
+	
 	
 
 }
