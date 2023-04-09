@@ -2,4 +2,4 @@
 NutriGains Proyect
 
 
-![portada](https://github.com/MrChette/NutriGains/blob/main/banner.png?raw=true)
+![portada](https://github.com/MrChette/NutriGains/blob/main/logoPNG.png?raw=true)
