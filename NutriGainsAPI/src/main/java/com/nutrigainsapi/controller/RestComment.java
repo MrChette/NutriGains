@@ -1,9 +1,14 @@
 package com.nutrigainsapi.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -49,5 +54,50 @@ public class RestComment {
 		else
 			return ResponseEntity.noContent().build();
 	}
+	
+	//Borrar un comentario
+	@DeleteMapping("/user/deletecomment/{idcomment}")
+	public ResponseEntity<?> deleteComment(@PathVariable(name="idcomment", required = true) long idcomment){
+		boolean deleted = commentService.removeEntity(idcomment);
+		if(deleted)
+			return ResponseEntity.ok().build();
+		else
+			return ResponseEntity.noContent().build();
+		
+	}
+	
+	//Recupera todos los comentarios
+	@GetMapping("/user/commentbyidrecipe/{idrecipe}")
+	public ResponseEntity<?> getAllComments(@PathVariable(name="idrecipe", required = true) long idrecipe){
+		boolean exist = commentService.listAll()!=null;
+		if(exist) {
+			List<CommentModel> modelList = commentService.listAll();
+			List<CommentModel> comments = new ArrayList<>();
+			for (CommentModel model : modelList) {
+				if(model.getIdRecipe()==idrecipe) {
+					comments.add(model);
+				}
+			}
+			return ResponseEntity.ok(comments);
+		}
+		else
+			return ResponseEntity.noContent().build();		
+	}
+	
+	/*
+	 * //Recupera la categoría correspondiente a ese id
+	@GetMapping("/admin/categories/{id}")
+	public ResponseEntity<?> listCategory(@PathVariable(name = "id", required = true) long id) {
+		boolean exist = categoryService.findCategoryById(id)!=null;
+		if(exist) {
+			CategoryModel categoryM = categoryService.findCategoryByIdModel(id);
+			return ResponseEntity.ok(categoryM);
+		}
+		else
+			return ResponseEntity.noContent().build();
+		
+	}
+	 */
+	
 
 }

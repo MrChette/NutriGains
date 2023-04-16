@@ -39,7 +39,7 @@ public class Food {
 	@Column(name="salt", unique=false, nullable = false)
 	private double salt;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "food")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "food",orphanRemoval = true)
 	private List<RecipeList> recipes = new ArrayList<>();
 	
 	@ManyToOne

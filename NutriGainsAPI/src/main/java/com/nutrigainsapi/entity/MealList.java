@@ -25,7 +25,7 @@ public class MealList {
 	@JoinColumn(name = "food_id", nullable = true)
 	private Food food;
 	
-	@ManyToOne
+	@ManyToOne()
 	@JoinColumn(name = "meal_id", nullable = false)
 	private Meal meal;
 

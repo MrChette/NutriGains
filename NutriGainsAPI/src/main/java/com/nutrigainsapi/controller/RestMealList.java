@@ -39,16 +39,16 @@ public class RestMealList {
 	
 	
 	//Añadir recetas a las comidas realizadas
-		@PostMapping("/user/recipetomeal/{id}/{idrecipe}")
-		public ResponseEntity<?> addRecipeToMeal(@PathVariable(name="id",required = true) long id,
-				@PathVariable(name="idrecipe",required = true) long idrecipe) {
-			MealListModel mealListModel = new MealListModel();
-			
-			mealListModel.setIdMeal(id);
-			mealListModel.setIdRecipe(idrecipe);
-			mealListService.addEntity(mealListModel);
-			
-			return ResponseEntity.status(HttpStatus.CREATED).body(mealListModel);
-		}
+	@PostMapping("/user/recipetomeal/{id}/{idrecipe}")
+	public ResponseEntity<?> addRecipeToMeal(@PathVariable(name="id",required = true) long id,
+			@PathVariable(name="idrecipe",required = true) long idrecipe) {
+		MealListModel mealListModel = new MealListModel();
+		
+		mealListModel.setIdMeal(id);
+		mealListModel.setIdRecipe(idrecipe);
+		mealListService.addEntity(mealListModel);
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(mealListModel);
+	}
 
 }

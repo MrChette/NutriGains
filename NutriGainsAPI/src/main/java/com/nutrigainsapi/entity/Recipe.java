@@ -26,6 +26,9 @@ public class Recipe {
     @ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe",orphanRemoval = true)
+	private List<RecipeList> recipes = new ArrayList<>();
 
 
 	public Recipe() {

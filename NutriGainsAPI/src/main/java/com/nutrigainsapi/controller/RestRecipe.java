@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -32,7 +33,7 @@ public class RestRecipe {
 	return ResponseEntity.status(HttpStatus.CREATED).body(recipeModel);
 	}
 	
-	//Actualizar una receta (nombre)
+	//Actualizar una receta (solo tiene nombre)
 	@PutMapping("/user/editrecipe/{idrecipe}")
 	public ResponseEntity<?> editRecipe(@PathVariable(name="idrecipe",required=true) long idrecipe,
 			@RequestBody RecipeModel recipemodel){
@@ -46,5 +47,17 @@ public class RestRecipe {
 		else
 			return ResponseEntity.noContent().build();
 	}
+	
+	//Borra una receta
+	@DeleteMapping("/user/deleterecipe/{idrecipe}")
+	public ResponseEntity<?> deleteRecipe(@PathVariable(name="idrecipe",required=true) long idrecipe){
+		boolean deleted = recipeService.removeEntity(idrecipe);
+		if(deleted)
+			return ResponseEntity.ok().build();
+		else
+			return ResponseEntity.noContent().build();
+	}
+	
+	
 
 }

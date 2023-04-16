@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -66,8 +67,17 @@ public class RestFood {
 		}
 		else
 			return ResponseEntity.noContent().build();
-		
 	}
 	
+	//Eliminar alimento
+	@DeleteMapping("/user/deletefood/{idfood}")
+	public ResponseEntity<?> deleteFood(@PathVariable long idfood){
+		boolean deleted = foodService.removeEntity(idfood);
+		if(deleted)
+			return ResponseEntity.ok().build();
+		else
+			return ResponseEntity.noContent().build();
+	}
+
 
 }
