@@ -1,24 +1,41 @@
 package com.nutrigainsapi.controller;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.nutrigainsapi.apirest.Product;
 import com.nutrigainsapi.entity.Food;
 import com.nutrigainsapi.model.FoodModel;
+import com.nutrigainsapi.model.User;
+import com.nutrigainsapi.repository.FoodRepository;
 import com.nutrigainsapi.service.GenericService;
 
 @RestController
@@ -28,6 +45,10 @@ public class RestFood {
 	@Autowired
 	@Qualifier("foodServiceImpl")
 	private GenericService<Food,FoodModel,Long> foodService;
+	
+	@Autowired
+	@Qualifier("foodRepository")
+	private FoodRepository foodRepository;
 	
 	//Crear un alimento
 	@PostMapping("/user/{id}/newfood")
@@ -78,6 +99,74 @@ public class RestFood {
 		else
 			return ResponseEntity.noContent().build();
 	}
+	
+	//Traer todos los alimentos de un usuario
+	@GetMapping("/user/getalluserfood/{iduser}")
+	public ResponseEntity<?> getFoodByUser(@PathVariable(name="iduser",required = true) long iduser){
+		boolean exist = foodRepository.findByUserId(iduser)!=null;
+		if (exist) {
+		List<Food> userFoods = foodRepository.findByUserId(iduser);
+		List<FoodModel> modelFoods = new ArrayList<>();
+		for(Food x : userFoods) {
+			modelFoods.add(foodService.transformToModel(x));
+		}
+		return ResponseEntity.ok(modelFoods);
+		}
+		else
+			return ResponseEntity.noContent().build();
+		
+	}
+	
+		//Comprobar si el alimento con ese codigo de barra esta
+		@GetMapping("/user/getfoodbybarcode/{barcode}")
+		public ResponseEntity<?> getFoodByBarCode(@PathVariable(name="barcode",required = true) long barcode){
+			boolean exist = foodRepository.findByBarcode(barcode)!=null;
+			if (exist) {
+			FoodModel food = foodService.transformToModel(foodRepository.findByBarcode(barcode));
+			return ResponseEntity.ok(food);
+			}
+			else
+				return ResponseEntity.noContent().build();
+			
+		}
+		
+		
+		//Peticion get API OpenFoodFacts by BARCODE
+		@GetMapping("/user/foodbyapi/{userid}/{barcode}")
+		public ResponseEntity<?> foodbyapi(@PathVariable(name="barcode",required = true) long barcode,@PathVariable(name="userid",required = true) long userid) throws JsonMappingException, JsonProcessingException{
+			
+			ResponseEntity<?> response = getFoodByBarCode(barcode);
+			if(response.getStatusCodeValue()==204) {
+				RestTemplate restTemplate = new RestTemplate();
+				String apiUrl = "https://world.openfoodfacts.net/api/v2/product/"+barcode+"?fields=product_name,nutriments";
+				String credentials = "off:off";
+				String encodedCredentials = new String(Base64.getEncoder().encode(credentials.getBytes()));
+				HttpHeaders headers = new HttpHeaders();
+				headers.add("Authorization", "Basic " + encodedCredentials);
+				HttpEntity<String> entity = new HttpEntity<>(headers);
+				
+				Product product = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, Product.class).getBody();
+
+				FoodModel food = new FoodModel();
+					food.setBarcode(Long.parseLong(product.getCode()));
+					food.setName(product.getProduct().getProduct_name());
+					food.setKcal(product.getProduct().getNutriments().getEnergy_value());
+					food.setProtein(product.getProduct().getNutriments().getProteins());
+					food.setFat(product.getProduct().getNutriments().getFat());
+					food.setCarbohydrates(product.getProduct().getNutriments().getCarbohydrates());
+					food.setSugar(product.getProduct().getNutriments().getSugars());
+					food.setSalt(product.getProduct().getNutriments().getSalt());
+					food.setIdUser(userid);
+				foodService.addEntity(food);
+				
+				return ResponseEntity.ok(food);
+			}
+			else
+				return ResponseEntity.noContent().build();		
+		}
+
+
 
 
 }
+      

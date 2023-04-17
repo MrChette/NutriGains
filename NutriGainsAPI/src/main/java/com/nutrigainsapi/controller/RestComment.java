@@ -66,7 +66,7 @@ public class RestComment {
 		
 	}
 	
-	//Recupera todos los comentarios
+	//Recupera todos los comentarios de una receta
 	@GetMapping("/user/commentbyidrecipe/{idrecipe}")
 	public ResponseEntity<?> getAllComments(@PathVariable(name="idrecipe", required = true) long idrecipe){
 		boolean exist = commentService.listAll()!=null;
@@ -83,21 +83,5 @@ public class RestComment {
 		else
 			return ResponseEntity.noContent().build();		
 	}
-	
-	/*
-	 * //Recupera la categoría correspondiente a ese id
-	@GetMapping("/admin/categories/{id}")
-	public ResponseEntity<?> listCategory(@PathVariable(name = "id", required = true) long id) {
-		boolean exist = categoryService.findCategoryById(id)!=null;
-		if(exist) {
-			CategoryModel categoryM = categoryService.findCategoryByIdModel(id);
-			return ResponseEntity.ok(categoryM);
-		}
-		else
-			return ResponseEntity.noContent().build();
-		
-	}
-	 */
-	
 
 }
