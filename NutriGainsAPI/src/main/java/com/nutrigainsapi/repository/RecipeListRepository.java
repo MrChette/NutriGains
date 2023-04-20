@@ -11,4 +11,5 @@ import com.nutrigainsapi.entity.RecipeList;
 public interface RecipeListRepository extends JpaRepository<RecipeList,Serializable>{
 
 		public abstract RecipeList findById(long id);
+		
 }
