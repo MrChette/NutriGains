@@ -20,6 +20,8 @@ import com.nutrigainsapi.entity.Comment;
 import com.nutrigainsapi.model.CommentModel;
 import com.nutrigainsapi.service.GenericService;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping("/api")
 public class RestComment {
@@ -31,6 +33,7 @@ public class RestComment {
 	
 	//Crear comentarios para una receta
 	@PostMapping("/user/newcomment/{iduser}/{idrecipe}")
+	@Operation(summary = "Crear comentarios para una receta" , description = " ... ")
 	public ResponseEntity<?> newComment(@PathVariable(name="iduser", required = true)long iduser,
 			@PathVariable(name="idrecipe", required = true) long idrecipe,
 			@RequestBody CommentModel commentModel){
@@ -42,6 +45,7 @@ public class RestComment {
 	
 	//Actualizar un comentario
 	@PutMapping("/user/editcomment/{idcomment}")
+	@Operation(summary = "Actualizar un comentario" , description = " ... ")
 	public ResponseEntity<?> editComment(@PathVariable(name="idcomment", required = true) long idcomment,
 			@RequestBody CommentModel commentModel){
 		boolean exist = commentService.findEntityById(idcomment)!=null;
@@ -57,6 +61,7 @@ public class RestComment {
 	
 	//Borrar un comentario
 	@DeleteMapping("/user/deletecomment/{idcomment}")
+	@Operation(summary = "Borrar un comentario" , description = " ... ")
 	public ResponseEntity<?> deleteComment(@PathVariable(name="idcomment", required = true) long idcomment){
 		boolean deleted = commentService.removeEntity(idcomment);
 		if(deleted)
@@ -68,6 +73,7 @@ public class RestComment {
 	
 	//Recupera todos los comentarios de una receta
 	@GetMapping("/user/commentbyidrecipe/{idrecipe}")
+	@Operation(summary = "Recupera todos los comentarios de una receta" , description = " ... ")
 	public ResponseEntity<?> getAllComments(@PathVariable(name="idrecipe", required = true) long idrecipe){
 		boolean exist = commentService.listAll()!=null;
 		if(exist) {

@@ -23,6 +23,7 @@ import com.nutrigainsapi.serviceImpl.UserService;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 public class UserController {
@@ -36,6 +37,7 @@ public class UserController {
 	private AuthenticationManager authenticationManager;
 		
 	@PostMapping("/login")
+	@Operation(summary = "Login usuario" , description = " ... ")
 	public com.nutrigainsapi.entity.User login(@RequestParam("username") String username,
 			@RequestParam("password") String password) {
 		Authentication authentication = authenticationManager
@@ -51,6 +53,7 @@ public class UserController {
 
 
 	@PostMapping("/register")
+	@Operation(summary = "Register usuario" , description = " ... ")
 	public ResponseEntity<?> saveUser(@RequestBody com.nutrigainsapi.entity.User user){
 		boolean exist = userService.findUsuario(user.getUsername())!=null;
 		if(exist) {

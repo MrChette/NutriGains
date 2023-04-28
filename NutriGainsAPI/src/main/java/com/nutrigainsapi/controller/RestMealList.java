@@ -18,6 +18,8 @@ import com.nutrigainsapi.model.MealListModel;
 import com.nutrigainsapi.repository.MealListRepository;
 import com.nutrigainsapi.service.GenericService;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping("/api")
 public class RestMealList {
@@ -33,6 +35,7 @@ public class RestMealList {
 	
 	//Añadir alimentos a las comidas realizadas
 	@PostMapping("/user/foodtomeal/{id}/{idfood}")
+	@Operation(summary = "Añadir alimentos a las comidas realizadas" , description = " ... ")
 	public ResponseEntity<?> addFoodToMeal(@PathVariable(name="id",required = true) long id,
 			@PathVariable(name="idfood",required = true) long idfood) {
 		MealListModel mealListModel = new MealListModel();
@@ -49,6 +52,7 @@ public class RestMealList {
 	
 	//Añadir recetas a las comidas realizadas
 	@PostMapping("/user/recipetomeal/{id}/{idrecipe}")
+	@Operation(summary = "Añadir recetas a las comidas realizadas" , description = " ... ")
 	public ResponseEntity<?> addRecipeToMeal(@PathVariable(name="id",required = true) long id,
 			@PathVariable(name="idrecipe",required = true) long idrecipe) {
 		MealListModel mealListModel = new MealListModel();
@@ -62,6 +66,7 @@ public class RestMealList {
 	
 	//Traer todas las MealList de un Meal (idmeal)
 	@GetMapping("user/getmeallistbyidmeal/{idmeal}")
+	@Operation(summary = "Traer todas las MealList de un Meal (idmeal)" , description = " ... ")
 	public ResponseEntity<?> getMealsByIdMeal(@PathVariable(name="idmeal", required= true) long idmeal){
 			List<MealList> mealList = mealListRepository.findAllByMealId(idmeal);
 			List<MealListModel> mealListModel = new ArrayList<>() ;
@@ -70,5 +75,7 @@ public class RestMealList {
 			}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mealListModel);
 	}
+	
+	
 
 }

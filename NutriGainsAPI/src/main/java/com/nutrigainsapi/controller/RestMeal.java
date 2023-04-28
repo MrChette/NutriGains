@@ -23,6 +23,8 @@ import com.nutrigainsapi.model.MealModel;
 import com.nutrigainsapi.repository.MealRepository;
 import com.nutrigainsapi.service.GenericService;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping("/api")
 public class RestMeal {
@@ -37,6 +39,7 @@ public class RestMeal {
 	
 	//Crear una comida (desayuno,almuerzo,cena)
 	@PostMapping("/user/{id}/newmeal")
+	@Operation(summary = "Crear una comida (desayuno,almuerzo,cena)" , description = " ... ")
 	public ResponseEntity<?> createNewMeal(@PathVariable (name="id", required = true) long id){
 		MealModel mealModel = new MealModel();
 		
@@ -54,6 +57,7 @@ public class RestMeal {
 	
 	//Borrar una comida realizada
 	@DeleteMapping("/user/deletemeal/{idmeal}")
+	@Operation(summary = "Borrar una comida realizada" , description = " ... ")
 	public ResponseEntity<?> deleteMeal(@PathVariable (name="idmeal",required = true) long idmeal){
 		boolean deleted = mealService.removeEntity(idmeal);
 		if(deleted)
@@ -64,6 +68,7 @@ public class RestMeal {
 	
 	//Traer todas las Meal de un usuario
 	@GetMapping("/user/getallusermeal/{iduser}")
+	@Operation(summary = "Traer todas las Meal de un usuario" , description = " ... ")
 	public ResponseEntity<?> getAllMealByUserId(@PathVariable(name="iduser", required = true) long iduser){
 		List<Meal> allMeals = mealRepository.findAllByUserId(iduser);
 		List<MealModel> allMealsModel = new ArrayList<>();
@@ -75,6 +80,7 @@ public class RestMeal {
 	
 	//Traer la meal con esa id
 	@GetMapping("/user/getmealbyid/{idmeal}")
+	@Operation(summary = "Traer la meal con esa id" , description = " ... ")
 	public ResponseEntity<?> getMealById(@PathVariable(name="idmeal", required = true) long idmeal){
 		MealModel mealModel = mealService.findModelById(idmeal);
 		return ResponseEntity.status(HttpStatus.CREATED).body(mealModel);

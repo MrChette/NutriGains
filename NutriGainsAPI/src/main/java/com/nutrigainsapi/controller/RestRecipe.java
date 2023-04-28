@@ -16,6 +16,8 @@ import com.nutrigainsapi.entity.Recipe;
 import com.nutrigainsapi.model.RecipeModel;
 import com.nutrigainsapi.service.GenericService;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping("/api")
 public class RestRecipe {
@@ -26,6 +28,7 @@ public class RestRecipe {
 	
 	//Crear una Receta Base
 	@PostMapping("/user/{id}/newrecipe")
+	@Operation(summary = "Crear una Receta Base" , description = " ... ")
 	public ResponseEntity<?> createBaseRecipe(@PathVariable (name="id", required = true) long id,
 			@RequestBody RecipeModel recipeModel){
 		recipeModel.setIdUser(id);
@@ -35,6 +38,7 @@ public class RestRecipe {
 	
 	//Actualizar una receta (solo tiene nombre)
 	@PutMapping("/user/editrecipe/{idrecipe}")
+	@Operation(summary = "Actualizar una receta (solo tiene nombre)" , description = " ... ")
 	public ResponseEntity<?> editRecipe(@PathVariable(name="idrecipe",required=true) long idrecipe,
 			@RequestBody RecipeModel recipemodel){
 		boolean exist = recipeService.findEntityById(idrecipe)!=null;
@@ -50,6 +54,7 @@ public class RestRecipe {
 	
 	//Borra una receta
 	@DeleteMapping("/user/deleterecipe/{idrecipe}")
+	@Operation(summary = "Borra una receta" , description = " ... ")
 	public ResponseEntity<?> deleteRecipe(@PathVariable(name="idrecipe",required=true) long idrecipe){
 		boolean deleted = recipeService.removeEntity(idrecipe);
 		if(deleted)
