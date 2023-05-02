@@ -37,6 +37,7 @@ import com.nutrigainsapi.model.FoodModel;
 import com.nutrigainsapi.model.User;
 import com.nutrigainsapi.repository.FoodRepository;
 import com.nutrigainsapi.service.GenericService;
+import com.nutrigainsapi.serviceImpl.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 
@@ -52,12 +53,15 @@ public class RestFood {
 	@Qualifier("foodRepository")
 	private FoodRepository foodRepository;
 	
+	@Autowired
+	@Qualifier("userService")
+	private UserService userService;
+	
 	//Crear un alimento
-	@PostMapping("/user/{id}/newfood")
+	@PostMapping("/user/newfood")
 	@Operation(summary = "Crear un alimento" , description = " ... ")
-	public ResponseEntity<?> createFood(@PathVariable (name="id", required = true) long id,
-			@RequestBody FoodModel foodModel){
-		foodModel.setIdUser(id);
+	public ResponseEntity<?> createFood(@RequestBody FoodModel foodModel){
+		foodModel.setIdUser(userService.getUserId());
 		System.out.println(foodModel);
 		foodService.addEntity(foodModel);
 		return ResponseEntity.status(HttpStatus.CREATED).body(foodModel);
@@ -106,12 +110,12 @@ public class RestFood {
 	}
 	
 	//Traer todos los alimentos de un usuario
-	@GetMapping("/user/getalluserfood/{iduser}")
+	@GetMapping("/user/getalluserfood")
 	@Operation(summary = "Traer todos los alimentos de un usuario" , description = " ... ")
-	public ResponseEntity<?> getFoodByUser(@PathVariable(name="iduser",required = true) long iduser){
-		boolean exist = foodRepository.findByUserId(iduser)!=null;
+	public ResponseEntity<?> getFoodByUser(){
+		boolean exist = foodRepository.findByUserId(userService.getUserId())!=null;
 		if (exist) {
-		List<Food> userFoods = foodRepository.findByUserId(iduser);
+		List<Food> userFoods = foodRepository.findByUserId(userService.getUserId());
 		List<FoodModel> modelFoods = new ArrayList<>();
 		for(Food x : userFoods) {
 			modelFoods.add(foodService.transformToModel(x));
@@ -138,9 +142,9 @@ public class RestFood {
 		
 		
 		//Peticion get API OpenFoodFacts by BARCODE
-		@GetMapping("/user/foodbyapi/{userid}/{barcode}")
+		@GetMapping("/user/foodbyapi/{barcode}")
 		@Operation(summary = "Peticion get API OpenFoodFacts by BARCODE y lo añade a la BBDD" , description = " ... ")
-		public ResponseEntity<?> foodbyapi(@PathVariable(name="barcode",required = true) long barcode,@PathVariable(name="userid",required = true) long userid) throws JsonMappingException, JsonProcessingException{
+		public ResponseEntity<?> foodbyapi(@PathVariable(name="barcode",required = true) long barcode) throws JsonMappingException, JsonProcessingException{
 			
 			ResponseEntity<?> response = getFoodByBarCode(barcode);
 			if(response.getStatusCodeValue()==204) {
@@ -163,7 +167,7 @@ public class RestFood {
 					food.setCarbohydrates(product.getProduct().getNutriments().getCarbohydrates());
 					food.setSugar(product.getProduct().getNutriments().getSugars());
 					food.setSalt(product.getProduct().getNutriments().getSalt());
-					food.setIdUser(userid);
+					food.setIdUser(userService.getUserId());
 				foodService.addEntity(food);
 				
 				return ResponseEntity.ok(food);
@@ -171,9 +175,6 @@ public class RestFood {
 			else
 				return ResponseEntity.noContent().build();		
 		}
-
-
-
-
+		
 }
       

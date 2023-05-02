@@ -6,7 +6,9 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.User.UserBuilder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -48,6 +50,12 @@ public class UserService implements UserDetailsService {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+	
+	public Long getUserId() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		com.nutrigainsapi.entity.User userModel = findUsuario(auth.getName());
+	return(userModel.getId());
+	}
 
 	public com.nutrigainsapi.entity.User registrar(com.nutrigainsapi.entity.User user) {
 		user.setUsername(user.getUsername());
@@ -55,27 +63,6 @@ public class UserService implements UserDetailsService {
 		user.setEnabled(true);
 		user.setRole("ROLE_USER");
 		return userRepository.save(user);
-	}
-
-	public int activar(String username) {
-		int a = 0;
-		com.nutrigainsapi.entity.User u = userRepository.findByUsername(username);
-		com.nutrigainsapi.entity.User user = new com.nutrigainsapi.entity.User();
-		user.setPassword(passwordEncoder().encode(u.getPassword()));
-		user.setUsername(u.getUsername());
-		user.setId(u.getId());
-
-		if (u.isEnabled() == false) {
-			user.setEnabled(true);
-			a = 1;
-		} else {
-			user.setEnabled(false);
-			a = 0;
-		}
-		user.setRole(u.getRole());
-
-		userRepository.save(user);
-		return a;
 	}
 
 	public void deleteUser(String username) throws Exception {

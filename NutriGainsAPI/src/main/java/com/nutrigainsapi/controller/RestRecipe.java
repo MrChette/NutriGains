@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.nutrigainsapi.entity.Recipe;
 import com.nutrigainsapi.model.RecipeModel;
+import com.nutrigainsapi.model.User;
 import com.nutrigainsapi.service.GenericService;
+import com.nutrigainsapi.serviceImpl.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 
@@ -26,12 +30,15 @@ public class RestRecipe {
 	@Qualifier("recipeServiceImpl")
 	private GenericService<Recipe,RecipeModel,Long> recipeService;
 	
+	@Autowired
+	@Qualifier("userService")
+	private UserService userService;
+	
 	//Crear una Receta Base
-	@PostMapping("/user/{id}/newrecipe")
+	@PostMapping("/user/newrecipe")
 	@Operation(summary = "Crear una Receta Base" , description = " ... ")
-	public ResponseEntity<?> createBaseRecipe(@PathVariable (name="id", required = true) long id,
-			@RequestBody RecipeModel recipeModel){
-		recipeModel.setIdUser(id);
+	public ResponseEntity<?> createBaseRecipe(@RequestBody RecipeModel recipeModel){
+		recipeModel.setIdUser(userService.getUserId());
 		recipeService.addEntity(recipeModel);
 	return ResponseEntity.status(HttpStatus.CREATED).body(recipeModel);
 	}
@@ -61,8 +68,7 @@ public class RestRecipe {
 			return ResponseEntity.ok().build();
 		else
 			return ResponseEntity.noContent().build();
-	}
-	
+	}	
 	
 
 }

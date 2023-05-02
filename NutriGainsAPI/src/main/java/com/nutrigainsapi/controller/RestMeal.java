@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +24,7 @@ import com.nutrigainsapi.entity.Meal;
 import com.nutrigainsapi.model.MealModel;
 import com.nutrigainsapi.repository.MealRepository;
 import com.nutrigainsapi.service.GenericService;
+import com.nutrigainsapi.serviceImpl.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 
@@ -37,10 +40,15 @@ public class RestMeal {
 	@Qualifier("mealRepository")
 	private MealRepository mealRepository;
 	
+	@Autowired
+	@Qualifier("userService")
+	private UserService userService;
+	
+	
 	//Crear una comida (desayuno,almuerzo,cena)
-	@PostMapping("/user/{id}/newmeal")
+	@PostMapping("/user/newmeal")
 	@Operation(summary = "Crear una comida (desayuno,almuerzo,cena)" , description = " ... ")
-	public ResponseEntity<?> createNewMeal(@PathVariable (name="id", required = true) long id){
+	public ResponseEntity<?> createNewMeal(){
 		MealModel mealModel = new MealModel();
 		
 		LocalDateTime localDateTime = LocalDateTime.now();
@@ -48,7 +56,7 @@ public class RestMeal {
 		Instant instant = localDateTime.atZone(zoneId).toInstant();
 		Date date = Date.from(instant);
 		
-		mealModel.setIdUser(id);
+		mealModel.setIdUser(userService.getUserId());
 		mealModel.setDate(date);		
 		mealService.addEntity(mealModel);
 
@@ -85,4 +93,5 @@ public class RestMeal {
 		MealModel mealModel = mealService.findModelById(idmeal);
 		return ResponseEntity.status(HttpStatus.CREATED).body(mealModel);
 	}
+
 }

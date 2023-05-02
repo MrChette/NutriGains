@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.nutrigainsapi.entity.Comment;
 import com.nutrigainsapi.model.CommentModel;
 import com.nutrigainsapi.service.GenericService;
+import com.nutrigainsapi.serviceImpl.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 
@@ -31,14 +34,18 @@ public class RestComment {
 	private GenericService<Comment,CommentModel,Long> commentService;
 	
 	
+	@Autowired
+	@Qualifier("userService")
+	private UserService userService;
+	
+	
 	//Crear comentarios para una receta
-	@PostMapping("/user/newcomment/{iduser}/{idrecipe}")
+	@PostMapping("/user/newcomment/{idrecipe}")
 	@Operation(summary = "Crear comentarios para una receta" , description = " ... ")
-	public ResponseEntity<?> newComment(@PathVariable(name="iduser", required = true)long iduser,
-			@PathVariable(name="idrecipe", required = true) long idrecipe,
+	public ResponseEntity<?> newComment(@PathVariable(name="idrecipe", required = true) long idrecipe,
 			@RequestBody CommentModel commentModel){
 		commentModel.setIdRecipe(idrecipe);
-		commentModel.setIdUser(iduser);
+		commentModel.setIdUser(userService.getUserId());
 		commentService.addEntity(commentModel);
 	return ResponseEntity.status(HttpStatus.CREATED).body(commentModel);		
 	}
@@ -89,5 +96,6 @@ public class RestComment {
 		else
 			return ResponseEntity.noContent().build();		
 	}
+	
 
 }
