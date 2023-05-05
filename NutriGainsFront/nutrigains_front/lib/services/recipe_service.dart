@@ -11,7 +11,7 @@ class RecipeService extends ChangeNotifier {
   bool isLoading = true;
   Future newRecipe(String name) async {
     final url = Uri.http(_baseUrl, '/api/user/newrecipe');
-    String? token = await AuthService().readToken();
+    String? token = await AuthService().getToken();
 
     isLoading = true;
     notifyListeners();

@@ -9,6 +9,7 @@ import 'package:nutrigains_front/services/food_service.dart';
 import 'package:nutrigains_front/services/recipe_service.dart';
 import 'package:provider/provider.dart';
 
+import '../models/meal_model.dart';
 import '../providers/login_provider.dart';
 import '../services/auth_service.dart';
 import '../services/comment_service.dart';
@@ -155,7 +156,15 @@ class _LoginForm extends StatelessWidget {
                       //    sugar: 100.0);
                       //await FoodService().newFood(food);
 
-                      FoodService().newFoodByBarcode(5000159461122);
+                      //FoodService().newFoodByBarcode(3168930009078);
+
+                      //DateTime now = DateTime.now();
+                      //String formattedDate =
+                      //    "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+                      //print(formattedDate);
+                      //final List<MealModel> meals =
+                      //    await MealService().getMealByDate(formattedDate);
+                      //meals.length;
 
                       //                     //
                       //                     //
@@ -170,6 +179,12 @@ class _LoginForm extends StatelessWidget {
 
                       print(spliter);
                       if (spliter?[0] == '200') {
+                        if (spliter?[1] == 'ROLE_ADMIN') {
+                          Navigator.pushReplacementNamed(context, '');
+                        } else {
+                          Navigator.pushReplacementNamed(
+                              context, 'userMainScreen');
+                        }
                       } else {
                         customToast('Email or password incorrect', context);
                         Navigator.pushReplacementNamed(context, 'login');

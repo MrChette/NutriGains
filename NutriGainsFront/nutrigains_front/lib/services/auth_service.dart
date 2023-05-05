@@ -10,11 +10,9 @@ class AuthService extends ChangeNotifier {
   final String _baseUrl = '192.168.1.135:8080';
   final storage = const FlutterSecureStorage();
 
-  // Si retornamos algo, es un error, si no, todo bien!
   Future<String?> register(
     String username,
     String password,
-    /*int courseId*/
   ) async {
     final Map<String, dynamic> authData = {
       'username': username,
@@ -63,46 +61,20 @@ class AuthService extends ChangeNotifier {
       final Map<String, dynamic> decodedResp = json.decode(valores);
       await storage.write(key: 'token', value: decodedResp['token']);
       await storage.write(key: 'id', value: decodedResp['id'].toString());
+      await storage.write(
+          key: 'username', value: decodedResp['username'].toString());
 
       return (response.statusCode.toString() +
           ',' +
           decodedResp['role'] +
           ',' +
-          decodedResp['enabled'].toString());
+          decodedResp['enabled'].toString() +
+          ',' +
+          decodedResp['username'].toString());
     } else {
       print('Error al enviar la solicitud');
       return (response.statusCode.toString() + ',' + '');
     }
-
-    // await storage.write(key: 'token', value: decodedResp['data']['token']);
-    // print(storage);
-
-    // print("Iniciarndo");
-    // final Map authData = new Map<String, dynamic>();
-    // authData['username'] = username;
-    // authData['password'] = password;
-    // // 'returnSecureToken': true
-    // print(json.encode(authData));
-
-    // final url = Uri.http(_baseUrl, '/login', {});
-    // print(url);
-    // final resp = await http.post(url, body: authData);
-    // print(resp.toString());
-
-    // final Map<String, dynamic> decodedResp = json.decode(resp.body);
-
-    // if (decodedResp['success'] == true) {
-    //   // Token hay que guardarlo en un lugar seguro
-    //   // decodedResp['idToken'];
-    //   await storage.write(key: 'token', value: decodedResp['data']['token']);
-    //   await storage.write(
-    //       key: 'id', value: decodedResp['data']['id'].toString());
-    //   return decodedResp['data']['type'] +
-    //       ',' +
-    //       decodedResp['data']['actived'].toString();
-    // } else {
-    //   return decodedResp['message'];
-    // }
   }
 
   Future logout() async {
@@ -110,11 +82,15 @@ class AuthService extends ChangeNotifier {
     return;
   }
 
-  Future<String> readToken() async {
+  Future<String> getUserName() async {
+    return await storage.read(key: 'username') ?? '';
+  }
+
+  Future<String> getToken() async {
     return await storage.read(key: 'token') ?? '';
   }
 
-  Future<String> readId() async {
+  Future<String> getId() async {
     return await storage.read(key: 'id') ?? '';
   }
 }

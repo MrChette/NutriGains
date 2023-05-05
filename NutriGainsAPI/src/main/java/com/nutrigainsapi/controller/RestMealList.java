@@ -36,15 +36,13 @@ public class RestMealList {
 	//Añadir alimentos a las comidas realizadas
 	@PostMapping("/user/foodtomeal/{idmeal}/{idfood}")
 	@Operation(summary = "Añadir alimentos a las comidas realizadas" , description = " ... ")
-	public ResponseEntity<?> addFoodToMeal(@PathVariable(name="id",required = true) long idmeal,
+	public ResponseEntity<?> addFoodToMeal(@PathVariable(name="idmeal",required = true) long idmeal,
 			@PathVariable(name="idfood",required = true) long idfood) {
 		MealListModel mealListModel = new MealListModel();
 		
 		mealListModel.setIdMeal(idmeal);
 		mealListModel.setIdFood(idfood);
-		
 		mealListService.addEntity(mealListModel);
-		
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(mealListModel);
 	}
@@ -69,8 +67,10 @@ public class RestMealList {
 	@Operation(summary = "Traer todas las MealList de un Meal (idmeal)" , description = " ... ")
 	public ResponseEntity<?> getMealsByIdMeal(@PathVariable(name="idmeal", required= true) long idmeal){
 			List<MealList> mealList = mealListRepository.findAllByMealId(idmeal);
+			System.out.println(mealList);
 			List<MealListModel> mealListModel = new ArrayList<>() ;
 			for(MealList x : mealList) {
+				System.out.println(x);
 				mealListModel.add(mealListService.transformToModel(x));
 			}
 		return ResponseEntity.status(HttpStatus.CREATED).body(mealListModel);

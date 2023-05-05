@@ -11,7 +11,7 @@ class CommentService extends ChangeNotifier {
   bool isLoading = true;
   Future newComment(int idRecipe, String comment) async {
     final url = Uri.http(_baseUrl, '/api/user/newcomment/$idRecipe');
-    String? token = await AuthService().readToken();
+    String? token = await AuthService().getToken();
 
     isLoading = true;
     notifyListeners();

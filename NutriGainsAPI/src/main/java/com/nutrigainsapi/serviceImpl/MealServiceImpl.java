@@ -1,5 +1,6 @@
 package com.nutrigainsapi.serviceImpl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,6 +67,11 @@ public class MealServiceImpl implements GenericService<Meal,MealModel,Long>{
 		return mealRepository.findAll().stream()
 				.map(c->transformToModel(c)).collect(Collectors.toList());
 	}
+	
+	public List<MealModel> findMealByDate(Date date) {
+        return mealRepository.findByDate(date).stream()
+				.map(c->transformToModel(c)).collect(Collectors.toList());
+    }
 
 
 }

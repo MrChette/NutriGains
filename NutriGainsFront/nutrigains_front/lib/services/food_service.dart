@@ -11,9 +11,10 @@ import 'package:http/http.dart' as http;
 class FoodService extends ChangeNotifier {
   final String _baseUrl = '192.168.1.135:8080';
   bool isLoading = true;
+
   Future newFood(FoodModel food) async {
     final url = Uri.http(_baseUrl, '/api/user/newfood');
-    String? token = await AuthService().readToken();
+    String? token = await AuthService().getToken();
 
     isLoading = true;
     notifyListeners();
@@ -50,7 +51,7 @@ class FoodService extends ChangeNotifier {
 
   Future newFoodByBarcode(int barcode) async {
     final url = Uri.http(_baseUrl, '/api/user/foodbyapi/$barcode');
-    String? token = await AuthService().readToken();
+    String? token = await AuthService().getToken();
 
     isLoading = true;
     notifyListeners();

@@ -157,11 +157,11 @@ public class RestFood {
 				HttpEntity<String> entity = new HttpEntity<>(headers);
 				
 				Product product = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, Product.class).getBody();
-
+				System.out.println(product.toString());
 				FoodModel food = new FoodModel();
 					food.setBarcode(Long.parseLong(product.getCode()));
 					food.setName(product.getProduct().getProduct_name());
-					food.setKcal(product.getProduct().getNutriments().getEnergy_value());
+					food.setKcal(product.getProduct().getNutriments().getEnergykcal());
 					food.setProtein(product.getProduct().getNutriments().getProteins());
 					food.setFat(product.getProduct().getNutriments().getFat());
 					food.setCarbohydrates(product.getProduct().getNutriments().getCarbohydrates());

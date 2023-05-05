@@ -26,7 +26,7 @@ public class Meal {
 	private long id;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="date", unique=false, nullable = false,columnDefinition = "DATETIME")
+	@Column(name="date", unique=false, nullable = false,columnDefinition = "DATE")
 	private Date date;
 	
 	@ManyToOne

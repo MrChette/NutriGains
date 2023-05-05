@@ -3,24 +3,20 @@
 import 'dart:convert';
 import 'dart:ffi';
 
-class MealModel {
-  MealModel(
-      {required this.id,
-      required this.food_id,
-      required this.meal_id,
-      required this.recipe_id});
+class MealListModel {
+  MealListModel({required this.id, this.food_id, this.meal_id, this.recipe_id});
 
-  Long id;
-  Long food_id;
-  Long meal_id;
-  Long recipe_id;
+  int id;
+  int? food_id;
+  int? meal_id;
+  int? recipe_id;
 
-  factory MealModel.fromRawJson(String str) =>
-      MealModel.fromJson(json.decode(str));
+  factory MealListModel.fromRawJson(String str) =>
+      MealListModel.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory MealModel.fromJson(Map<String, dynamic> json) => MealModel(
+  factory MealListModel.fromJson(Map<String, dynamic> json) => MealListModel(
         id: json["id"],
         food_id: json["food_id"],
         meal_id: json["meal_id"],

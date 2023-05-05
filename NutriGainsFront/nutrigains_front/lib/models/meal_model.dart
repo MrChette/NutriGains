@@ -4,15 +4,15 @@ import 'dart:convert';
 import 'dart:ffi';
 
 class MealModel {
-  MealModel({
-    required this.id,
-    required this.date,
-    required this.user_id,
-  });
+  int? id;
+  String? date;
+  Long? user_id;
 
-  Long id;
-  DateTime date;
-  Long user_id;
+  MealModel({
+    this.id,
+    this.date,
+    this.user_id,
+  });
 
   factory MealModel.fromRawJson(String str) =>
       MealModel.fromJson(json.decode(str));

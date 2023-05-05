@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nutrigains_front/screens/login_screen.dart';
 import 'package:nutrigains_front/screens/register_screen.dart';
+import 'package:nutrigains_front/screens/user_MainScreen.dart';
 import 'package:nutrigains_front/services/auth_service.dart';
 import 'package:provider/provider.dart';
 
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         routes: {
           'login': (_) => const LoginScreen(),
           'register': (_) => const RegisterScreen(),
+          'userMainScreen': (_) => const userMainScreen()
         });
   }
 }

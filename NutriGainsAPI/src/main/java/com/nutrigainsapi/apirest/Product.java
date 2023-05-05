@@ -1,5 +1,7 @@
 package com.nutrigainsapi.apirest;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Product {
     private String code;
     private ProductDetails product;
@@ -41,21 +43,28 @@ public class Product {
         }
 
         public static class Nutriments {
-            private double energy_value;
+        	
+        	@JsonProperty("energy-kcal_100g")
+            private double energykcal;
+        	@JsonProperty("proteins_100g")
             private double proteins;
+        	@JsonProperty("fat_100g")
             private double fat;
+        	@JsonProperty("carbohydrates_100g")
             private double carbohydrates;
+        	@JsonProperty("sugars_100g")
             private double sugars;
+        	@JsonProperty("salt_100g")
             private double salt;
 
             
 
-			public double getEnergy_value() {
-				return energy_value;
+			public double getEnergykcal() {
+				return energykcal;
 			}
 
-			public void setEnergy_value(double energy_value) {
-				this.energy_value = energy_value;
+			public void setEnergykcal(double energy_kcal) {
+				this.energykcal = energy_kcal;
 			}
 
 			public double getProteins() {
@@ -97,6 +106,9 @@ public class Product {
             public void setSalt(double salt) {
                 this.salt = salt;
             }
+
+            
         }
-    }
+    }    
+    
 }

@@ -1,14 +1,18 @@
 package com.nutrigainsapi.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -24,6 +28,7 @@ import com.nutrigainsapi.entity.Meal;
 import com.nutrigainsapi.model.MealModel;
 import com.nutrigainsapi.repository.MealRepository;
 import com.nutrigainsapi.service.GenericService;
+import com.nutrigainsapi.serviceImpl.MealServiceImpl;
 import com.nutrigainsapi.serviceImpl.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +39,7 @@ public class RestMeal {
 	
 	@Autowired
 	@Qualifier("mealServiceImpl")
-	private GenericService<Meal,MealModel,Long> mealService;
+	private MealServiceImpl mealService;
 	
 	@Autowired
 	@Qualifier("mealRepository")
@@ -48,19 +53,23 @@ public class RestMeal {
 	//Crear una comida (desayuno,almuerzo,cena)
 	@PostMapping("/user/newmeal")
 	@Operation(summary = "Crear una comida (desayuno,almuerzo,cena)" , description = " ... ")
-	public ResponseEntity<?> createNewMeal(){
+	public ResponseEntity<?> createNewMeal() throws ParseException{
 		MealModel mealModel = new MealModel();
-		
-		LocalDateTime localDateTime = LocalDateTime.now();
-		ZoneId zoneId = ZoneId.systemDefault();
-		Instant instant = localDateTime.atZone(zoneId).toInstant();
-		Date date = Date.from(instant);
-		
-		mealModel.setIdUser(userService.getUserId());
-		mealModel.setDate(date);		
-		mealService.addEntity(mealModel);
 
-		return ResponseEntity.status(HttpStatus.CREATED).body(mealModel);
+	    LocalDateTime localDateTime = LocalDateTime.now();
+	    ZoneId zoneId = ZoneId.systemDefault();
+	    Instant instant = localDateTime.atZone(zoneId).toInstant();
+	    Date date = Date.from(instant);
+
+	    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+	    String formattedDate = formatter.format(date);
+	    Date formattedDateAsDate = formatter.parse(formattedDate);
+
+	    mealModel.setIdUser(userService.getUserId());
+	    mealModel.setDate(formattedDateAsDate);
+	    mealService.addEntity(mealModel);
+
+	    return ResponseEntity.status(HttpStatus.CREATED).body(mealModel);
 	}
 	
 	//Borrar una comida realizada
@@ -75,10 +84,10 @@ public class RestMeal {
 	}
 	
 	//Traer todas las Meal de un usuario
-	@GetMapping("/user/getallusermeal/{iduser}")
+	@GetMapping("/user/getallusermeal")
 	@Operation(summary = "Traer todas las Meal de un usuario" , description = " ... ")
-	public ResponseEntity<?> getAllMealByUserId(@PathVariable(name="iduser", required = true) long iduser){
-		List<Meal> allMeals = mealRepository.findAllByUserId(iduser);
+	public ResponseEntity<?> getAllMealByUserId(){
+		List<Meal> allMeals = mealRepository.findAllByUserId(userService.getUserId());
 		List<MealModel> allMealsModel = new ArrayList<>();
 		for(Meal x : allMeals) {
 			allMealsModel.add(mealService.transformToModel(x));
@@ -92,6 +101,21 @@ public class RestMeal {
 	public ResponseEntity<?> getMealById(@PathVariable(name="idmeal", required = true) long idmeal){
 		MealModel mealModel = mealService.findModelById(idmeal);
 		return ResponseEntity.status(HttpStatus.CREATED).body(mealModel);
+	}
+	
+	//Traer la meal correspondiende a ese date
+	@GetMapping("/user/getmealbydate/{date}")
+	public ResponseEntity<?> getMealByDate(@PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+		List<MealModel> meals = mealService.findMealByDate(date);
+	    if (meals != null && !meals.isEmpty()) {
+	        List<MealModel> userMeals = meals.stream()
+	                .filter(meal -> meal.getIdUser() == userService.getUserId())
+	                .collect(Collectors.toList());
+	        if (!userMeals.isEmpty()) {
+	            return ResponseEntity.ok(userMeals);
+	        }
+	    }
+	    return ResponseEntity.notFound().build();
 	}
 
 }
