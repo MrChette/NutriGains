@@ -18,9 +18,9 @@ class MealListModel {
 
   factory MealListModel.fromJson(Map<String, dynamic> json) => MealListModel(
         id: json["id"],
-        food_id: json["food_id"],
-        meal_id: json["meal_id"],
-        recipe_id: json["recipe_id"],
+        food_id: json["idFood"],
+        meal_id: json["idMeal"],
+        recipe_id: json["idRecipe"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -29,4 +29,9 @@ class MealListModel {
         "meal_id": meal_id,
         "recipe_id": recipe_id,
       };
+
+  @override
+  String toString() {
+    return 'MealModel(id: $id, food_id: $food_id, meal_id: $meal_id, repice_id: $recipe_id)';
+  }
 }

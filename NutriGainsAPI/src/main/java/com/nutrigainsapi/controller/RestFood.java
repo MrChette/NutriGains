@@ -114,10 +114,16 @@ public class RestFood {
 	@Operation(summary = "Traer todos los alimentos de un usuario" , description = " ... ")
 	public ResponseEntity<?> getFoodByUser(){
 		boolean exist = foodRepository.findByUserId(userService.getUserId())!=null;
+		System.out.println(exist);
 		if (exist) {
 		List<Food> userFoods = foodRepository.findByUserId(userService.getUserId());
+		for(Food x : userFoods)
+			System.out.println(x.toString());
+		
 		List<FoodModel> modelFoods = new ArrayList<>();
+		System.out.println("FOODMODEL");
 		for(Food x : userFoods) {
+			System.out.println(x.toString());
 			modelFoods.add(foodService.transformToModel(x));
 		}
 		return ResponseEntity.ok(modelFoods);
@@ -136,8 +142,9 @@ public class RestFood {
 			FoodModel food = foodService.transformToModel(foodRepository.findByBarcode(barcode));
 			return ResponseEntity.ok(food);
 		}
-		else
+		else {
 			return ResponseEntity.noContent().build();
+		}
 		}
 		
 		

@@ -5,12 +5,12 @@ import 'dart:ffi';
 
 class MealModel {
   int? id;
-  String? date;
-  Long? user_id;
+  String date;
+  int? user_id;
 
   MealModel({
     this.id,
-    this.date,
+    required this.date,
     this.user_id,
   });
 
@@ -22,7 +22,7 @@ class MealModel {
   factory MealModel.fromJson(Map<String, dynamic> json) => MealModel(
         id: json["id"],
         date: json["date"],
-        user_id: json["user_id"],
+        user_id: json["idUser"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -30,4 +30,9 @@ class MealModel {
         "date": date,
         "user_id": user_id,
       };
+
+  @override
+  String toString() {
+    return 'MealModel(id: $id, date: $date, user_id: $user_id)';
+  }
 }

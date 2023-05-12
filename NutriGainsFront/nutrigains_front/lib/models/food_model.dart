@@ -4,8 +4,9 @@ import 'dart:convert';
 import 'dart:ffi';
 
 class FoodModel {
+  int? id;
   String name;
-  Long? barcode;
+  int? barcode;
   double carbohydrates;
   double fat;
   double kcal;
@@ -14,6 +15,7 @@ class FoodModel {
   double sugar;
 
   FoodModel({
+    this.id,
     required this.name,
     this.barcode,
     required this.carbohydrates,
@@ -30,8 +32,9 @@ class FoodModel {
   String toRawJson() => json.encode(toJson());
 
   factory FoodModel.fromJson(Map<String, dynamic> json) => FoodModel(
+        id: json["id"] as int?,
         name: json["name"],
-        barcode: json["barcode"],
+        barcode: json["barcode"] as int?,
         carbohydrates: json["carbohydrates"],
         fat: json["fat"],
         kcal: json["kcal"],
@@ -41,6 +44,7 @@ class FoodModel {
       );
 
   Map<String, dynamic> toJson() => {
+        "id": id,
         "name": name,
         "barcode": barcode,
         "carbohydrates": carbohydrates,
@@ -50,4 +54,9 @@ class FoodModel {
         "salt": salt,
         "sugar": sugar,
       };
+
+  @override
+  String toString() {
+    return 'MealModel(id : $id, name: $name, bacode: $barcode, carbohydrates : $carbohydrates, fat: $fat, kcal: $kcal, protein: $protein, salt: $salt, sugar: $sugar)';
+  }
 }

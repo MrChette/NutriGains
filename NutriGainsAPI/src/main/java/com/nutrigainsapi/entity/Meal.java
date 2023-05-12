@@ -32,6 +32,7 @@ public class Meal {
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
+
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "meal",orphanRemoval = true)
 	private List<MealList> recipes = new ArrayList<>();
@@ -42,47 +43,67 @@ public class Meal {
 		super();
 	}
 
-	public Meal(long id, Recipe recipeName, List<Long> idFoodList, Date date, User user) {
+
+
+	public Meal(long id, Date date, User user, List<MealList> recipes) {
 		super();
 		this.id = id;
 		this.date = date;
 		this.user = user;
+		this.recipes = recipes;
 	}
+
+
 
 	public long getId() {
 		return id;
 	}
 
+
+
 	public void setId(long id) {
 		this.id = id;
 	}
+
+
 
 	public Date getDate() {
 		return date;
 	}
 
+
+
 	public void setDate(Date date) {
 		this.date = date;
 	}
+
+
 
 	public User getUser() {
 		return user;
 	}
 
+
+
 	public void setUser(User user) {
 		this.user = user;
 	}
 
-	@Override
-	public String toString() {
-		return "Meal [id=" + id + ", recipeName=" + ", date=" + date
-				+ ", user=" + user + "]";
+
+
+	public List<MealList> getRecipes() {
+		return recipes;
 	}
 
-	
+
+
+	public void setRecipes(List<MealList> recipes) {
+		this.recipes = recipes;
+	}
+
+
 
 	
-
 	
 	
 	

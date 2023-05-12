@@ -4,8 +4,11 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+import 'package:nutrigains_front/models/comment_model.dart';
 import 'package:nutrigains_front/models/food_model.dart';
+import 'package:nutrigains_front/models/mealList_model.dart';
 import 'package:nutrigains_front/services/food_service.dart';
+import 'package:nutrigains_front/services/recipeList_service.dart';
 import 'package:nutrigains_front/services/recipe_service.dart';
 import 'package:provider/provider.dart';
 
@@ -13,6 +16,7 @@ import '../models/meal_model.dart';
 import '../providers/login_provider.dart';
 import '../services/auth_service.dart';
 import '../services/comment_service.dart';
+import '../services/mealList_service.dart';
 import '../services/meal_service.dart';
 import '../ui/input_decorations.dart';
 import '../widgets/auth_background.dart';
@@ -134,50 +138,11 @@ class _LoginForm extends StatelessWidget {
 
                       if (!loginForm.isValidForm()) return;
 
-                      loginForm.isLoading = true;
-
-                      //                     //
-                      //                     //
-                      // PRUEBA DE ENDPOINTS //
-                      //                     //
-                      //                     //
-
-                      //await RecipeService().newRecipe("Prueba desde flutter 2");
-                      //await MealService().newMeal();
-                      //await CommentService().newComment(1, "Probando un comentario desde flutter");
-
-                      //final food = FoodModel(
-                      //    name: "Prueba desde flutter",
-                      //    carbohydrates: 100.0,
-                      //    fat: 100.0,
-                      //    kcal: 100.0,
-                      //    protein: 100.0,
-                      //    salt: 100.0,
-                      //    sugar: 100.0);
-                      //await FoodService().newFood(food);
-
-                      //FoodService().newFoodByBarcode(3168930009078);
-
-                      //DateTime now = DateTime.now();
-                      //String formattedDate =
-                      //    "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
-                      //print(formattedDate);
-                      //final List<MealModel> meals =
-                      //    await MealService().getMealByDate(formattedDate);
-                      //meals.length;
-
-                      //                     //
-                      //                     //
-                      // PRUEBA DE ENDPOINTS //
-                      //                     //
-                      //                     //
-
                       // validar si el login es correcto
                       final String? data = await authService.login(
                           loginForm.username, loginForm.password);
                       final spliter = data?.split(',');
-
-                      print(spliter);
+                      loginForm.isLoading = true;
                       if (spliter?[0] == '200') {
                         if (spliter?[1] == 'ROLE_ADMIN') {
                           Navigator.pushReplacementNamed(context, '');
@@ -185,6 +150,94 @@ class _LoginForm extends StatelessWidget {
                           Navigator.pushReplacementNamed(
                               context, 'userMainScreen');
                         }
+
+                        ////////////////////////////////////////////////////////////////////////////////////////
+                        //                     //
+                        //                     //
+                        // PRUEBA DE ENDPOINTS //
+                        //                     //
+                        //                     //
+
+                        //  NEWRECIPE //
+                        //await RecipeService().newRecipe("Prueba desde flutter 2");
+
+                        //  NEWFOOD //
+                        //final food = FoodModel(
+                        //    name: "Prueba desde flutter",
+                        //    carbohydrates: 100.0,
+                        //    fat: 100.0,
+                        //    kcal: 100.0,
+                        //    protein: 100.0,
+                        //    salt: 100.0,
+                        //    sugar: 100.0);
+                        //await FoodService().newFood(food);
+
+                        // NEWFOODBYBARCODE  //
+                        //FoodService().newFoodByApi(3168930009078);
+
+                        //  GETALLUSERFOOD //
+                        //List<FoodModel> foodList;
+                        //foodList = await FoodService().getAllUserFood();
+                        //foodList.forEach((food) {
+                        //  print(food.toString());
+                        //});
+
+                        //  NEWCOMMENT  //
+                        //await CommentService().newComment(1, "Probando un comentario desde flutter");
+
+                        // COMMENTBYIDRECIPE //
+                        //List<CommentModel> commentList;
+                        //commentList =
+                        //    await CommentService().commentByIdRecipe(1);
+                        //commentList.forEach((comment) {
+                        //  print(comment.toString());
+                        //});
+
+                        //  ADDFOODTOMEAL - LIST -  ADDRECIPETOMEAL //
+                        //if (mealResult != null) {
+                        //  await MealListService()
+                        //      .addFoodToMeal(mealResult.id, 105);
+                        //  await MealListService()
+                        //      .addRecipeToMeal(mealResult.id, 1);
+                        //} else {
+                        //  print('No se pudo crear la comida');
+                        //}
+
+                        // GETMEALISTBYIDMEAL //
+                        //List<MealListModel> mealList =
+                        //    await MealListService().getMealListByIdMeal(1);
+                        //mealList.forEach((meal) {
+                        //  print(meal.toString());
+                        //});
+
+                        //  NEWMEAL  //
+                        //MealModel? mealResult;
+                        //mealResult = await MealService().newMeal();
+
+                        // GETMEALBYID //
+                        //MealModel meal;
+                        //meal = await MealService().getMealById(1);
+                        //print(meal.toString());
+
+                        //  GETMEALBYDATE //
+                        //DateTime now = DateTime.now();
+                        //String formattedDate =
+                        //    "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+                        //print(formattedDate);
+                        //final List<MealModel> meals =
+                        //    await MealService().getMealByDate(formattedDate);
+                        //meals.length;
+
+                        // ADDFOODTORECIPE //
+                        //RecipeListService().addFoodToRecipe(1, 1);
+                        //RecipeListService().addFoodToRecipe(1, 2);
+
+                        //                     //
+                        //                     //
+                        // PRUEBA DE ENDPOINTS //
+                        //                     //
+                        //                     //
+                        ////////////////////////////////////////////////////////////////////////////////////////
                       } else {
                         customToast('Email or password incorrect', context);
                         Navigator.pushReplacementNamed(context, 'login');

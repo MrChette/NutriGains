@@ -23,8 +23,8 @@ class CommentModel {
   factory CommentModel.fromJson(Map<String, dynamic> json) => CommentModel(
         id: json["id"],
         comment: json["comment"],
-        recipe_id: json["recipe_id"],
-        user_id: json["user_id"],
+        recipe_id: json["idRecipe"],
+        user_id: json["idUser"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -33,4 +33,9 @@ class CommentModel {
         "recipe_id": recipe_id,
         "user_id": user_id,
       };
+
+  @override
+  String toString() {
+    return 'MealModel(id : $id, comment: $comment, recipe_id: $recipe_id, user_id : $user_id)';
+  }
 }

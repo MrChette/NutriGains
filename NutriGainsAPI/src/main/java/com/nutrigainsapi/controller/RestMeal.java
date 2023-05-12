@@ -53,24 +53,46 @@ public class RestMeal {
 	//Crear una comida (desayuno,almuerzo,cena)
 	@PostMapping("/user/newmeal")
 	@Operation(summary = "Crear una comida (desayuno,almuerzo,cena)" , description = " ... ")
+//	public ResponseEntity<?> createNewMeal() throws ParseException{
+//		MealModel mealModel = new MealModel();
+//
+//	    LocalDateTime localDateTime = LocalDateTime.now();
+//	    ZoneId zoneId = ZoneId.systemDefault();
+//	    Instant instant = localDateTime.atZone(zoneId).toInstant();
+//	    Date date = Date.from(instant);
+//
+//	    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+//	    String formattedDate = formatter.format(date);
+//	    Date formattedDateAsDate = formatter.parse(formattedDate);
+//
+//	    mealModel.setIdUser(userService.getUserId());
+//	    mealModel.setDate(formattedDateAsDate);
+//	    
+//	    Meal savedMeal = mealRepository.saveAndFlush(mealModel);
+//	    mealModel.setId(savedMeal.getId());
+//	    //mealService.addEntity(mealModel);
+//
+//	    return ResponseEntity.status(HttpStatus.CREATED).body(mealModel);
+//	}
+
 	public ResponseEntity<?> createNewMeal() throws ParseException{
-		MealModel mealModel = new MealModel();
+	    MealModel mealModel = new MealModel();
 
 	    LocalDateTime localDateTime = LocalDateTime.now();
 	    ZoneId zoneId = ZoneId.systemDefault();
 	    Instant instant = localDateTime.atZone(zoneId).toInstant();
 	    Date date = Date.from(instant);
 
-	    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-	    String formattedDate = formatter.format(date);
-	    Date formattedDateAsDate = formatter.parse(formattedDate);
-
 	    mealModel.setIdUser(userService.getUserId());
-	    mealModel.setDate(formattedDateAsDate);
-	    mealService.addEntity(mealModel);
+	    mealModel.setDate(date);
+
+	    Meal mealEntity = mealService.transform(mealModel);
+	    mealRepository.save(mealEntity);
+	    mealModel.setId(mealEntity.getId());
 
 	    return ResponseEntity.status(HttpStatus.CREATED).body(mealModel);
 	}
+
 	
 	//Borrar una comida realizada
 	@DeleteMapping("/user/deletemeal/{idmeal}")
@@ -107,15 +129,12 @@ public class RestMeal {
 	@GetMapping("/user/getmealbydate/{date}")
 	public ResponseEntity<?> getMealByDate(@PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
 		List<MealModel> meals = mealService.findMealByDate(date);
-	    if (meals != null && !meals.isEmpty()) {
+	    //if (meals != null && !meals.isEmpty()) {
 	        List<MealModel> userMeals = meals.stream()
 	                .filter(meal -> meal.getIdUser() == userService.getUserId())
 	                .collect(Collectors.toList());
-	        if (!userMeals.isEmpty()) {
-	            return ResponseEntity.ok(userMeals);
-	        }
-	    }
-	    return ResponseEntity.notFound().build();
+	        return ResponseEntity.ok(userMeals);
+	    //}
 	}
 
 }

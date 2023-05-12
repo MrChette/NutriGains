@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:nutrigains_front/models/comment_model.dart';
 
 import 'auth_service.dart';
 
@@ -34,6 +35,34 @@ class CommentService extends ChangeNotifier {
       print('OK - COMMENT CREATED');
     } else {
       print('BAD REQUEST - COMMENT NOT CREATED');
+      print(resp.statusCode);
+    }
+  }
+
+  Future commentByIdRecipe(int idRecipe) async {
+    final url = Uri.http(_baseUrl, '/api/user/commentbyidrecipe/$idRecipe');
+    String? token = await AuthService().getToken();
+
+    isLoading = true;
+    notifyListeners();
+
+    final resp = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization": "Bearer $token"
+    });
+
+    isLoading = false;
+    notifyListeners();
+    if (resp.statusCode == 200) {
+      final List<dynamic> commentsJson = json.decode(resp.body);
+      final List<CommentModel> comment = commentsJson
+          .map((commentJson) => CommentModel.fromJson(commentJson))
+          .toList();
+      print('OK - LISTA COMMENTS');
+      return comment;
+    } else {
+      print('BAD REQUEST - CANT LIST COMMENTS');
       print(resp.statusCode);
     }
   }

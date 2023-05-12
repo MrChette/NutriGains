@@ -43,7 +43,6 @@ class AuthService extends ChangeNotifier {
 
   Future<String?> login(String username, String password) async {
     String url = 'http://$_baseUrl/login';
-    print(url);
     var request = http.MultipartRequest('POST', Uri.parse(url));
 
     request.fields['username'] = username;

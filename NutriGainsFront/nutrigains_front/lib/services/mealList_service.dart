@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 
@@ -19,31 +18,17 @@ class MealListService extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final resp = await http.get(url, headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      "Authorization": "Bearer $token"
-    });
+    final resp =
+        await http.get(url, headers: {"Authorization": "Bearer $token"});
     isLoading = false;
     notifyListeners();
 
     if (resp.statusCode == 201) {
-      final responseData = jsonDecode(resp.body) as List<dynamic>;
-      List<MealListModel> mealList = responseData
-          .map((item) => MealListModel(
-                id: int.tryParse(item['id'].toString()) ?? 0,
-                food_id: item['idFood'] != null
-                    ? int.tryParse(item['idFood'].toString())
-                    : null,
-                meal_id: item['idMeal'] != null
-                    ? int.tryParse(item['idMeal'].toString())
-                    : null,
-                recipe_id: item['idRecipe'] != null
-                    ? int.tryParse(item['idRecipe'].toString())
-                    : null,
-              ))
+      final List<dynamic> mealsJson = json.decode(resp.body);
+      final List<MealListModel> meals = mealsJson
+          .map((mealsJson) => MealListModel.fromJson(mealsJson))
           .toList();
-      return mealList;
+      return meals;
     } else {
       print('BAD REQUEST - MEAL NOT CREATED');
       print(resp.statusCode);
@@ -51,16 +36,47 @@ class MealListService extends ChangeNotifier {
     }
   }
 
-  Future<List<MealListModel>> getmeallistbyidmeal(int id) async {
-    final mealListService = MealListService();
-    final List<MealListModel> mealList =
-        await mealListService.getMealListByIdMeal(id);
-    for (var meal in mealList) {
-      print('id ${meal.id}');
-      print('recipe ${meal.recipe_id}');
-      print('food ${meal.food_id}');
-      print('meal ${meal.meal_id}');
+  Future addFoodToMeal(int? idMeal, int idFood) async {
+    final url = Uri.http(_baseUrl, '/api/user/foodtomeal/$idMeal/$idFood');
+    String? token = await AuthService().getToken();
+
+    isLoading = true;
+    notifyListeners();
+
+    print(token);
+    final resp =
+        await http.post(url, headers: {"Authorization": "Bearer $token"});
+
+    isLoading = false;
+    notifyListeners();
+
+    if (resp.statusCode == 201) {
+      print('OK - FOOD ADDED TO MEAL');
+    } else {
+      print('BAD REQUEST - CANT ADD THE FOOD TO MEAL');
+      print(resp.statusCode);
     }
-    return mealList;
+  }
+
+  Future addRecipeToMeal(int? idMeal, int idRecipe) async {
+    final url = Uri.http(_baseUrl, '/api/user/recipetomeal/$idMeal/$idRecipe');
+    String? token = await AuthService().getToken();
+
+    isLoading = true;
+    notifyListeners();
+
+    print(token);
+    final resp =
+        await http.post(url, headers: {"Authorization": "Bearer $token"});
+
+    isLoading = false;
+    notifyListeners();
+
+    if (resp.statusCode == 201) {
+      print('OK - RECIPE ADDED TO MEAL');
+    } else {
+      print('BAD REQUEST - CANT ADD THE RECIPE TO MEAL');
+      print(resp.statusCode);
+    }
   }
 }

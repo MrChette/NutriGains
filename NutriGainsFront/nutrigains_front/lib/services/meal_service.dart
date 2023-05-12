@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 class MealService extends ChangeNotifier {
   final String _baseUrl = '192.168.1.135:8080';
   bool isLoading = true;
+
   Future newMeal() async {
     final url = Uri.http(_baseUrl, '/api/user/newmeal');
     String? token = await AuthService().getToken();
@@ -17,28 +18,59 @@ class MealService extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final resp = await http.post(url, headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      "Authorization": "Bearer $token"
-    });
+    print(token);
+    final resp =
+        await http.post(url, headers: {"Authorization": "Bearer $token"});
+
     isLoading = false;
     notifyListeners();
+
     if (resp.statusCode == 201) {
+      final mealResponse = MealModel.fromJson(json.decode(resp.body));
+      final mealModel = MealModel(
+        id: mealResponse.id,
+        user_id: mealResponse.user_id,
+        date: DateTime.parse(mealResponse.date).toString(),
+      );
+      print(mealModel.toString());
       print('OK - MEAL CREATED');
+      return mealModel;
     } else {
       print('BAD REQUEST - MEAL NOT CREATED');
       print(resp.statusCode);
     }
   }
 
+  Future<MealModel> getMealById(int idmeal) async {
+    final url = Uri.http(_baseUrl, '/api/user/getmealbyid/$idmeal');
+    String? token = await AuthService().getToken();
+    isLoading = true;
+    notifyListeners();
+
+    final resp = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization": "Bearer $token"
+    });
+
+    isLoading = false;
+    notifyListeners();
+
+    if (resp.statusCode == 201) {
+      final mealsJson = json.decode(resp.body);
+      final meals = MealModel.fromJson(mealsJson);
+      return meals;
+    } else {
+      print(resp.statusCode);
+      throw Exception('Failed to load meals');
+    }
+  }
+
   Future<List<MealModel>> getMealByDate(String date) async {
     final url = Uri.http(_baseUrl, '/api/user/getmealbydate/$date');
     String? token = await AuthService().getToken();
-    print(token);
     isLoading = true;
     notifyListeners();
-    print(url);
 
     final resp = await http.get(url, headers: {
       'Content-Type': 'application/json',
@@ -53,7 +85,6 @@ class MealService extends ChangeNotifier {
       final List<dynamic> mealsJson = json.decode(resp.body);
       final List<MealModel> meals =
           mealsJson.map((mealJson) => MealModel.fromJson(mealJson)).toList();
-      print(meals);
       return meals;
     } else {
       print(resp.statusCode);

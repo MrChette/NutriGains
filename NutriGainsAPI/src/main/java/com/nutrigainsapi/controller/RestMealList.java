@@ -51,7 +51,7 @@ public class RestMealList {
 	//Añadir recetas a las comidas realizadas
 	@PostMapping("/user/recipetomeal/{idmeal}/{idrecipe}")
 	@Operation(summary = "Añadir recetas a las comidas realizadas" , description = " ... ")
-	public ResponseEntity<?> addRecipeToMeal(@PathVariable(name="id",required = true) long idmeal,
+	public ResponseEntity<?> addRecipeToMeal(@PathVariable(name="idmeal",required = true) long idmeal,
 			@PathVariable(name="idrecipe",required = true) long idrecipe) {
 		MealListModel mealListModel = new MealListModel();
 		
