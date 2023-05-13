@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:provider/provider.dart';
+import '../models/food_model.dart';
 import '../models/mealList_model.dart';
 import '../models/meal_model.dart';
 import '../services/auth_service.dart';
@@ -88,6 +89,175 @@ class _HomeScreenState extends State<userMainScreen> {
             } else {
               customToast('Email or password incorrect', context);
             }
+          },
+        ),
+      ),
+    );
+  }
+
+  @override
+  @override
+  Widget foodForm(BuildContext context) {
+    return SizedBox(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 35.0),
+        width: MediaQuery.of(context).size.width * 1,
+        child: CustomIconButton(
+          icon: Icons.add,
+          label: 'Form comida',
+          onPressed: () {
+            FoodModel foodModel = FoodModel(
+              name: '',
+              carbohydrates: 0.0,
+              fat: 0.0,
+              kcal: 0.0,
+              protein: 0.0,
+              salt: 0.0,
+              sugar: 0.0,
+            );
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                // return object of type Dialog
+                return AlertDialog(
+                  title: const Text("Create Product"),
+                  content: SizedBox(
+                    height: 350,
+                    width: 300,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          initialValue: foodModel.name,
+                          onChanged: (String textTyped) {
+                            setState(() {
+                              foodModel.name = textTyped;
+                            });
+                          },
+                          keyboardType: TextInputType.text,
+                          decoration: const InputDecoration(hintText: 'Name'),
+                        ),
+                        TextFormField(
+                          initialValue: foodModel.carbohydrates.toString(),
+                          onChanged: (String textTyped) {
+                            setState(() {
+                              foodModel.carbohydrates = double.parse(textTyped);
+                            });
+                          },
+                          keyboardType: TextInputType.number,
+                          decoration:
+                              const InputDecoration(hintText: 'Carbohydrates'),
+                        ),
+                        TextFormField(
+                          initialValue: foodModel.fat.toString(),
+                          onChanged: (String textTyped) {
+                            setState(() {
+                              foodModel.fat = double.parse(textTyped);
+                            });
+                          },
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(hintText: 'Fat'),
+                        ),
+                        TextFormField(
+                          initialValue: foodModel.kcal.toString(),
+                          onChanged: (String textTyped) {
+                            setState(() {
+                              foodModel.kcal = double.parse(textTyped);
+                            });
+                          },
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(hintText: 'Kcal'),
+                        ),
+                        TextFormField(
+                          initialValue: foodModel.protein.toString(),
+                          onChanged: (String textTyped) {
+                            setState(() {
+                              foodModel.protein = double.parse(textTyped);
+                            });
+                          },
+                          keyboardType: TextInputType.number,
+                          decoration:
+                              const InputDecoration(hintText: 'Protein'),
+                        ),
+                        TextFormField(
+                          initialValue: foodModel.salt.toString(),
+                          onChanged: (String textTyped) {
+                            setState(() {
+                              foodModel.salt = double.parse(textTyped);
+                            });
+                          },
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(hintText: 'Salt'),
+                        ),
+                        TextFormField(
+                          initialValue: foodModel.sugar.toString(),
+                          onChanged: (String textTyped) {
+                            setState(() {
+                              foodModel.sugar = double.parse(textTyped);
+                            });
+                          },
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(hintText: 'Sugar'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                top: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1.0,
+                                ),
+                                right: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1.0,
+                                ),
+                              ),
+                            ),
+                            child: TextButton(
+                              onPressed: () {
+                                setState(() {});
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text(
+                                "Cancel",
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                top: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1.0,
+                                ),
+                              ),
+                            ),
+                            child: TextButton(
+                              onPressed: () async {
+                                await FoodService().newFood(foodModel);
+                                Navigator.pop(context);
+                              },
+                              child: const Text(
+                                "Save",
+                                style: TextStyle(color: Colors.green),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            );
           },
         ),
       ),
@@ -188,7 +358,9 @@ class _HomeScreenState extends State<userMainScreen> {
                           children: [
                             addFoodButton(context),
                             const SizedBox(height: 30.0),
-                            addBarcodeButton(context)
+                            addBarcodeButton(context),
+                            const SizedBox(height: 30.0),
+                            foodForm(context)
                           ],
                         ),
                       ),
