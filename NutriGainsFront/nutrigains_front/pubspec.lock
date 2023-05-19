@@ -81,6 +81,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.1"
+  circular_seek_bar:
+    dependency: "direct main"
+    description:
+      name: circular_seek_bar
+      sha256: "78ff5e54b6012523f3ce19b33c870ab75433ea96977f44606f1641a8ac5c1873"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0+2"
   clock:
     dependency: transitive
     description:
@@ -335,10 +343,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_spinbox
-      sha256: "0d015758a0f713fd9766d6060b4b028054cf25e746314e86f7250d05c85baa89"
+      sha256: "38d8c1a3a39f0fa72823d4470785f5e165f2deb53531ca7803b54ba45e4dbd46"
       url: "https://pub.dev"
     source: hosted
-    version: "0.11.0"
+    version: "0.13.1"
   flutter_spinkit:
     dependency: "direct main"
     description:
@@ -988,4 +996,4 @@ packages:
     version: "3.1.1"
 sdks:
   dart: ">=2.19.6 <3.0.0"
-  flutter: ">=3.3.0"
+  flutter: ">=3.7.0"

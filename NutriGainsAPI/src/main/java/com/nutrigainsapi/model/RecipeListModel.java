@@ -5,17 +5,37 @@ public class RecipeListModel {
 	private long id;
 	private long idRecipe;
 	private long idFood;
+	private long grams;
 	
 	public RecipeListModel() {
 		super();
 	}
 
-	public RecipeListModel(long id, long idRecipe, long idFood) {
+	
+
+	public RecipeListModel(long id, long idRecipe, long idFood, long grams) {
 		super();
 		this.id = id;
 		this.idRecipe = idRecipe;
 		this.idFood = idFood;
+		this.grams = grams;
 	}
+	
+	
+
+
+
+	public long getGrams() {
+		return grams;
+	}
+
+
+
+	public void setGrams(long grams) {
+		this.grams = grams;
+	}
+
+
 
 	public long getId() {
 		return id;
@@ -41,10 +61,14 @@ public class RecipeListModel {
 		this.idFood = idFood;
 	}
 
+
+
 	@Override
 	public String toString() {
-		return "RecipeListModel [id=" + id + ", idRecipe=" + idRecipe + ", idFood=" + idFood + "]";
+		return "RecipeListModel [id=" + id + ", idRecipe=" + idRecipe + ", idFood=" + idFood + ", grams=" + grams + "]";
 	}
+
+	
 	
 	
 	

@@ -51,47 +51,66 @@ public class RestMeal {
 	
 	
 	//Crear una comida (desayuno,almuerzo,cena)
-	@PostMapping("/user/newmeal")
-	@Operation(summary = "Crear una comida (desayuno,almuerzo,cena)" , description = " ... ")
+//	@PostMapping("/user/newmeal")
+//	@Operation(summary = "Crear una comida (desayuno,almuerzo,cena)" , description = " ... ")
 //	public ResponseEntity<?> createNewMeal() throws ParseException{
-//		MealModel mealModel = new MealModel();
+//	    MealModel mealModel = new MealModel();
 //
 //	    LocalDateTime localDateTime = LocalDateTime.now();
 //	    ZoneId zoneId = ZoneId.systemDefault();
 //	    Instant instant = localDateTime.atZone(zoneId).toInstant();
 //	    Date date = Date.from(instant);
 //
-//	    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-//	    String formattedDate = formatter.format(date);
-//	    Date formattedDateAsDate = formatter.parse(formattedDate);
-//
 //	    mealModel.setIdUser(userService.getUserId());
-//	    mealModel.setDate(formattedDateAsDate);
-//	    
-//	    Meal savedMeal = mealRepository.saveAndFlush(mealModel);
-//	    mealModel.setId(savedMeal.getId());
-//	    //mealService.addEntity(mealModel);
+//	    mealModel.setDate(date);
+//
+//	    Meal mealEntity = mealService.transform(mealModel);
+//	    mealRepository.save(mealEntity);
+//	    mealModel.setId(mealEntity.getId());
 //
 //	    return ResponseEntity.status(HttpStatus.CREATED).body(mealModel);
 //	}
-
-	public ResponseEntity<?> createNewMeal() throws ParseException{
-	    MealModel mealModel = new MealModel();
-
-	    LocalDateTime localDateTime = LocalDateTime.now();
+	
+	@PostMapping("/user/newfoodmeal/{idfood}/{grams}")
+	@Operation(summary = "Crear una comida (desayuno,almuerzo,cena)" , description = " ... ")
+	public ResponseEntity<?> newFoodMeal(@PathVariable(name="idfood",required = true) long idfood,
+										 @PathVariable(name="grams",required = true) long grams) throws ParseException{
+		MealModel mealModel = new MealModel();
+		LocalDateTime localDateTime = LocalDateTime.now();
 	    ZoneId zoneId = ZoneId.systemDefault();
 	    Instant instant = localDateTime.atZone(zoneId).toInstant();
 	    Date date = Date.from(instant);
 
 	    mealModel.setIdUser(userService.getUserId());
 	    mealModel.setDate(date);
-
-	    Meal mealEntity = mealService.transform(mealModel);
+		mealModel.setIdFood(idfood);
+		mealModel.setGrams(grams);
+		Meal mealEntity = mealService.transform(mealModel);
 	    mealRepository.save(mealEntity);
 	    mealModel.setId(mealEntity.getId());
-
 	    return ResponseEntity.status(HttpStatus.CREATED).body(mealModel);
 	}
+	
+	
+	@PostMapping("/user/newrecipemeal/{idrecipe}")
+	@Operation(summary = "Crear una comida con receta (desayuno,almuerzo,cena)" , description = " ... ")
+	public ResponseEntity<?> newRecipeMeal(@PathVariable(name="idrecipe",required = true) long idrecipe) throws ParseException{
+		MealModel mealModel = new MealModel();
+		LocalDateTime localDateTime = LocalDateTime.now();
+	    ZoneId zoneId = ZoneId.systemDefault();
+	    Instant instant = localDateTime.atZone(zoneId).toInstant();
+	    Date date = Date.from(instant);
+
+	    mealModel.setIdUser(userService.getUserId());
+	    mealModel.setDate(date);
+		mealModel.setIdRecipe(idrecipe);
+		Meal mealEntity = mealService.transform(mealModel);
+	    mealRepository.save(mealEntity);
+	    mealModel.setId(mealEntity.getId());
+	    return ResponseEntity.status(HttpStatus.CREATED).body(mealModel);
+		
+	}
+
 
 	
 	//Borrar una comida realizada

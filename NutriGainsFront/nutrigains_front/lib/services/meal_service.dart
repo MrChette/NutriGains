@@ -11,8 +11,8 @@ class MealService extends ChangeNotifier {
   final String _baseUrl = '192.168.1.135:8080';
   bool isLoading = true;
 
-  Future newMeal() async {
-    final url = Uri.http(_baseUrl, '/api/user/newmeal');
+  Future newFoodMeal(int idFood, int grams) async {
+    final url = Uri.http(_baseUrl, '/api/user/newfoodmeal/$idFood/$grams');
     String? token = await AuthService().getToken();
 
     isLoading = true;
@@ -33,10 +33,40 @@ class MealService extends ChangeNotifier {
         date: DateTime.parse(mealResponse.date).toString(),
       );
       print(mealModel.toString());
-      print('OK - MEAL CREATED');
+      print('OK - FOODMEAL CREATED');
       return mealModel;
     } else {
-      print('BAD REQUEST - MEAL NOT CREATED');
+      print('BAD REQUEST - FOODMEAL NOT CREATED');
+      print(resp.statusCode);
+    }
+  }
+
+  Future newRecipeMeal(int idRecipe) async {
+    final url = Uri.http(_baseUrl, '/api/user/newrecipemeal/$idRecipe');
+    String? token = await AuthService().getToken();
+
+    isLoading = true;
+    notifyListeners();
+
+    print(token);
+    final resp =
+        await http.post(url, headers: {"Authorization": "Bearer $token"});
+
+    isLoading = false;
+    notifyListeners();
+
+    if (resp.statusCode == 201) {
+      final mealResponse = MealModel.fromJson(json.decode(resp.body));
+      final mealModel = MealModel(
+        id: mealResponse.id,
+        user_id: mealResponse.user_id,
+        date: DateTime.parse(mealResponse.date).toString(),
+      );
+      print(mealModel.toString());
+      print('OK - RECIPEMEAL CREATED');
+      return mealModel;
+    } else {
+      print('BAD REQUEST - RECIPEMEAL NOT CREATED');
       print(resp.statusCode);
     }
   }

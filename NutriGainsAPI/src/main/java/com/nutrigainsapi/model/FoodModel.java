@@ -1,16 +1,10 @@
 package com.nutrigainsapi.model;
 
-public class FoodModel {
+public class FoodModel extends NutritionalDataModel{
 	
 	private long id;
 	private Long barcode;
 	private String name;
-	private double kcal;
-	private double protein;
-	private double fat;
-	private double carbohydrates;
-	private double sugar;
-	private double salt;
 	private long idUser;
 	
 	
@@ -19,18 +13,12 @@ public class FoodModel {
 	}
 
 
-	public FoodModel(long id, Long barcode, String name, double kcal, double protein, double fat, double carbohydrates,
-			double sugar, double salt, long idUser) {
-		super();
+	public FoodModel(long id,Long barcode, String name,float kcal, double protein, double fat, 
+			double carbohydrates, double sugar, double salt,  long idUser) {
+		super(kcal, protein, fat, carbohydrates, sugar, salt);
 		this.id = id;
-		this.barcode = (barcode == 0 ) ? null : barcode;
+		this.barcode = barcode;
 		this.name = name;
-		this.kcal = kcal;
-		this.protein = protein;
-		this.fat = fat;
-		this.carbohydrates = carbohydrates;
-		this.sugar = sugar;
-		this.salt = salt;
 		this.idUser = idUser;
 	}
 
@@ -65,66 +53,6 @@ public class FoodModel {
 	}
 
 
-	public double getKcal() {
-		return kcal;
-	}
-
-
-	public void setKcal(double kcal) {
-		this.kcal = kcal;
-	}
-
-
-	public double getProtein() {
-		return protein;
-	}
-
-
-	public void setProtein(double protein) {
-		this.protein = protein;
-	}
-
-
-	public double getFat() {
-		return fat;
-	}
-
-
-	public void setFat(double fat) {
-		this.fat = fat;
-	}
-
-
-	public double getCarbohydrates() {
-		return carbohydrates;
-	}
-
-
-	public void setCarbohydrates(double carbohydrates) {
-		this.carbohydrates = carbohydrates;
-	}
-
-
-	public double getSugar() {
-		return sugar;
-	}
-
-
-	public void setSugar(double sugar) {
-		this.sugar = sugar;
-	}
-
-
-	public double getSalt() {
-		return salt;
-	}
-
-
-	public void setSalt(double salt) {
-		this.salt = salt;
-	}
-
-
 	public long getIdUser() {
 		return idUser;
 	}
@@ -137,10 +65,18 @@ public class FoodModel {
 
 	@Override
 	public String toString() {
-		return "FoodModel [id=" + id + ", barcode=" + barcode + ", name=" + name + ", kcal=" + kcal + ", protein="
-				+ protein + ", fat=" + fat + ", carbohydrates=" + carbohydrates + ", sugar=" + sugar + ", salt=" + salt
-				+ ", idUser=" + idUser + "]";
+		return "FoodModel [id=" + id + ", barcode=" + barcode + ", name=" + name + ", idUser=" + idUser + "]";
 	}
+
+	
+	
+
+
+	
+	
+	
+	
+
 
 
 	

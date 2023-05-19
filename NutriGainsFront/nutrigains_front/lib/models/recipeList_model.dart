@@ -3,8 +3,8 @@
 import 'dart:convert';
 import 'dart:ffi';
 
-class RecipeModel {
-  RecipeModel({
+class RecipeListModel {
+  RecipeListModel({
     required this.id,
     required this.food_id,
     required this.recipe_id,
@@ -14,12 +14,13 @@ class RecipeModel {
   Long food_id;
   Long recipe_id;
 
-  factory RecipeModel.fromRawJson(String str) =>
-      RecipeModel.fromJson(json.decode(str));
+  factory RecipeListModel.fromRawJson(String str) =>
+      RecipeListModel.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory RecipeModel.fromJson(Map<String, dynamic> json) => RecipeModel(
+  factory RecipeListModel.fromJson(Map<String, dynamic> json) =>
+      RecipeListModel(
         id: json["id"],
         food_id: json["food_id"],
         recipe_id: json["recipe_id"],

@@ -6,17 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:nutrigains_front/models/comment_model.dart';
 import 'package:nutrigains_front/models/food_model.dart';
-import 'package:nutrigains_front/models/mealList_model.dart';
 import 'package:nutrigains_front/services/food_service.dart';
 import 'package:nutrigains_front/services/recipeList_service.dart';
 import 'package:nutrigains_front/services/recipe_service.dart';
 import 'package:provider/provider.dart';
 
 import '../models/meal_model.dart';
+import '../models/recipe_model.dart';
 import '../providers/login_provider.dart';
 import '../services/auth_service.dart';
 import '../services/comment_service.dart';
-import '../services/mealList_service.dart';
 import '../services/meal_service.dart';
 import '../ui/input_decorations.dart';
 import '../widgets/auth_background.dart';
@@ -148,7 +147,7 @@ class _LoginForm extends StatelessWidget {
                           Navigator.pushReplacementNamed(context, '');
                         } else {
                           Navigator.pushReplacementNamed(
-                              context, 'userMainScreen');
+                              context, 'userMainScreen' /*recipeScreen*/);
                         }
 
                         ////////////////////////////////////////////////////////////////////////////////////////
@@ -219,7 +218,7 @@ class _LoginForm extends StatelessWidget {
                         //meal = await MealService().getMealById(1);
                         //print(meal.toString());
 
-                        //  GETMEALBYDATE //
+                        //  GETMEALBYDATE-TODAY//
                         //DateTime now = DateTime.now();
                         //String formattedDate =
                         //    "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
@@ -231,6 +230,13 @@ class _LoginForm extends StatelessWidget {
                         // ADDFOODTORECIPE //
                         //RecipeListService().addFoodToRecipe(1, 1);
                         //RecipeListService().addFoodToRecipe(1, 2);
+
+                        // GETALLUSERRECIPES //
+                        //List<RecipeModel> list =
+                        //    await RecipeService().getalluserrecipe();
+                        //list.forEach((element) {
+                        //  print(element.toString());
+                        //});
 
                         //                     //
                         //                     //

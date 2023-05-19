@@ -34,6 +34,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.nutrigainsapi.apirest.Product;
 import com.nutrigainsapi.entity.Food;
 import com.nutrigainsapi.model.FoodModel;
+import com.nutrigainsapi.model.RecipeModel;
 import com.nutrigainsapi.model.User;
 import com.nutrigainsapi.repository.FoodRepository;
 import com.nutrigainsapi.service.GenericService;
@@ -133,6 +134,18 @@ public class RestFood {
 		
 	}
 	
+	@GetMapping("/user/getfood/{idfood}")
+	@Operation(summary = "Get food by id" , description = " ... ")
+	public ResponseEntity<?> getFood(@PathVariable(name="idfood",required=true) long idfood){
+		boolean exist = foodService.findEntityById(idfood)!=null;
+		if(exist) {
+			FoodModel fm = foodService.findModelById(idfood);
+			return ResponseEntity.accepted().body(fm);
+		}
+		else
+			return ResponseEntity.noContent().build();
+	}
+	
 	//Comprobar si el alimento con ese codigo de barra existe en la bbdd
 	@GetMapping("/user/getfoodbybarcode/{barcode}")
 	@Operation(summary = "Comprobar si el alimento con ese codigo de barra existe en la bbdd" , description = " ... ")
@@ -166,18 +179,22 @@ public class RestFood {
 				Product product = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, Product.class).getBody();
 				System.out.println(product.toString());
 				FoodModel food = new FoodModel();
-					food.setBarcode(Long.parseLong(product.getCode()));
-					food.setName(product.getProduct().getProduct_name());
-					food.setKcal(product.getProduct().getNutriments().getEnergykcal());
-					food.setProtein(product.getProduct().getNutriments().getProteins());
-					food.setFat(product.getProduct().getNutriments().getFat());
-					food.setCarbohydrates(product.getProduct().getNutriments().getCarbohydrates());
-					food.setSugar(product.getProduct().getNutriments().getSugars());
-					food.setSalt(product.getProduct().getNutriments().getSalt());
-					food.setIdUser(userService.getUserId());
-				foodService.addEntity(food);
+					if(product.getCode() != null) {
+						food.setBarcode(Long.parseLong(product.getCode()));
+						food.setName(product.getProduct().getProduct_name());
+						food.setKcal(product.getProduct().getNutriments().getEnergykcal());
+						food.setProtein(product.getProduct().getNutriments().getProteins());
+						food.setFat(product.getProduct().getNutriments().getFat());
+						food.setCarbohydrates(product.getProduct().getNutriments().getCarbohydrates());
+						food.setSugar(product.getProduct().getNutriments().getSugars());
+						food.setSalt(product.getProduct().getNutriments().getSalt());
+						food.setIdUser(userService.getUserId());
+						foodService.addEntity(food);
+						return ResponseEntity.ok(food);
+					}else{
+						return ResponseEntity.noContent().build();
+					}
 				
-				return ResponseEntity.ok(food);
 			}
 			else
 				return ResponseEntity.noContent().build();		

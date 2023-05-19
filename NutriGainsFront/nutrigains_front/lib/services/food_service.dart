@@ -129,4 +129,30 @@ class FoodService extends ChangeNotifier {
       throw Exception('Failed to load foods');
     }
   }
+
+  Future getFood(int idfood) async {
+    final url = Uri.http(_baseUrl, '/api/user/getfood/$idfood');
+    String? token = await AuthService().getToken();
+
+    isLoading = true;
+    notifyListeners();
+
+    final resp = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization": "Bearer $token"
+    });
+
+    isLoading = false;
+    notifyListeners();
+
+    if (resp.statusCode == 202) {
+      final dynamic foodJson = json.decode(resp.body);
+      final FoodModel food = FoodModel.fromJson(foodJson);
+      return food;
+    } else {
+      print(resp.statusCode);
+      throw Exception('Failed to load food');
+    }
+  }
 }

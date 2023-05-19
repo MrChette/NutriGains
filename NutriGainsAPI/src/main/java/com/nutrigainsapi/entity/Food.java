@@ -15,7 +15,7 @@ import jakarta.persistence.OneToMany;
 
 
 @Entity
-public class Food {
+public class Food extends NutritionalData{
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -26,18 +26,7 @@ public class Food {
 	private Long barcode;
 	@Column(name="name", unique = true, nullable = false)
 	private String name;
-	@Column(name="kcal", unique=false, nullable = false)
-	private double kcal;
-	@Column(name="protein", unique=false, nullable = false)
-	private double protein;
-	@Column(name="fat", unique=false, nullable = false)
-	private double fat;
-	@Column(name="carbohydrates", unique=false, nullable = false)
-	private double carbohydrates;
-	@Column(name="sugar", unique=false, nullable = false)
-	private double sugar;
-	@Column(name="salt", unique=false, nullable = false)
-	private double salt;
+
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "food",orphanRemoval = true)
 	private List<RecipeList> recipes = new ArrayList<>();
@@ -50,18 +39,12 @@ public class Food {
 		super();
 	}
 
-	public Food(long id, Long barcode, String name, double kcal, double protein, double fat, double carbohydrates,
-			double sugar, double salt, List<RecipeList> recipes, User user) {
-		super();
+	public Food(long id, Long barcode, String name,double kcal, double protein, double fat, double carbohydrates, 
+			double sugar, double salt,  List<RecipeList> recipes, User user) {
+		super(kcal, protein, fat, carbohydrates, sugar, salt);
 		this.id = id;
 		this.barcode = barcode;
 		this.name = name;
-		this.kcal = kcal;
-		this.protein = protein;
-		this.fat = fat;
-		this.carbohydrates = carbohydrates;
-		this.sugar = sugar;
-		this.salt = salt;
 		this.recipes = recipes;
 		this.user = user;
 	}
@@ -90,54 +73,6 @@ public class Food {
 		this.name = name;
 	}
 
-	public double getKcal() {
-		return kcal;
-	}
-
-	public void setKcal(double kcal) {
-		this.kcal = kcal;
-	}
-
-	public double getProtein() {
-		return protein;
-	}
-
-	public void setProtein(double protein) {
-		this.protein = protein;
-	}
-
-	public double getFat() {
-		return fat;
-	}
-
-	public void setFat(double fat) {
-		this.fat = fat;
-	}
-
-	public double getCarbohydrates() {
-		return carbohydrates;
-	}
-
-	public void setCarbohydrates(double carbohydrates) {
-		this.carbohydrates = carbohydrates;
-	}
-
-	public double getSugar() {
-		return sugar;
-	}
-
-	public void setSugar(double sugar) {
-		this.sugar = sugar;
-	}
-
-	public double getSalt() {
-		return salt;
-	}
-
-	public void setSalt(double salt) {
-		this.salt = salt;
-	}
-
 	public List<RecipeList> getRecipes() {
 		return recipes;
 	}
@@ -153,15 +88,12 @@ public class Food {
 	public void setUser(User user) {
 		this.user = user;
 	}
-
-	@Override
-	public String toString() {
-		return "Food [id=" + id + ", barcode=" + barcode + ", name=" + name + ", kcal=" + kcal + ", protein=" + protein
-				+ ", fat=" + fat + ", carbohydrates=" + carbohydrates + ", sugar=" + sugar + ", salt=" + salt
-				+ ", recipes=" + recipes + ", user=" + user + "]";
-	}
+	
+	
+	
 
 	
+
 	
 
 

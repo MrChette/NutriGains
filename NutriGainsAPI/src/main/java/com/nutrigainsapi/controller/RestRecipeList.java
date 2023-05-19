@@ -1,5 +1,8 @@
 package com.nutrigainsapi.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -8,11 +11,17 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nutrigainsapi.entity.RecipeList;
+import com.nutrigainsapi.entity.Recipe;
+import com.nutrigainsapi.model.FoodModel;
 import com.nutrigainsapi.model.RecipeListModel;
-import com.nutrigainsapi.service.GenericService;
+import com.nutrigainsapi.model.RecipeModel;
+import com.nutrigainsapi.serviceImpl.FoodServiceImpl;
+import com.nutrigainsapi.serviceImpl.RecipeListServiceImpl;
+import com.nutrigainsapi.serviceImpl.RecipeServiceImpl;
+import com.nutrigainsapi.serviceImpl.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 
@@ -20,20 +29,68 @@ import io.swagger.v3.oas.annotations.Operation;
 @RequestMapping("/api")
 public class RestRecipeList {
 	
+	
+	
+	@Autowired
+	@Qualifier("userService")
+	private UserService userService;
+	
+	
 	@Autowired
 	@Qualifier("recipeListServiceImpl")
-	private GenericService<RecipeList,RecipeListModel,Long> recipeListService;
+	private RecipeListServiceImpl recipeListService;
+	
+	@Autowired
+	@Qualifier("foodServiceImpl")
+	private FoodServiceImpl foodService;
+	
+	@Autowired
+	@Qualifier("recipeServiceImpl")
+	private RecipeServiceImpl recipeService;
 	
 	//Añadir alimentos a una receta
-	@PostMapping("/user/foodtorecipe/{idrecipe}/{idfood}")
-	@Operation(summary = "Añadir alimentos a una receta" , description = " ... ")
-	public ResponseEntity<?> addFoodToRecipe(@PathVariable(name="idrecipe",required = true) long idrecipe,
-			@PathVariable(name="idfood",required = true) long idfood){
-		RecipeListModel recipeListModel = new RecipeListModel();
-		recipeListModel.setIdRecipe(idrecipe);
-		recipeListModel.setIdFood(idfood);
-		recipeListService.addEntity(recipeListModel);
-		return ResponseEntity.status(HttpStatus.CREATED).body(recipeListModel);	
+	@PostMapping("/user/foodtorecipe")
+	@Operation(summary = "Añadir alimentos a una receta", description = " ... ")
+	public ResponseEntity<?> addFoodToRecipe(@RequestParam("id_food") List<Long> idFoods,
+	                                         @RequestParam("grams") List<Long> gramsList,
+	                                         @RequestParam("name") String name) {
+	    
+	    
+	    if (idFoods.size() != gramsList.size() || name == "") {
+	    	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+	    }
+	  
+	    RecipeModel recipeModel = new RecipeModel();
+	    recipeModel.setName(name);
+	    recipeModel.setIdUser(userService.getUserId());
+	    for (int i = 0; i < idFoods.size(); i++) {
+	        long idFood = idFoods.get(i);
+	        long grams = gramsList.get(i);
+	        FoodModel food = foodService.findModelById(idFood);
+	        recipeModel.setKcal(recipeModel.getKcal()+((food.getKcal()/100)*grams));
+	        recipeModel.setProtein(recipeModel.getProtein()+((food.getProtein()/100)*grams));
+	        recipeModel.setCarbohydrates(recipeModel.getCarbohydrates()+((food.getCarbohydrates()/100)*grams));
+	        recipeModel.setFat(recipeModel.getFat()+((food.getFat()/100)*grams));
+	        recipeModel.setSalt(recipeModel.getSalt()+((food.getSalt()/100)*grams));
+	        recipeModel.setSugar(recipeModel.getSugar()+((food.getSalt()/100)*grams));
+	        
+	    }
+	    Recipe recipe = recipeService.addEntity(recipeModel);
+	    
+ 
+	    List<RecipeListModel> recipeList = new ArrayList<RecipeListModel>();
+        for (int i = 0; i < idFoods.size(); i++) {
+        	RecipeListModel recipeListModel = new RecipeListModel();
+        	long idFood = idFoods.get(i);
+	        long grams = gramsList.get(i);
+	        recipeListModel.setIdRecipe(recipe.getId());
+	        recipeListModel.setIdFood(idFood);
+	        recipeListModel.setGrams(grams);
+	        recipeList.add(recipeListModel);
+        }
+	    recipeListService.addEntities(recipeList);
+	    
+	    return ResponseEntity.status(HttpStatus.CREATED).body(recipeList);
 	}
 	
 	

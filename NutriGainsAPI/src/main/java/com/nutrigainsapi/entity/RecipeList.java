@@ -15,6 +15,9 @@ public class RecipeList {
 	@Column(name="id")
     private long id;
 	
+	@Column(name="grams")
+	private long grams;
+	
 	@ManyToOne
 	@JoinColumn(name = "recipe_id", nullable = false)
 	private Recipe recipe;
@@ -31,12 +34,35 @@ public class RecipeList {
 	}
 
 
-	public RecipeList(long id, Recipe recipe, Food food) {
+	
+
+
+	public RecipeList(long id, long grams, Recipe recipe, Food food) {
 		super();
 		this.id = id;
+		this.grams = grams;
 		this.recipe = recipe;
 		this.food = food;
 	}
+
+
+
+
+
+	public long getGrams() {
+		return grams;
+	}
+
+
+
+
+
+	public void setGrams(long grams) {
+		this.grams = grams;
+	}
+
+
+
 
 
 	public long getId() {
@@ -81,10 +107,16 @@ public class RecipeList {
 
 
 
+
 	@Override
 	public String toString() {
-		return "RecipeList [id=" + id + ", recipe=" + recipe + ", food=" + food + "]";
+		return "RecipeList [id=" + id + ", grams=" + grams + ", recipe=" + recipe + ", food=" + food + "]";
 	}
+
+
+
+
+	
 	
 	
 	

@@ -1,18 +1,24 @@
 // ignore: file_names
-// ignore_for_file: camel_case_types
+// ignore_for_file: camel_case_types, no_leading_underscores_for_local_identifiers
 
+import 'package:circular_seek_bar/circular_seek_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
+import 'package:intl/intl.dart';
+import 'package:nutrigains_front/models/recipeList_model.dart';
+import 'package:nutrigains_front/services/recipe_service.dart';
 import 'package:provider/provider.dart';
 import '../models/food_model.dart';
-import '../models/mealList_model.dart';
 import '../models/meal_model.dart';
+import '../models/recipe_model.dart';
 import '../services/auth_service.dart';
 import '../services/food_service.dart';
-import '../services/mealList_service.dart';
+
 import '../services/meal_service.dart';
+import '../widgets/CustomIconButton.dart';
+import '../widgets/GenericBottomNavigationBar.dart';
 
 class userMainScreen extends StatefulWidget {
   const userMainScreen({Key? key}) : super(key: key);
@@ -36,20 +42,86 @@ void customToast(String s, BuildContext context) {
 }
 
 class _HomeScreenState extends State<userMainScreen> {
-  final MealListService _mealListRepository = MealListService();
   final AuthService authService = AuthService();
-  final String username = '';
+  String username = '';
   int _scanBarcode = 0;
+  List<MealModel> todaymeals = [];
+  double todaykcal = 0;
+  bool isLoading = true;
+  int _currentIndex = 0;
+
+  void _onNavBarItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+    if (index == 0) {
+      Navigator.pushNamed(context, 'userMainScreen');
+    } else if (index == 1) {
+      Navigator.pushNamed(context, 'recipeScreen');
+    } else if (index == 2) {
+      Navigator.pushNamed(context, 'foodScreen');
+    }
+  }
 
   getUsername() async {
-    String username = await authService.getUserName();
-    print(username);
+    String user = await authService.getUserName();
+    setState(() {
+      username = user;
+    });
+    print("hecho");
+  }
+
+  getTodayMeals() async {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    final List<MealModel> meals =
+        await MealService().getMealByDate(formattedDate);
+    print(meals.length);
+    setState(() {
+      todaymeals = meals;
+      print("hecho");
+    });
+
+    for (MealModel meal in todaymeals) {
+      RecipeModel? getRecipe;
+      FoodModel? getFood;
+      final MealModel fetchedMeal = await MealService().getMealById(meal.id!);
+      print('fetchedmeal $fetchedMeal');
+      if (fetchedMeal.food_id == null) {
+        getRecipe = await RecipeService().getRecipe(fetchedMeal.recipe_id!);
+      } else {
+        getFood = await FoodService().getFood(fetchedMeal.food_id!);
+        //FoodModel getFood = await FoodService().getFood(fetchedMeal.food_id!);
+      }
+      setState(() {
+        if (getRecipe != null) {
+          todaykcal += getRecipe.kcal;
+        } else {
+          todaykcal += getFood!.kcal;
+        }
+      });
+      print("IMPRIMETE $getRecipe.kcal");
+    }
+    print("todaymeals $todaymeals");
+    print("hecho");
   }
 
   @override
   void initState() {
     super.initState();
-    getUsername();
+    initializeData();
+  }
+
+  Future<void> initializeData() async {
+    await getUsername();
+    await getTodayMeals();
+
+    // Todas las operaciones se han completado, actualiza el estado
+    print("true");
+    setState(() {
+      print("false");
+      isLoading = false;
+    });
   }
 
   Future<void> scanBarcodeNormal() async {
@@ -87,7 +159,7 @@ class _HomeScreenState extends State<userMainScreen> {
             if (result == null) {
               await FoodService().newFoodByApi(_scanBarcode);
             } else {
-              customToast('Email or password incorrect', context);
+              customToast('Ya existe', context);
             }
           },
         ),
@@ -95,7 +167,6 @@ class _HomeScreenState extends State<userMainScreen> {
     );
   }
 
-  @override
   @override
   Widget foodForm(BuildContext context) {
     return SizedBox(
@@ -268,7 +339,6 @@ class _HomeScreenState extends State<userMainScreen> {
   Widget build(BuildContext context) {
     var selectedItem = '';
     // ignore: no_leading_underscores_for_local_identifiers
-
     return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(
@@ -327,12 +397,75 @@ class _HomeScreenState extends State<userMainScreen> {
           )
         ],
       ),
+
+      ///////////////////////////////////////////////
+      ///////////////////////////////////////////////
       //AQUI AÑADIMOS LOS OBJETOS PARA LA PANTALLA //
-      body: Column(
-        children: [
-          const SizedBox(height: 30.0),
-          addMealButton(context),
-        ],
+      ///////////////////////////////////////////////
+      ///////////////////////////////////////////////
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: userCard(context),
+                ),
+                const SizedBox(height: 15.0),
+                Center(
+                  child: Text(
+                    "Today you have ${todaymeals.length} meals",
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 15.0),
+                addMealButton(context),
+                const SizedBox(height: 15.0),
+                Center(
+                  child: circularStats(context, todaykcal, 2500),
+                ),
+              ],
+            ),
+      bottomNavigationBar: GenericBottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onNavBarItemTapped,
+      ),
+
+      ///////////////////////////////////////////////
+      ///////////////////////////////////////////////
+      //AQUI AÑADIMOS LOS OBJETOS PARA LA PANTALLA //
+      ///////////////////////////////////////////////
+      ///////////////////////////////////////////////
+    );
+  }
+
+  Widget userCard(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.circular(15.0), // Establece el radio de los bordes
+      ),
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.85,
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Hello, $username',
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -351,7 +484,7 @@ class _HomeScreenState extends State<userMainScreen> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text("ADD MEAL"),
+                      title: const Text("ADD MEAL"),
                       content: SizedBox(
                         height: 300,
                         child: Column(
@@ -373,12 +506,86 @@ class _HomeScreenState extends State<userMainScreen> {
   }
 }
 
+Widget circularStats(
+  BuildContext context,
+  double _progress,
+  double _maxprogress,
+) {
+  ValueNotifier<double> _valueNotifier = ValueNotifier(0);
+
+  // Calculate the remaining progress after reaching maxprogress
+  double remainingProgress =
+      (_progress - _maxprogress).clamp(0, double.infinity);
+
+  return Card(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(15.0),
+    ),
+    child: Container(
+      width: MediaQuery.of(context).size.width * 0.85,
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text(
+            'Calories Budget',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16.0),
+          CircularSeekBar(
+            interactive: false,
+            width: double.infinity,
+            height: 250,
+            minProgress: 0,
+            progress: _progress,
+            maxProgress: _maxprogress,
+            barWidth: 30,
+            startAngle: 50,
+            sweepAngle: 260,
+            strokeCap: StrokeCap.round,
+            trackColor: Colors.grey,
+            progressGradientColors: [
+              Colors.amber,
+              Colors.orange,
+              if (remainingProgress > 0) Colors.red,
+            ],
+            dashWidth: 10,
+            dashGap: 0,
+            curves: Curves.bounceOut,
+            valueNotifier: _valueNotifier,
+            child: Center(
+              child: ValueListenableBuilder(
+                valueListenable: _valueNotifier,
+                builder: (_, double value, __) => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '${_progress.toInt()}/${_maxprogress.toInt()}',
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 @override
 Widget addFoodButton(BuildContext context) {
   return SizedBox(
       child: Container(
     margin: const EdgeInsets.symmetric(horizontal: 35.0),
     width: MediaQuery.of(context).size.width * 1,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(49.0),
+      color: Colors.blue, // Cambia el color del botón según tus necesidades
+    ),
     child: CustomIconButton(
       icon: Icons.add,
       label: 'Añadir comida',
@@ -398,50 +605,4 @@ Widget addFoodButton(BuildContext context) {
       },
     ),
   ));
-}
-
-class CustomIconButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onPressed;
-  final EdgeInsetsGeometry padding;
-
-  const CustomIconButton({
-    Key? key,
-    required this.icon,
-    required this.label,
-    required this.onPressed,
-    this.padding = const EdgeInsets.symmetric(vertical: 12),
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(
-        icon,
-        color: Colors.black,
-      ),
-      label: Text(
-        label,
-        style: const TextStyle(
-          color: Colors.black,
-          // Otros estilos de texto
-        ),
-      ),
-      style: ElevatedButton.styleFrom(
-        primary: Colors.amber[600],
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        elevation: 5,
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        shadowColor: Colors.black,
-        onPrimary: Colors.amber[900],
-        textStyle: const TextStyle(fontSize: 16),
-        padding: padding,
-        animationDuration: const Duration(milliseconds: 100),
-      ),
-    );
-  }
 }

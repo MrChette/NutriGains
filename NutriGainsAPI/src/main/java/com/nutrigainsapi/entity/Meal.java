@@ -18,7 +18,7 @@ import jakarta.persistence.TemporalType;
 
 
 @Entity
-public class Meal {
+public class Meal{
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -29,28 +29,52 @@ public class Meal {
 	@Column(name="date", unique=false, nullable = false,columnDefinition = "DATE")
 	private Date date;
 	
+	@Column(name="grams", nullable = true)
+	private Long grams;
+	
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
+	
+	@ManyToOne
+	@JoinColumn(name = "recipe_id", nullable = true)
+	private Recipe recipe;
+	
+	@ManyToOne
+	@JoinColumn(name = "food_id", nullable = true)
+	private Food food;
 
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "meal",orphanRemoval = true)
-	private List<MealList> recipes = new ArrayList<>();
-	
+
 	
 
 	public Meal() {
 		super();
 	}
 
+	
 
-
-	public Meal(long id, Date date, User user, List<MealList> recipes) {
+	public Meal(long id, Date date, Long grams, User user, Recipe recipe, Food food) {
 		super();
 		this.id = id;
 		this.date = date;
+		this.grams = grams;
 		this.user = user;
-		this.recipes = recipes;
+		this.recipe = recipe;
+		this.food = food;
+	}
+	
+	
+
+
+
+	public Long getGrams() {
+		return grams;
+	}
+
+
+
+	public void setGrams(Long grams) {
+		this.grams = grams;
 	}
 
 
@@ -61,9 +85,11 @@ public class Meal {
 
 
 
+
 	public void setId(long id) {
 		this.id = id;
 	}
+
 
 
 
@@ -73,9 +99,11 @@ public class Meal {
 
 
 
+
 	public void setDate(Date date) {
 		this.date = date;
 	}
+
 
 
 
@@ -85,28 +113,47 @@ public class Meal {
 
 
 
+
 	public void setUser(User user) {
 		this.user = user;
 	}
 
 
 
-	public List<MealList> getRecipes() {
-		return recipes;
+
+	public Recipe getRecipe() {
+		return recipe;
 	}
 
 
 
-	public void setRecipes(List<MealList> recipes) {
-		this.recipes = recipes;
+
+	public void setRecipe(Recipe recipe) {
+		this.recipe = recipe;
 	}
 
 
 
-	
-	
-	
-	
-	
+
+	public Food getFood() {
+		return food;
+	}
+
+
+
+
+	public void setFood(Food food) {
+		this.food = food;
+	}
+
+
+
+	@Override
+	public String toString() {
+		return "Meal [id=" + id + ", date=" + date + ", grams=" + grams + ", user=" + user + ", recipe=" + recipe
+				+ ", food=" + food + "]";
+	}
+
+
 
 }

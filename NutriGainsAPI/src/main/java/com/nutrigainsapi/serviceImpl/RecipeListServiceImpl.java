@@ -1,5 +1,6 @@
 package com.nutrigainsapi.serviceImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,14 @@ public class RecipeListServiceImpl implements GenericService<RecipeList,RecipeLi
 	public RecipeList addEntity(RecipeListModel model) {
 		return recipeListRepository.save(transform(model));
 	}
-
+	
+	public List<RecipeListModel> addEntities(List<RecipeListModel> models) {
+		for(RecipeListModel x : models) {
+			recipeListRepository.save(transform(x));
+		}
+	    return models;
+	}
+	
 	@Override
 	public boolean removeEntity(Long id) {
 		if(recipeListRepository.findById(id)!=null) {
