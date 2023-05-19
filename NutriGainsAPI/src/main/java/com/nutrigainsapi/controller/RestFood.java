@@ -169,36 +169,31 @@ public class RestFood {
 			ResponseEntity<?> response = getFoodByBarCode(barcode);
 			if(response.getStatusCodeValue()==204) {
 				RestTemplate restTemplate = new RestTemplate();
-				String apiUrl = "https://world.openfoodfacts.net/api/v2/product/"+barcode+"?fields=product_name,nutriments";
-				String credentials = "off:off";
-				String encodedCredentials = new String(Base64.getEncoder().encode(credentials.getBytes()));
+				String apiUrl = "https://world.openfoodfacts.org/api/v2/product/"+barcode+"?fields=product_name,nutriments";
+				//String credentials = "off:off";
+				//String encodedCredentials = new String(Base64.getEncoder().encode(credentials.getBytes()));
 				HttpHeaders headers = new HttpHeaders();
-				headers.add("Authorization", "Basic " + encodedCredentials);
+				//headers.add("Authorization", "Basic " + encodedCredentials);
 				HttpEntity<String> entity = new HttpEntity<>(headers);
 				
 				Product product = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, Product.class).getBody();
 				System.out.println(product.toString());
 				FoodModel food = new FoodModel();
-					if(product.getCode() != null) {
-						food.setBarcode(Long.parseLong(product.getCode()));
-						food.setName(product.getProduct().getProduct_name());
-						food.setKcal(product.getProduct().getNutriments().getEnergykcal());
-						food.setProtein(product.getProduct().getNutriments().getProteins());
-						food.setFat(product.getProduct().getNutriments().getFat());
-						food.setCarbohydrates(product.getProduct().getNutriments().getCarbohydrates());
-						food.setSugar(product.getProduct().getNutriments().getSugars());
-						food.setSalt(product.getProduct().getNutriments().getSalt());
-						food.setIdUser(userService.getUserId());
-						foodService.addEntity(food);
-						return ResponseEntity.ok(food);
-					}else{
-						return ResponseEntity.noContent().build();
-					}
-				
-			}
-			else
-				return ResponseEntity.noContent().build();		
+				food.setName(product.getProduct().getProduct_name());
+				food.setBarcode(Long.parseLong(product.getCode()));
+				food.setKcal(product.getProduct().getNutriments().getEnergykcal());
+				food.setProtein(product.getProduct().getNutriments().getProteins());
+				food.setFat(product.getProduct().getNutriments().getFat());
+				food.setCarbohydrates(product.getProduct().getNutriments().getCarbohydrates());
+				food.setSugar(product.getProduct().getNutriments().getSugars());
+				food.setSalt(product.getProduct().getNutriments().getSalt());
+				food.setIdUser(userService.getUserId());
+				foodService.addEntity(food);
+			return ResponseEntity.ok(food);
+			
+			}	
+			
+			return ResponseEntity.noContent().build();		
 		}
-		
 }
       

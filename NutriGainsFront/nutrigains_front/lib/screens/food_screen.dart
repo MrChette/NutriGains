@@ -137,26 +137,50 @@ class _FoodScreenState extends State<FoodScreen> {
         currentIndex: _currentIndex,
         onTap: _onNavBarItemTapped,
       ),
-      floatingActionButton: Align(
-        alignment: Alignment.bottomCenter,
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 100.0),
-          width: MediaQuery.of(context).size.width * 1,
-          child: CustomIconButton(
-            icon: Icons.add,
-            label: 'ADD MEAL',
-            onPressed: () async {
-              for (var element in elementosSeleccionados) {
-                int position = elementosSeleccionados.indexOf(element);
-                int grams = selectedQuantities[position];
-                print('Elemento: $element, Posición: $position');
-                MealService().newFoodMeal(element.id!, position);
-              }
-            },
+      floatingActionButton: Stack(
+        children: <Widget>[
+          Padding(padding: EdgeInsets.only(left: 31)),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 100.0),
+              width: MediaQuery.of(context).size.width * 1,
+              child: CustomIconButton(
+                icon: Icons.add,
+                label: 'ADD MEAL',
+                onPressed: () async {
+                  for (var element in elementosSeleccionados) {
+                    int position = elementosSeleccionados.indexOf(element);
+                    int grams = selectedQuantities[position];
+                    print('Elemento: $element, Posición: $position');
+                    MealService().newFoodMeal(element.id!, position);
+                  }
+                },
+              ),
+            ),
           ),
-        ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 100.0),
+              width: MediaQuery.of(context).size.width * 1,
+              child: CustomIconButton(
+                icon: Icons.add,
+                label: 'ADD TO RECIPE',
+                onPressed: () async {
+                  for (var element in elementosSeleccionados) {
+                    int position = elementosSeleccionados.indexOf(element);
+                    int grams = selectedQuantities[position];
+                    print('Elemento: $element, Posición: $position');
+                    MealService().newFoodMeal(element.id!, position);
+                  }
+                },
+              ),
+            ),
+          ),
+        ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      //floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 

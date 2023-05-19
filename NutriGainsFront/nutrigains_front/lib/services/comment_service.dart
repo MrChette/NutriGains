@@ -8,7 +8,7 @@ import 'auth_service.dart';
 import 'package:http/http.dart' as http;
 
 class CommentService extends ChangeNotifier {
-  final String _baseUrl = '192.168.1.135:8080';
+  final String _baseUrl = '192.168.231.208:8080';
   bool isLoading = true;
   Future newComment(int idRecipe, String comment) async {
     final url = Uri.http(_baseUrl, '/api/user/newcomment/$idRecipe');

@@ -8,7 +8,7 @@ import 'auth_service.dart';
 import 'package:http/http.dart' as http;
 
 class MealService extends ChangeNotifier {
-  final String _baseUrl = '192.168.1.135:8080';
+  final String _baseUrl = '192.168.231.208:8080';
   bool isLoading = true;
 
   Future newFoodMeal(int idFood, int grams) async {

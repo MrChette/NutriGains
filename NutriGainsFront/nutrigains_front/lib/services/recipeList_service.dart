@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'auth_service.dart';
 
 class RecipeListService extends ChangeNotifier {
-  final String _baseUrl = '192.168.1.135:8080';
+  final String _baseUrl = '192.168.231.208:8080';
   bool isLoading = true;
 
   Future addFoodToRecipe(int idRecipe, int idFood) async {
