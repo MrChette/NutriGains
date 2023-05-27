@@ -1,15 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-
-import '../models/recipeList_model.dart';
 import '../models/recipe_model.dart';
 import 'auth_service.dart';
-
 import 'package:http/http.dart' as http;
 
 class RecipeService extends ChangeNotifier {
-  final String _baseUrl = '192.168.231.208:8080';
+  final String _baseUrl = '192.168.1.135:8080';
   bool isLoading = true;
   Future newRecipe(String name) async {
     final url = Uri.http(_baseUrl, '/api/user/newrecipe');
@@ -90,6 +87,38 @@ class RecipeService extends ChangeNotifier {
     } else {
       print('BAD REQUEST - RECIPE NOT RECIBED');
       print(resp.statusCode);
+    }
+  }
+
+  Future<List<RecipeModel>> getRecipes(List<int> idMeals) async {
+    final List<String> idMealStrings =
+        idMeals.map((id) => id.toString()).toList();
+    final url = Uri.http(
+        _baseUrl, '/api/user/getrecipelist', {'idmeal': idMealStrings});
+    String? token = await AuthService().getToken();
+
+    final stopwatch = Stopwatch(); // Crear una instancia de Stopwatch
+    stopwatch.start(); //
+
+    final resp = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+
+    stopwatch.stop(); // Detener el cronómetro
+    print('Tiempo de ejecución: ${stopwatch.elapsedMilliseconds} ms');
+
+    if (resp.statusCode == 202) {
+      final List<dynamic> recipeJsonList = jsonDecode(resp.body);
+      final List<RecipeModel> recipes =
+          recipeJsonList.map((json) => RecipeModel.fromJson(json)).toList();
+      print('OK - RECIPES RECEIVED');
+      return recipes;
+    } else {
+      print('BAD REQUEST - RECIPES NOT RECEIVED');
+      print(resp.statusCode);
+      throw Exception('Failed to fetch recipes');
     }
   }
 }

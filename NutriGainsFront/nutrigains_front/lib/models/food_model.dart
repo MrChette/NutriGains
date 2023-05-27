@@ -7,24 +7,41 @@ class FoodModel {
   int? id;
   String name;
   int? barcode;
-  double carbohydrates;
-  double fat;
-  double kcal;
-  double protein;
-  double salt;
-  double sugar;
+  double? carbohydrates;
+  double? fat;
+  double? kcal;
+  double? protein;
+  double? salt;
+  double? sugar;
 
   FoodModel({
     this.id,
     required this.name,
     this.barcode,
-    required this.carbohydrates,
-    required this.fat,
-    required this.kcal,
-    required this.protein,
-    required this.salt,
-    required this.sugar,
+    this.carbohydrates,
+    this.fat,
+    this.kcal,
+    this.protein,
+    this.salt,
+    this.sugar,
   });
+
+  factory FoodModel.withSomeData({
+    double carbohydrates = 0.0,
+    double fat = 0.0,
+    double kcal = 0.0,
+    double protein = 0.0,
+  }) {
+    return FoodModel(
+      name: '',
+      carbohydrates: carbohydrates,
+      fat: fat,
+      kcal: kcal,
+      protein: protein,
+      salt: 0.0, // Valor predeterminado para salt
+      sugar: 0.0, // Valor predeterminado para sugar
+    );
+  }
 
   factory FoodModel.fromRawJson(String str) =>
       FoodModel.fromJson(json.decode(str));

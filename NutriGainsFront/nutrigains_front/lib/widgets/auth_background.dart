@@ -45,7 +45,6 @@ class _BackGround extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: size.height,
-      color: Colors.black87,
     );
   }
 }

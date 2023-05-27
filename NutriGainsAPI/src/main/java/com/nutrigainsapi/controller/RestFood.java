@@ -118,13 +118,11 @@ public class RestFood {
 		System.out.println(exist);
 		if (exist) {
 		List<Food> userFoods = foodRepository.findByUserId(userService.getUserId());
-		for(Food x : userFoods)
-			System.out.println(x.toString());
 		
 		List<FoodModel> modelFoods = new ArrayList<>();
-		System.out.println("FOODMODEL");
+		//System.out.println("FOODMODEL");
 		for(Food x : userFoods) {
-			System.out.println(x.toString());
+			//System.out.println(x.toString());
 			modelFoods.add(foodService.transformToModel(x));
 		}
 		return ResponseEntity.ok(modelFoods);
@@ -177,7 +175,7 @@ public class RestFood {
 				HttpEntity<String> entity = new HttpEntity<>(headers);
 				
 				Product product = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, Product.class).getBody();
-				System.out.println(product.toString());
+				//System.out.println(product.toString());
 				FoodModel food = new FoodModel();
 				food.setName(product.getProduct().getProduct_name());
 				food.setBarcode(Long.parseLong(product.getCode()));

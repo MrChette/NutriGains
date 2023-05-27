@@ -41,6 +41,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.10.0"
+  backdrop:
+    dependency: "direct main"
+    description:
+      name: backdrop
+      sha256: "8d1de2db4aca3821bad670c092e3a050bf15aa1dd05ded4d14fdf0a0ae5da9dc"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.0"
   barcode:
     dependency: transitive
     description:
@@ -339,6 +347,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  flutter_smart_dialog:
+    dependency: "direct main"
+    description:
+      name: flutter_smart_dialog
+      sha256: da7ed8fe78e301e3c2cdaa533d13ed3edcf1853c1ba1a7383b481739569f7b2a
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.9.0+6"
   flutter_spinbox:
     dependency: "direct main"
     description:
@@ -798,13 +814,13 @@ packages:
     source: hosted
     version: "3.0.1"
   shelf_static:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: shelf_static
-      sha256: e792b76b96a36d4a41b819da593aff4bdd413576b3ba6150df5d8d9996d2e74c
+      sha256: a41d3f53c4adf0f57480578c1d61d90342cd617de7fc8077b1304643c2d85c1e
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.1"
+    version: "1.1.2"
   shelf_web_socket:
     dependency: transitive
     description:

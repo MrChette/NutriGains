@@ -2,6 +2,8 @@ package com.nutrigainsapi.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -10,8 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nutrigainsapi.entity.Recipe;
@@ -51,11 +53,21 @@ public class RestRecipeList {
 	//Añadir alimentos a una receta
 	@PostMapping("/user/foodtorecipe")
 	@Operation(summary = "Añadir alimentos a una receta", description = " ... ")
-	public ResponseEntity<?> addFoodToRecipe(@RequestParam("id_food") List<Long> idFoods,
-	                                         @RequestParam("grams") List<Long> gramsList,
-	                                         @RequestParam("name") String name) {
+	public ResponseEntity<?> addFoodToRecipe(@RequestBody Map<String, Object> request) {
+		List<String> idFoodStrings = (List<String>) request.get("idFood");
+	    List<String> gramsStrings = (List<String>) request.get("grams");
+	    String name = (String) request.get("name");
+
+	    List<Long> idFoods = idFoodStrings.stream()
+	                                      .map(Long::parseLong)
+	                                      .collect(Collectors.toList());
+
+	    List<Long> gramsList = gramsStrings.stream()
+	                                       .map(Long::parseLong)
+	                                       .collect(Collectors.toList());
 	    
-	    
+	    System.out.println("idfoods" + idFoods);
+	    System.out.println(gramsList);
 	    if (idFoods.size() != gramsList.size() || name == "") {
 	    	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 	    }
@@ -66,6 +78,7 @@ public class RestRecipeList {
 	    for (int i = 0; i < idFoods.size(); i++) {
 	        long idFood = idFoods.get(i);
 	        long grams = gramsList.get(i);
+	        System.out.println(idFood);
 	        FoodModel food = foodService.findModelById(idFood);
 	        recipeModel.setKcal(recipeModel.getKcal()+((food.getKcal()/100)*grams));
 	        recipeModel.setProtein(recipeModel.getProtein()+((food.getProtein()/100)*grams));

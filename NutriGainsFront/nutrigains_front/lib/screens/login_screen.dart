@@ -18,6 +18,7 @@ import '../services/auth_service.dart';
 import '../services/comment_service.dart';
 import '../services/meal_service.dart';
 import '../ui/input_decorations.dart';
+import '../widgets/CustomToast.dart';
 import '../widgets/auth_background.dart';
 import '../widgets/card_container.dart';
 
@@ -147,15 +148,10 @@ class _LoginForm extends StatelessWidget {
                           Navigator.pushReplacementNamed(context, '');
                         } else {
                           Navigator.pushReplacementNamed(
-                              context, 'userMainScreen' /*recipeScreen*/);
+                              context, /*'commentScreen'*/ 'recipeScreen');
                         }
 
-                        ////////////////////////////////////////////////////////////////////////////////////////
-                        //                     //
-                        //                     //
-                        // PRUEBA DE ENDPOINTS //
-                        //                     //
-                        //                     //
+                        // * *  PRUEBA DE ENDPOINTS //
 
                         //  NEWRECIPE //
                         //await RecipeService().newRecipe("Prueba desde flutter 2");
@@ -238,14 +234,13 @@ class _LoginForm extends StatelessWidget {
                         //  print(element.toString());
                         //});
 
-                        //                     //
-                        //                     //
-                        // PRUEBA DE ENDPOINTS //
-                        //                     //
-                        //                     //
-                        ////////////////////////////////////////////////////////////////////////////////////////
+                        // GETALLCOMMENTS WITH RECIPE//
+                        await CommentService().getAllComments();
+
+                        // ** PRUEBA DE ENDPOINTS //
                       } else {
-                        customToast('Email or password incorrect', context);
+                        CustomToast.customToast(
+                            'Email or password incorrect', context);
                         Navigator.pushReplacementNamed(context, 'login');
                       }
                     },
@@ -260,20 +255,6 @@ class _LoginForm extends StatelessWidget {
               )),
         ],
       ),
-    );
-  }
-
-  void customToast(String s, BuildContext context) {
-    showToast(
-      s,
-      context: context,
-      animation: StyledToastAnimation.scale,
-      reverseAnimation: StyledToastAnimation.fade,
-      position: StyledToastPosition.top,
-      animDuration: const Duration(seconds: 1),
-      duration: const Duration(seconds: 4),
-      curve: Curves.elasticOut,
-      reverseCurve: Curves.linear,
     );
   }
 }

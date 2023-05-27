@@ -17,11 +17,11 @@ public class Comment {
 	private long id;
 	
 	@ManyToOne
-	@JoinColumn(name = "recipe_id", nullable = false)
+	@JoinColumn(name = "recipe_id", unique=false,nullable = false)
 	private Recipe recipe;
 	
 	@ManyToOne
-	@JoinColumn(name = "user_id", nullable = false)
+	@JoinColumn(name = "user_id", unique=false, nullable = false)
 	private User user;
 	
 	@Column(name="comment",unique=false,nullable=false)

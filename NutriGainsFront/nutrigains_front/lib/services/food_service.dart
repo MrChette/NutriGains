@@ -10,7 +10,7 @@ import 'auth_service.dart';
 import 'package:http/http.dart' as http;
 
 class FoodService extends ChangeNotifier {
-  final String _baseUrl = '192.168.231.208:8080';
+  final String _baseUrl = '192.168.1.135:8080';
   bool isLoading = true;
 
   Future newFood(FoodModel food) async {
@@ -130,7 +130,7 @@ class FoodService extends ChangeNotifier {
     }
   }
 
-  Future getFood(int idfood) async {
+  Future<FoodModel> getFood(int idfood) async {
     final url = Uri.http(_baseUrl, '/api/user/getfood/$idfood');
     String? token = await AuthService().getToken();
 
@@ -151,7 +151,6 @@ class FoodService extends ChangeNotifier {
       final FoodModel food = FoodModel.fromJson(foodJson);
       return food;
     } else {
-      print(resp.statusCode);
       throw Exception('Failed to load food');
     }
   }

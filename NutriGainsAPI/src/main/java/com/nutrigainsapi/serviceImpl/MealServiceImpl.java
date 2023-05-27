@@ -1,5 +1,6 @@
 package com.nutrigainsapi.serviceImpl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,6 +55,19 @@ public class MealServiceImpl implements GenericService<Meal,MealModel,Long>{
 	public Meal transform(MealModel model) {
 		ModelMapper modelMapper = new ModelMapper();
 		return modelMapper.map(model, Meal.class);
+	}
+	
+	
+	public List<Meal> transformList	(List<MealModel> models) {
+	    ModelMapper modelMapper = new ModelMapper();
+	    List<Meal> meals = new ArrayList<>();
+
+	    for (MealModel model : models) {
+	        Meal meal = modelMapper.map(model, Meal.class);
+	        meals.add(meal);
+	    }
+
+	    return meals;
 	}
 
 	@Override

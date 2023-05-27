@@ -7,24 +7,9 @@ import 'package:provider/provider.dart';
 import '../providers/register_provider.dart';
 import '../services/auth_service.dart';
 import '../ui/input_decorations.dart';
+import '../widgets/CustomToast.dart';
 import '../widgets/auth_background.dart';
 import '../widgets/card_container.dart';
-
-// class getCicles extends ChangeNotifier {
-//   String _baseUrl = 'http://salesin.allsites.es/public/api/cicles';
-
-//   CiclesProvider() {
-//     print('Inicializando');
-//   }
-
-//   getCiclesName() async {
-//     var url = Uri.https(_baseUrl);
-
-//     final response = await http.get(url);
-
-//     print(response.body);
-//   }
-// }
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -133,10 +118,12 @@ class _RegisterForm extends StatelessWidget with InputValidationMixin {
                       );
 
                       if (errorMessage == '201') {
-                        customToast('Usuario creado con exito', context);
+                        CustomToast.customToast(
+                            'Usuario creado con exito', context);
                         Navigator.pushReplacementNamed(context, 'login');
                       } else {
-                        customToast('Este usuario ya existe', context);
+                        CustomToast.customToast(
+                            'Este usuario ya existe', context);
                         Navigator.pushReplacementNamed(context, 'register');
                         //mostrar error en pantalla
                         // customToast('The email is already registered', context);
@@ -154,20 +141,6 @@ class _RegisterForm extends StatelessWidget with InputValidationMixin {
                   )))
         ],
       ),
-    );
-  }
-
-  void customToast(String s, BuildContext context) {
-    showToast(
-      s,
-      context: context,
-      animation: StyledToastAnimation.scale,
-      reverseAnimation: StyledToastAnimation.fade,
-      position: StyledToastPosition.top,
-      animDuration: const Duration(seconds: 1),
-      duration: const Duration(seconds: 4),
-      curve: Curves.elasticOut,
-      reverseCurve: Curves.linear,
     );
   }
 }

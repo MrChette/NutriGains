@@ -1,14 +1,14 @@
 package com.nutrigainsapi.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.nutrigainsapi.entity.Comment;
 import com.nutrigainsapi.model.CommentModel;
+import com.nutrigainsapi.model.RecipeModel;
 import com.nutrigainsapi.service.GenericService;
+import com.nutrigainsapi.serviceImpl.RecipeServiceImpl;
 import com.nutrigainsapi.serviceImpl.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,6 +39,10 @@ public class RestComment {
 	@Autowired
 	@Qualifier("userService")
 	private UserService userService;
+	
+	@Autowired
+	@Qualifier("recipeServiceImpl")
+	private RecipeServiceImpl recipeService;
 	
 	
 	//Crear comentarios para una receta
@@ -97,5 +103,16 @@ public class RestComment {
 			return ResponseEntity.noContent().build();		
 	}
 	
+	@GetMapping("/user/comments")
+	@Operation(summary = "Recupera los comentarios", description = "...")
+	public ResponseEntity<?> getAllCommentsByRecipe() {
+	    List<CommentModel> commentList = commentService.listAll();
+
+	    if (!commentList.isEmpty()) {
+	        return ResponseEntity.ok(commentList);
+	    } else {
+	        return ResponseEntity.noContent().build();
+	    }
+	}
 
 }

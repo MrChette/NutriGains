@@ -30,6 +30,8 @@ class _recipeScreen extends State<RecipeScreen> {
       Navigator.pushNamed(context, 'recipeScreen');
     } else if (index == 2) {
       Navigator.pushNamed(context, 'foodScreen');
+    } else if (index == 3) {
+      Navigator.pushNamed(context, 'commentScreen');
     }
   }
 
@@ -60,6 +62,7 @@ class _recipeScreen extends State<RecipeScreen> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).canvasColor,
       body: isLoading
           ? _buildLoadingScreen()
           : Padding(
@@ -88,7 +91,9 @@ class _recipeScreen extends State<RecipeScreen> {
                               });
                             },
                             child: Card(
-                              color: isSelected ? Colors.blue : Colors.white,
+                              color: isSelected
+                                  ? Colors.amber
+                                  : Theme.of(context).cardColor,
                               child: ListTile(
                                 title: Text(data.name),
                                 subtitle: Column(

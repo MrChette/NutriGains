@@ -16,6 +16,7 @@ public interface MealRepository extends JpaRepository<Meal, Serializable>{
 	public abstract List<Meal> findAllByUserId(Long id);
 	public abstract List<Meal> findByDate(Date date);
 	public abstract Meal saveAndFlush(MealModel mealModel);
+	public abstract List<MealModel> findAllByDateAndUserId(Date date, Long userId);
 	
 	
 }

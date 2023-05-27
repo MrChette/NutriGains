@@ -2,10 +2,14 @@ package com.nutrigainsapi.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,11 +17,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nutrigainsapi.entity.Food;
 import com.nutrigainsapi.entity.Recipe;
-import com.nutrigainsapi.model.FoodModel;
 import com.nutrigainsapi.model.RecipeModel;
 import com.nutrigainsapi.repository.RecipeRepository;
 import com.nutrigainsapi.service.GenericService;
@@ -114,6 +117,42 @@ public class RestRecipe {
 		}
 		else
 			return ResponseEntity.noContent().build();
+	}
+	
+	@GetMapping("/user/getrecipelist")
+	@Operation(summary = "Actualizar una receta (solo tiene nombre)", description = " ... ")
+	public ResponseEntity<?> getRecipe(@RequestParam(name = "idmeal") List<Long> idMeals) {
+	    List<RecipeModel> recipeList = new ArrayList<>();
+
+	    ExecutorService executor = Executors.newFixedThreadPool(idMeals.size());
+	    List<Future<RecipeModel>> futures = new ArrayList<>();
+
+	    for (Long idMeal : idMeals) {
+	        Callable<RecipeModel> callable = () -> recipeService.findModelById(idMeal);
+	        Future<RecipeModel> future = executor.submit(callable);
+	        futures.add(future);
+	    }
+	    
+	    executor.shutdown();
+
+
+	    for (Future<RecipeModel> future : futures) {
+	        try {
+	            RecipeModel rp = future.get();
+	            if (rp != null) {
+	                recipeList.add(rp);
+	            }
+	        } catch (InterruptedException | ExecutionException e) {
+	            e.printStackTrace();
+	        }
+	    }
+
+	   
+	    if (!recipeList.isEmpty()) {
+	        return ResponseEntity.accepted().body(recipeList);
+	    } else {
+	        return ResponseEntity.noContent().build();
+	    }
 	}
 	
 	

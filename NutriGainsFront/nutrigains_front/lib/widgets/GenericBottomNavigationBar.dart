@@ -5,13 +5,13 @@ class GenericBottomNavigationBar extends StatefulWidget {
   final ValueChanged<int> onTap;
 
   const GenericBottomNavigationBar({
-    super.key,
+    Key? key,
     required this.currentIndex,
     required this.onTap,
-  });
+  }) : super(key: key);
 
   @override
-  _GenericBottomNavigationBarState createState() =>
+  State<GenericBottomNavigationBar> createState() =>
       _GenericBottomNavigationBarState();
 }
 
@@ -20,8 +20,10 @@ class _GenericBottomNavigationBarState
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
+      backgroundColor: Colors.white,
       currentIndex: widget.currentIndex,
       onTap: widget.onTap,
+      selectedItemColor: Colors.white,
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
@@ -34,6 +36,10 @@ class _GenericBottomNavigationBarState
         BottomNavigationBarItem(
           icon: Icon(Icons.food_bank),
           label: 'Foods',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'Social',
         ),
       ],
     );

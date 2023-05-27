@@ -1,12 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinbox/cupertino.dart';
-import 'package:flutter_spinbox/flutter_spinbox.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:nutrigains_front/models/food_model.dart';
-
 import '../services/food_service.dart';
 import '../services/meal_service.dart';
+import '../services/recipeList_service.dart';
 import '../widgets/CustomIconButton.dart';
+import '../widgets/CustomToast.dart';
 import '../widgets/GenericBottomNavigationBar.dart';
 
 class FoodScreen extends StatefulWidget {
@@ -20,7 +22,7 @@ class _FoodScreenState extends State<FoodScreen> {
   List<FoodModel> foodList = [];
   bool isLoading = true;
   List<FoodModel> elementosSeleccionados = [];
-  List<int> selectedQuantities = [];
+  int _scanBarcode = 0;
 
   int _currentIndex = 2;
   void _onNavBarItemTapped(int index) {
@@ -33,6 +35,8 @@ class _FoodScreenState extends State<FoodScreen> {
       Navigator.pushNamed(context, 'recipeScreen');
     } else if (index == 2) {
       Navigator.pushNamed(context, 'foodScreen');
+    } else if (index == 3) {
+      Navigator.pushNamed(context, 'commentScreen');
     }
   }
 
@@ -48,8 +52,6 @@ class _FoodScreenState extends State<FoodScreen> {
     setState(() {
       foodList = list;
       elementosSeleccionados = [];
-      selectedQuantities = List.generate(list.length, (_) => 0);
-      print(selectedQuantities);
     });
   }
 
@@ -61,126 +63,470 @@ class _FoodScreenState extends State<FoodScreen> {
     });
   }
 
+  Future<void> scanBarcodeNormal() async {
+    String barcodeScanRes;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+      print(barcodeScanRes);
+    } on PlatformException {
+      barcodeScanRes = 'Failed to get platform version.';
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      _scanBarcode = int.parse(barcodeScanRes);
+    });
+  }
+
+  addBarcodeButton(BuildContext context) {
+    return SizedBox(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 35.0),
+        width: MediaQuery.of(context).size.width * 1,
+        child: CustomIconButton(
+          icon: Icons.camera,
+          label: 'SCAN BARCODE',
+          onPressed: () async {
+            await scanBarcodeNormal();
+            var result = await FoodService().findFoodinBbdd(_scanBarcode);
+            if (result == null) {
+              await FoodService().newFoodByApi(_scanBarcode);
+            } else {
+              // ignore: use_build_context_synchronously
+              CustomToast.customToast('You already have this food', context);
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: isLoading
           ? _buildLoadingScreen()
           : Padding(
-              padding: const EdgeInsets.only(top: 20.0),
+              padding: const EdgeInsets.only(bottom: 40.0),
               child: Column(
                 children: [
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: foodList.length,
-                      itemBuilder: (context, index) {
-                        final data = foodList[index];
-                        bool isSelected = elementosSeleccionados.contains(data);
-
-                        return InkWell(
-                          onTap: () {
-                            setState(() {
-                              if (isSelected) {
-                                elementosSeleccionados.remove(data);
-                              } else {
-                                elementosSeleccionados.add(data);
-                              }
-                            });
-                          },
-                          child: Card(
-                            color: isSelected ? Colors.blue : Colors.white,
-                            child: ListTile(
-                              title: Text(data.name),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Kcal: ${data.kcal}'),
-                                  Text('Carbohydrates: ${data.carbohydrates}'),
-                                  Text('Protein: ${data.protein}'),
-                                  // Agrega más widgets Text o cualquier otro widget necesario para mostrar la información adicional
-                                ],
-                              ),
-                              trailing: Container(
-                                margin: EdgeInsets.all(10),
-                                width: 100,
-                                height: 50,
-                                child: TextField(
-                                  keyboardType: TextInputType.number,
-                                  textAlign: TextAlign.center,
-                                  decoration: const InputDecoration(
-                                    hintText: 'grams',
-                                    contentPadding:
-                                        EdgeInsets.symmetric(vertical: 8.0),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5.0)),
-                                    ),
+                    child: FractionallySizedBox(
+                      heightFactor: 0.89,
+                      child: ListView.builder(
+                        itemCount: foodList.length,
+                        itemBuilder: (context, index) {
+                          final data = foodList[index];
+                          bool isSelected =
+                              elementosSeleccionados.contains(data);
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 16.0),
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (isSelected) {
+                                    elementosSeleccionados.remove(data);
+                                  } else {
+                                    elementosSeleccionados.add(data);
+                                  }
+                                });
+                              },
+                              child: Card(
+                                color: isSelected
+                                    ? Colors.amber
+                                    : Theme.of(context).cardColor,
+                                child: ListTile(
+                                  title: Text(data.name),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Kcal: ${data.kcal}'),
+                                      Text(
+                                          'Carbohydrates: ${data.carbohydrates}'),
+                                      Text('Protein: ${data.protein}'),
+                                    ],
                                   ),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedQuantities[index] =
-                                          int.tryParse(value) ?? 0;
-                                      print(selectedQuantities);
-                                    });
-                                  },
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 75.0),
+        child: Stack(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: addSetGrams(context),
+                ),
+                const SizedBox(width: 10.0),
+                Expanded(
+                  child: addMealButton(context),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
       bottomNavigationBar: GenericBottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onNavBarItemTapped,
       ),
-      floatingActionButton: Stack(
-        children: <Widget>[
-          Padding(padding: EdgeInsets.only(left: 31)),
-          Align(
-            alignment: Alignment.bottomLeft,
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 100.0),
-              width: MediaQuery.of(context).size.width * 1,
-              child: CustomIconButton(
-                icon: Icons.add,
-                label: 'ADD MEAL',
-                onPressed: () async {
-                  for (var element in elementosSeleccionados) {
-                    int position = elementosSeleccionados.indexOf(element);
-                    int grams = selectedQuantities[position];
-                    print('Elemento: $element, Posición: $position');
-                    MealService().newFoodMeal(element.id!, position);
-                  }
-                },
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 100.0),
-              width: MediaQuery.of(context).size.width * 1,
-              child: CustomIconButton(
-                icon: Icons.add,
-                label: 'ADD TO RECIPE',
-                onPressed: () async {
-                  for (var element in elementosSeleccionados) {
-                    int position = elementosSeleccionados.indexOf(element);
-                    int grams = selectedQuantities[position];
-                    print('Elemento: $element, Posición: $position');
-                    MealService().newFoodMeal(element.id!, position);
-                  }
-                },
-              ),
-            ),
-          ),
-        ],
+    );
+  }
+
+  Widget addSetGrams(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 1,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: CustomIconButton(
+          icon: Icons.settings,
+          label: 'SET GRAMS',
+          onPressed: () async {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                List<TextEditingController> textControllers = [];
+                return AlertDialog(
+                  content: SizedBox(
+                    width: MediaQuery.of(context).size.width * 1,
+                    child: ListView.builder(
+                      itemCount: elementosSeleccionados.length,
+                      shrinkWrap: true,
+                      itemBuilder: (BuildContext context, int index) {
+                        var elemento = elementosSeleccionados[index];
+                        TextEditingController controller =
+                            TextEditingController();
+                        textControllers.add(controller);
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                elemento.name,
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 8.0,
+                            ), // Espacio entre el nombre y el TextField
+                            Expanded(
+                              child: TextField(
+                                controller:
+                                    controller, // Asignar el controlador al TextField
+                                keyboardType: TextInputType.number,
+                                decoration: const InputDecoration(
+                                  labelText: 'Grams',
+                                ),
+                                onChanged: (value) {
+                                  // Aquí puedes guardar el valor ingresado para cada elemento
+                                },
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                  actions: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment
+                          .center, // Centra los botones horizontalmente
+                      children: [
+                        CustomIconButton(
+                          label: 'ADD TO MEAL',
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 3.0, vertical: 8.0),
+                          onPressed: () {
+                            List<int> foodIds = elementosSeleccionados
+                                .map((element) => element.id)
+                                .where((id) => id != null)
+                                .map((id) => id!)
+                                .toList();
+                            List<int> gramsList = textControllers
+                                .map((controller) =>
+                                    int.tryParse(controller.text) ?? 0)
+                                .toList();
+                            MealService().newFoodMeal(foodIds, gramsList);
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        const SizedBox(
+                            width: 30.0), // Espacio entre los botones
+                        CustomIconButton(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 3.0, vertical: 8.0),
+                          label: 'CREATE RECIPE',
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                String recipeName = '';
+                                final alertDialogContext = context;
+
+                                return AlertDialog(
+                                  title: const Text('Enter Recipe Name'),
+                                  content: TextField(
+                                    onChanged: (value) {
+                                      recipeName = value;
+                                    },
+                                    decoration: const InputDecoration(
+                                      labelText: 'Recipe Name',
+                                    ),
+                                  ),
+                                  actions: [
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        if (recipeName.isNotEmpty) {
+                                          List<int> foodIds =
+                                              elementosSeleccionados
+                                                  .map((element) => element.id)
+                                                  .where((id) => id != null)
+                                                  .map((id) => id!)
+                                                  .toList();
+                                          List<int> gramsList = textControllers
+                                              .map((controller) =>
+                                                  int.tryParse(
+                                                      controller.text) ??
+                                                  0)
+                                              .toList();
+
+                                          RecipeListService().foodtorecipe(
+                                              foodIds, gramsList, recipeName);
+                                          Navigator.of(alertDialogContext)
+                                              .pop();
+                                          Navigator.of(context).pop();
+                                        }
+                                      },
+                                      child: const Text('Save'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ),
       ),
-      //floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+    );
+  }
+
+  Widget addMealButton(BuildContext context) {
+    return SizedBox(
+        width: MediaQuery.of(context).size.width * 1,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: CustomIconButton(
+            icon: Icons.add,
+            label: 'ADD FOOD',
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text("ADD MEAL"),
+                    contentPadding: const EdgeInsets.fromLTRB(20.0, 40.0, 20.0,
+                        0.0), // Ajusta los valores según tus necesidades
+                    content: SizedBox(
+                      height: 200, // Modifica la altura según tus necesidades
+                      child: Column(
+                        children: [
+                          addBarcodeButton(context),
+                          const SizedBox(height: 30.0),
+                          foodForm(context),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+
+              print('Botón presionado');
+            },
+          ),
+        ));
+  }
+
+  Widget foodForm(BuildContext context) {
+    return SizedBox(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 30.0),
+        width: MediaQuery.of(context).size.width * 1,
+        child: CustomIconButton(
+          icon: Icons.add,
+          label: 'Form comida',
+          onPressed: () {
+            FoodModel foodModel = FoodModel(
+              name: '',
+            );
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text("Create Product"),
+                  content: SingleChildScrollView(
+                    child: SizedBox(
+                      height: 350,
+                      width: 300,
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            initialValue: foodModel.name,
+                            onChanged: (String textTyped) {
+                              setState(() {
+                                foodModel.name = textTyped;
+                              });
+                            },
+                            keyboardType: TextInputType.text,
+                            decoration: const InputDecoration(hintText: 'Name'),
+                          ),
+                          TextFormField(
+                            onChanged: (String textTyped) {
+                              setState(() {
+                                foodModel.kcal = double.parse(textTyped);
+                              });
+                            },
+                            keyboardType: TextInputType.number,
+                            decoration: const InputDecoration(hintText: 'Kcal'),
+                          ),
+                          TextFormField(
+                            onChanged: (String textTyped) {
+                              setState(() {
+                                foodModel.protein = double.parse(textTyped);
+                              });
+                            },
+                            keyboardType: TextInputType.number,
+                            decoration:
+                                const InputDecoration(hintText: 'Protein'),
+                          ),
+                          TextFormField(
+                            onChanged: (String textTyped) {
+                              setState(() {
+                                foodModel.carbohydrates =
+                                    double.parse(textTyped);
+                              });
+                            },
+                            keyboardType: TextInputType.number,
+                            decoration: const InputDecoration(
+                                hintText: 'Carbohydrates'),
+                          ),
+                          TextFormField(
+                            onChanged: (String textTyped) {
+                              setState(() {
+                                foodModel.fat = double.parse(textTyped);
+                              });
+                            },
+                            keyboardType: TextInputType.number,
+                            decoration: const InputDecoration(hintText: 'Fat'),
+                          ),
+                          TextFormField(
+                            onChanged: (String textTyped) {
+                              setState(() {
+                                foodModel.salt = double.parse(textTyped);
+                              });
+                            },
+                            keyboardType: TextInputType.number,
+                            decoration: const InputDecoration(hintText: 'Salt'),
+                          ),
+                          TextFormField(
+                            onChanged: (String textTyped) {
+                              setState(() {
+                                foodModel.sugar = double.parse(textTyped);
+                              });
+                            },
+                            keyboardType: TextInputType.number,
+                            decoration:
+                                const InputDecoration(hintText: 'Sugar'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  actions: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                top: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1.0,
+                                ),
+                                right: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1.0,
+                                ),
+                              ),
+                            ),
+                            child: TextButton(
+                              onPressed: () {
+                                setState(() {});
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text(
+                                "Cancel",
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                top: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1.0,
+                                ),
+                              ),
+                            ),
+                            child: TextButton(
+                              onPressed: () async {
+                                await FoodService().newFood(foodModel);
+                                Navigator.pop(context);
+                                initializeData();
+                              },
+                              child: const Text(
+                                "Save",
+                                style: TextStyle(color: Colors.green),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ),
+      ),
     );
   }
 
