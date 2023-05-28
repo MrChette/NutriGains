@@ -97,6 +97,8 @@ class _FoodScreenState extends State<FoodScreen> {
             var result = await FoodService().findFoodinBbdd(_scanBarcode);
             if (result == null) {
               await FoodService().newFoodByApi(_scanBarcode);
+              Navigator.pop(context);
+              initializeData();
             } else {
               // ignore: use_build_context_synchronously
               CustomToast.customToast('You already have this food', context);

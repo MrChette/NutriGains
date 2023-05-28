@@ -168,7 +168,7 @@ class MealService extends ChangeNotifier {
       );
       return nutriment;
     } else {
-      throw Exception('Failed to fetch kcal');
+      return onlyNutriment(carbohydrates: 0, fat: 0, kcal: 0, protein: 0);
     }
   }
 

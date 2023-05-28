@@ -116,9 +116,41 @@ class RecipeService extends ChangeNotifier {
       print('OK - RECIPES RECEIVED');
       return recipes;
     } else {
+      List<RecipeModel> recipes = [];
       print('BAD REQUEST - RECIPES NOT RECEIVED');
       print(resp.statusCode);
-      throw Exception('Failed to fetch recipes');
+      return recipes;
+    }
+  }
+
+  Future<List<RecipeModel>> getAllRecipes() async {
+    final url = Uri.http(_baseUrl, '/api/user/getallrecipes');
+    String? token = await AuthService().getToken();
+
+    final stopwatch = Stopwatch(); // Crear una instancia de Stopwatch
+    stopwatch.start(); //
+
+    final resp = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+
+    stopwatch.stop(); // Detener el cronómetro
+    print('Tiempo de ejecución: ${stopwatch.elapsedMilliseconds} ms');
+
+    if (resp.statusCode == 200) {
+      final List<dynamic> recipeJsonList = jsonDecode(resp.body);
+      final List<RecipeModel> recipes =
+          recipeJsonList.map((json) => RecipeModel.fromJson(json)).toList();
+      print(recipes);
+      print('OK - ALL RECIPES RECEIVED');
+      return recipes;
+    } else {
+      List<RecipeModel> recipes = [];
+      print('BAD REQUEST - RECIPES NOT RECEIVED');
+      print(resp.statusCode);
+      return recipes;
     }
   }
 }

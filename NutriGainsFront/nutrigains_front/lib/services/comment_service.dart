@@ -86,8 +86,8 @@ class CommentService extends ChangeNotifier {
       print(comments);
       return comments;
     } else {
-      throw Exception(
-          'Error al obtener los comentarios: ${response.statusCode}');
+      List<CommentModel> noComments = [];
+      return noComments;
     }
   }
 

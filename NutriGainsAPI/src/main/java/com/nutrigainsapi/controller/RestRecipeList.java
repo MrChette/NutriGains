@@ -61,6 +61,7 @@ public class RestRecipeList {
 	    List<Long> idFoods = idFoodStrings.stream()
 	                                      .map(Long::parseLong)
 	                                      .collect(Collectors.toList());
+	    System.out.println("IDFOODS -- " + idFoods);
 
 	    List<Long> gramsList = gramsStrings.stream()
 	                                       .map(Long::parseLong)
@@ -75,8 +76,9 @@ public class RestRecipeList {
 	    RecipeModel recipeModel = new RecipeModel();
 	    recipeModel.setName(name);
 	    recipeModel.setIdUser(userService.getUserId());
+	    recipeModel.setId(0);
 	    for (int i = 0; i < idFoods.size(); i++) {
-	        long idFood = idFoods.get(i);
+	        Long idFood = idFoods.get(i);
 	        long grams = gramsList.get(i);
 	        System.out.println(idFood);
 	        FoodModel food = foodService.findModelById(idFood);
@@ -88,6 +90,7 @@ public class RestRecipeList {
 	        recipeModel.setSugar(recipeModel.getSugar()+((food.getSalt()/100)*grams));
 	        
 	    }
+	    System.out.println("RecipeModel " + recipeModel);
 	    Recipe recipe = recipeService.addEntity(recipeModel);
 	    
  

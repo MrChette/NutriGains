@@ -17,8 +17,7 @@ class CommentScreen extends StatefulWidget {
 
 class _CommentsScreenState extends State<CommentScreen> {
   List<CommentModel> listaComments = [];
-  Set<int> idRecipes = <int>{};
-  List<RecipeModel> listaRecetas = [];
+  List<RecipeModel> recipeList = [];
   bool isLoading = true;
 
   int _currentIndex = 3;
@@ -43,31 +42,23 @@ class _CommentsScreenState extends State<CommentScreen> {
     initializeData();
   }
 
+  getRecipes() async {
+    List<RecipeModel> recipesRecived = await RecipeService().getAllRecipes();
+    setState(() {
+      recipeList = recipesRecived;
+    });
+  }
+
   getComments() async {
-    try {
-      List<CommentModel> commentsData = await CommentService().getAllComments();
-      Set<int> uniqueIds = <int>{};
-      List<RecipeModel> recipes = [];
-      for (CommentModel comment in commentsData) {
-        uniqueIds.add(comment.recipe_id);
-      }
-      for (int id in uniqueIds) {
-        recipes.add(await RecipeService().getRecipe(id));
-      }
-      setState(() {
-        listaComments = commentsData;
-        idRecipes = uniqueIds;
-        listaRecetas = recipes;
-      });
-    } catch (error) {
-      // Manejo del error
-      print('Error al obtener los comentarios: $error');
-    }
+    List<CommentModel> commentsData = await CommentService().getAllComments();
+    setState(() {
+      listaComments = commentsData;
+    });
   }
 
   Future<void> initializeData() async {
     await getComments();
-
+    await getRecipes();
     setState(() {
       isLoading = false;
     });
@@ -95,82 +86,102 @@ class _CommentsScreenState extends State<CommentScreen> {
   }
 
   Widget _buildCommentsList() {
-    return Column(
-      children: [
-        SizedBox(height: 16), // Agregar SizedBox encima del ListView
-        Expanded(
-          child: ListView.builder(
-            itemCount: listaRecetas.length,
-            itemBuilder: (context, index) {
-              RecipeModel recipe = listaRecetas.elementAt(index);
-              List<CommentModel> comments = listaComments
-                  .where((comment) => comment.recipe_id == recipe.id)
-                  .toList();
-              return Container(
-                margin: EdgeInsets.fromLTRB(12.0, 0, 12.0, 30),
-                child: Card(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(
-                          child: Column(
-                            children: [
-                              Text(
-                                recipe.name,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              Text(
-                                'Kcal : ${recipe.kcal.toStringAsFixed(1)}      Protein : ${recipe.protein.toStringAsFixed(1)}     Carbs : ${recipe.carbohydrates.toStringAsFixed(1)}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ],
+    return isLoading
+        ? _buildLoadingScreen()
+        : Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: ListView.separated(
+              itemCount: recipeList.length,
+              itemBuilder: (context, recipeIndex) {
+                RecipeModel recipe = recipeList[recipeIndex];
+                // Crear una lista de comentarios asociados a la receta actual
+                List<CommentModel> commentsForRecipe = listaComments
+                    .where((comment) => comment.recipe_id == recipe.id)
+                    .toList();
+                print('quepasaaa $recipeList');
+                print('quepasaaa $commentsForRecipe');
+                return Container(
+                  margin: EdgeInsets.fromLTRB(
+                      20, 10, 20, 10), // Utiliza el EdgeInsets personalizado
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Nombre de la receta
+                          Text(
+                            recipe.name,
+                            style: const TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                      ),
-                      const Divider(
-                        color: Colors.black,
-                      ),
-                      for (var comment in comments)
-                        Column(
-                          children: [
-                            ListTile(
-                              leading: Icon(
-                                Icons.comment,
-                                size: 20,
-                              ),
-                              title: Text(
-                                comment.comment,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
+                          const SizedBox(height: 20),
+                          // Divider para separar la receta del comentario
+                          const Divider(
+                            thickness: 3,
+                            color: Colors.amber,
+                            indent: 0,
+                            endIndent: 20,
+                          ),
+                          const SizedBox(height: 20),
+                          // Comentario
+                          commentsForRecipe.isNotEmpty
+                              ? ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: commentsForRecipe.length,
+                                  itemBuilder: (context, commentIndex) {
+                                    CommentModel comment =
+                                        commentsForRecipe[commentIndex];
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.amber,
+                                          width: 1.0,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                      ),
+                                      margin: const EdgeInsets.only(bottom: 30),
+                                      padding: const EdgeInsets.fromLTRB(
+                                          0, 10, 0, 10),
+                                      child: ListTile(
+                                        leading: Icon(Icons
+                                            .comment), // Ícono a la izquierda
+                                        title: Text(comment.comment),
+                                        // Otros detalles del comentario
+                                      ),
+                                    );
+                                  },
+                                )
+                              : const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 8),
+                                  child: Text(
+                                    'No hay comentarios disponibles',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                            Divider(
-                              color: Colors.black,
-                            ),
-                          ],
-                        ),
-                    ],
+                          const SizedBox(height: 16),
+                          const SizedBox(height: 16),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
+                );
+              },
+              separatorBuilder: (context, index) => const SizedBox(height: 16),
+            ),
+          );
+  }
+
+  Widget _buildLoadingScreen() {
+    return const Center(
+      child: CircularProgressIndicator(),
     );
   }
 }

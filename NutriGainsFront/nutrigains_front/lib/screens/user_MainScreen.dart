@@ -57,14 +57,19 @@ class _HomeScreenState extends State<userMainScreen> {
     print("hecho");
   }
 
-  void deleteMeal(int mealId) {
-    MealService().deleteMeal(mealId);
-    initializeData();
+  void deleteMeal(int mealId) async {
+    todaymeals.clear();
+    foodList.clear();
+    recipeList.clear();
+    isLoading = true;
+    await MealService().deleteMeal(mealId);
+    await initializeData();
   }
 
   getTodayMeals() async {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+
     final List<MealModel> meals =
         await MealService().getMealByDate(formattedDate);
     final onlyNutriment todayNutrimentsEnd =
@@ -422,8 +427,8 @@ Widget cardList(
                 trailing: IconButton(
                   icon: const Icon(Icons.delete),
                   onPressed: () {
-                    MealService().deleteMeal(index);
-                    Navigator.pushNamed(context, 'userMainScreen');
+                    print(todaymeals[index].id!);
+                    onDeleteMeal(todaymeals[index].id!);
                     //! Logica del que llame al deleteMeals */
                   },
                 ),
@@ -464,9 +469,8 @@ Widget cardList(
                 trailing: IconButton(
                   icon: const Icon(Icons.delete),
                   onPressed: () {
-                    onDeleteMeal(todaymeals[index].id!);
-                    Navigator.pushNamed(context,
-                        'userMainScreen'); //! Logica del que llame al deleteMeals */
+                    onDeleteMeal(todaymeals[index]
+                        .id!); //! Logica del que llame al deleteMeals */
                   },
                 ),
                 //** */: Para mas widgets

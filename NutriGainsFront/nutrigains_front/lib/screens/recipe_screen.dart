@@ -99,10 +99,12 @@ class _recipeScreen extends State<RecipeScreen> {
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Kcal: ${data.kcal}'),
                                     Text(
-                                        'Carbohydrates: ${data.carbohydrates}'),
-                                    Text('Protein: ${data.protein}'),
+                                        'Kcal: ${data.kcal.toStringAsFixed(0)}'),
+                                    Text(
+                                        'Carbohydrates: ${data.carbohydrates.toStringAsFixed(0)}'),
+                                    Text(
+                                        'Protein: ${data.protein.toStringAsFixed(0)}'),
                                     // Agrega más widgets Text o cualquier otro widget necesario para mostrar la información adicional
                                   ],
                                 ),

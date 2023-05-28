@@ -86,6 +86,11 @@ public class MealServiceImpl implements GenericService<Meal,MealModel,Long>{
         return mealRepository.findByDate(date).stream()
 				.map(c->transformToModel(c)).collect(Collectors.toList());
     }
+	
+	public List<MealModel> findByDateAndUserId(Date date,Long idUser) {
+        return mealRepository.findByDateAndUserId(date,idUser).stream()
+				.map(c->transformToModel(c)).collect(Collectors.toList());
+    }
 
 
 }

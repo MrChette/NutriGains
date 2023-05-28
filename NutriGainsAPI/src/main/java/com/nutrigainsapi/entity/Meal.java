@@ -102,6 +102,12 @@ public class Meal {
 	public void setFood(Food food) {
 		this.food = food;
 	}
+	
+	
+
+	public void setGrams(Long grams) {
+		this.grams = grams;
+	}
 
 	@Override
 	public String toString() {

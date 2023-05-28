@@ -235,7 +235,7 @@ class _LoginForm extends StatelessWidget {
                         //});
 
                         // GETALLCOMMENTS WITH RECIPE//
-                        await CommentService().getAllComments();
+                        //await CommentService().getAllComments();
 
                         // ** PRUEBA DE ENDPOINTS //
                       } else {

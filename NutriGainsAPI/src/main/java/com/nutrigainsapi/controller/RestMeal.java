@@ -103,18 +103,18 @@ public class RestMeal {
 
 	    // Itera sobre los objetos FoodMeal y los valores de gramos para crear los modelos de comidas
 	    for (int i = 0; i < foodId.size(); i++) {
-
 	        MealModel mealModel = new MealModel();
 	        mealModel.setIdUser(userService.getUserId());
 	        mealModel.setDate(date);
 	        mealModel.setIdFood(foodId.get(i));
 	        mealModel.setGrams(grams.get(i));
-
+	        System.out.println(mealModel);
 	        mealModels.add(mealModel);
 	    }
 
 	    // Transforma los modelos de comidas en entidades Meal y guárdalas en la base de datos
 	    List<Meal> mealEntities = mealService.transformList(mealModels);
+	    System.out.println(mealEntities);
 	    mealRepository.saveAll(mealEntities);
 
 
@@ -195,13 +195,15 @@ public class RestMeal {
 	
 	@GetMapping("/user/gettodaykcal/{date}")
 	public ResponseEntity<?> getTodayKcal(@PathVariable("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) throws ExecutionException {
-	    List<MealModel> meals = mealService.findMealByDate(date);
+		long userId = userService.getUserId();
+	    List<MealModel> meals = mealService.findByDateAndUserId(date, userId);
 
 	    final double[] kcal = {0};
 	    final double[] protein = {0};
 	    final double[] carbohydrates = {0};
 	    final double[] fat = {0};
-
+	    	
+	    if(!meals.isEmpty()) {
 	    ExecutorService executorService = Executors.newFixedThreadPool(meals.size());
 	    List<Future<Void>> futures = new ArrayList<>();
 
@@ -241,6 +243,10 @@ public class RestMeal {
 	    nutriments.add(fat[0]);
 
 	    return ResponseEntity.ok(nutriments);
+	    }
+	    else {
+	    	return ResponseEntity.noContent().build();
+	    }
 	}
 
 

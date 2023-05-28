@@ -87,25 +87,7 @@ public class RestRecipe {
 		else
 			return ResponseEntity.noContent().build();
 	}
-	/*
-	 * boolean exist = foodRepository.findByUserId(userService.getUserId())!=null;
-		System.out.println(exist);
-		if (exist) {
-		List<Food> userFoods = foodRepository.findByUserId(userService.getUserId());
-		for(Food x : userFoods)
-			System.out.println(x.toString());
-		
-		List<FoodModel> modelFoods = new ArrayList<>();
-		System.out.println("FOODMODEL");
-		for(Food x : userFoods) {
-			System.out.println(x.toString());
-			modelFoods.add(foodService.transformToModel(x));
-		}
-		return ResponseEntity.ok(modelFoods);
-		}
-		else
-			return ResponseEntity.noContent().build();
-	 */
+
 	
 	@GetMapping("/user/getrecipe/{idmeal}")
 	@Operation(summary = "Actualizar una receta (solo tiene nombre)" , description = " ... ")
@@ -119,8 +101,18 @@ public class RestRecipe {
 			return ResponseEntity.noContent().build();
 	}
 	
+	
+	@GetMapping("/user/getallrecipes")
+	@Operation(summary = "Recibe todas las recetas")
+	public ResponseEntity<?> getAllRecipes(){
+		List<RecipeModel> allRecipes = recipeService.listAll();
+		
+		return ResponseEntity.ok().body(allRecipes);
+		
+	}
+	
 	@GetMapping("/user/getrecipelist")
-	@Operation(summary = "Actualizar una receta (solo tiene nombre)", description = " ... ")
+	@Operation(summary = "Recibe las recetas que tienen comentarios", description = " ... ")
 	public ResponseEntity<?> getRecipe(@RequestParam(name = "idmeal") List<Long> idMeals) {
 	    List<RecipeModel> recipeList = new ArrayList<>();
 
@@ -166,6 +158,25 @@ public class RestRecipe {
 		else
 			return ResponseEntity.noContent().build();
 	}	
+	
+	@GetMapping("/user/externalrecipe/{idrecipe}")
+	@Operation(summary = "Añade una receta que no ha creado el usuario añadiendola a la lista de recetas del usuario")
+	public ResponseEntity<?> externalRecipe(@PathVariable(name="idrecipe", required = true) long idrecipe){
+		Recipe recipe = recipeService.findEntityById(idrecipe);
+		Long userId = userService.getUserId();
+		if(recipe.getUser().getId() == userId) {
+			return ResponseEntity.noContent().build();
+		}else {
+			System.out.println(recipe.getId());
+//			recipe.setId(null);
+			RecipeModel recipeModel = recipeService.transformToModel(recipe);
+			recipeModel.setId(0);
+			recipeModel.setIdUser(userId);
+			System.out.println(recipeModel);
+			recipeService.addEntity(recipeModel);
+			return ResponseEntity.ok(recipeModel);
+		}
+	}
 	
 
 }
