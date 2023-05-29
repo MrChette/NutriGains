@@ -5,15 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:nutrigains_front/models/food_model.dart';
 import 'package:nutrigains_front/models/meal_model.dart';
 
+import '../widgets/ip.dart';
 import 'auth_service.dart';
 
 import 'package:http/http.dart' as http;
 
 class FoodService extends ChangeNotifier {
-  final String _baseUrl = '192.168.1.135:8080';
+  final String _baseUrl = '${getIp().ip}:8080';
   bool isLoading = true;
 
-  Future newFood(FoodModel food) async {
+  Future<String> newFood(FoodModel food) async {
     final url = Uri.http(_baseUrl, '/api/user/newfood');
     String? token = await AuthService().getToken();
 
@@ -43,14 +44,13 @@ class FoodService extends ChangeNotifier {
     isLoading = false;
     notifyListeners();
     if (resp.statusCode == 201) {
-      print('OK - FOOD CREATED');
+      return ('FOOD CREATED SUCCESFULY');
     } else {
-      print('BAD REQUEST - RECIPE NOT CREATED');
-      print(resp.statusCode);
+      return ('Opps, something wrong happened');
     }
   }
 
-  Future newFoodByApi(int barcode) async {
+  Future<String> newFoodByApi(int barcode) async {
     final url = Uri.http(_baseUrl, '/api/user/foodbyapi/$barcode');
     String? token = await AuthService().getToken();
 
@@ -66,10 +66,9 @@ class FoodService extends ChangeNotifier {
     isLoading = false;
     notifyListeners();
     if (resp.statusCode == 200) {
-      print('OK - FOOD BY BARCODE CREATED');
+      return 'FOOD ADDED';
     } else {
-      print('BAD REQUEST - FOOD BY BARCODE NOT CREATED');
-      print(resp.statusCode);
+      return 'Opps, something wrong happened';
     }
   }
 
@@ -91,7 +90,6 @@ class FoodService extends ChangeNotifier {
     if (resp.statusCode == 200) {
       final Map<String, dynamic> foodJson = json.decode(resp.body);
       final FoodModel food = FoodModel.fromJson(foodJson);
-      print('OK - FOOD FOUND IN BBDD');
       return food;
     } else if (resp.statusCode == 204) {
       print('FOOD NOT FOUND IN BBDD - REQUEST TO EXTERNAL API');

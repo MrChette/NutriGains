@@ -13,6 +13,7 @@ import '../models/recipe_model.dart';
 import '../services/auth_service.dart';
 import '../services/food_service.dart';
 import '../services/meal_service.dart';
+import '../widgets/CustomToast.dart';
 import '../widgets/GenericBottomNavigationBar.dart';
 
 class userMainScreen extends StatefulWidget {
@@ -57,13 +58,23 @@ class _HomeScreenState extends State<userMainScreen> {
     print("hecho");
   }
 
-  void deleteMeal(int mealId) async {
-    todaymeals.clear();
-    foodList.clear();
-    recipeList.clear();
-    isLoading = true;
-    await MealService().deleteMeal(mealId);
-    await initializeData();
+  void deleteMeal(int mealId, int? foodIndex, int? recipeIndex) async {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    CustomToast.customToast(await MealService().deleteMeal(mealId), context);
+    onlyNutriment todayNutrimentsEnd =
+        await MealService().getTodayKcal(formattedDate);
+    setState(() {
+      todaymeals.removeWhere((meal) => meal.id == mealId);
+      if (foodIndex != null) {
+        foodList.removeAt(foodIndex);
+      }
+      if (recipeIndex != null) {
+        print(recipeIndex);
+        recipeList.removeAt(recipeIndex);
+      }
+      todayNutriments = todayNutrimentsEnd;
+    });
   }
 
   getTodayMeals() async {
@@ -83,6 +94,7 @@ class _HomeScreenState extends State<userMainScreen> {
         recipesId.add(meal.recipe_id!);
       }
     }
+    print(recipesId);
     List<RecipeModel> theRecipe = await RecipeService().getRecipes(recipesId);
     recipeList = theRecipe;
     setState(() {
@@ -403,7 +415,7 @@ Widget cardList(
     List<FoodModel> foodList,
     List<RecipeModel> recipeList,
     List<MealModel> todaymeals,
-    Function(int) onDeleteMeal) {
+    Function(int, int?, int?) onDeleteMeal) {
   return ListView.builder(
     physics: const NeverScrollableScrollPhysics(),
     scrollDirection: Axis.vertical,
@@ -421,15 +433,29 @@ Widget cardList(
             margin: const EdgeInsets.symmetric(
                 vertical: 10), // Separación vertical entre las tarjetas
             child: SizedBox(
-              height: 90,
+              height: 90, // Ajusta la altura según tus necesidades
               child: ListTile(
-                title: Text(foodModel.name),
+                contentPadding: const EdgeInsets.fromLTRB(16, 19, 16, 0),
+                title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          foodModel.name,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 11,
+                      ),
+                      Text("${foodModel.kcal!.toStringAsFixed(0)} Kcal")
+                    ]),
                 trailing: IconButton(
                   icon: const Icon(Icons.delete),
                   onPressed: () {
-                    print(todaymeals[index].id!);
-                    onDeleteMeal(todaymeals[index].id!);
-                    //! Logica del que llame al deleteMeals */
+                    onDeleteMeal(todaymeals[index].id!, index,
+                        null); //! Logica del que llame al deleteMeals */
                   },
                 ),
                 //** */: Para mas widgets
@@ -469,8 +495,8 @@ Widget cardList(
                 trailing: IconButton(
                   icon: const Icon(Icons.delete),
                   onPressed: () {
-                    onDeleteMeal(todaymeals[index]
-                        .id!); //! Logica del que llame al deleteMeals */
+                    onDeleteMeal(todaymeals[index].id!, null,
+                        index); //! Logica del que llame al deleteMeals */
                   },
                 ),
                 //** */: Para mas widgets

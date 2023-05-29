@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nutrigains_front/models/recipe_model.dart';
 import 'package:nutrigains_front/services/meal_service.dart';
 import 'package:nutrigains_front/services/recipeList_service.dart';
+import 'package:nutrigains_front/widgets/CustomToast.dart';
 
 import '../services/recipe_service.dart';
 import '../widgets/CustomIconButton.dart';
@@ -51,11 +52,7 @@ class _recipeScreen extends State<RecipeScreen> {
 
   Future<void> initializeData() async {
     getAllUserRecipes();
-
-    // Todas las operaciones se han completado, actualiza el estado
-    print("true");
     setState(() {
-      print("false");
       isLoading = false;
     });
   }
@@ -71,7 +68,7 @@ class _recipeScreen extends State<RecipeScreen> {
                 children: [
                   Expanded(
                     child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 20),
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
                       child: GridView.count(
                         crossAxisCount: 2,
                         crossAxisSpacing:
@@ -132,7 +129,8 @@ class _recipeScreen extends State<RecipeScreen> {
               label: 'ADD MEAL',
               onPressed: () async {
                 for (var element in elementosSeleccionados) {
-                  MealService().newRecipeMeal(element.id);
+                  CustomToast.customToast(
+                      await MealService().newRecipeMeal(element.id), context);
                 }
               },
             ),

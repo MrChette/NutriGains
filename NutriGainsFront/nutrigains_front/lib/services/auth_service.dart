@@ -5,9 +5,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:nutrigains_front/widgets/ip.dart';
 
 class AuthService extends ChangeNotifier {
-  final String _baseUrl = '192.168.1.135:8080';
+  final String _baseUrl = '${getIp().ip}:8080';
   final storage = const FlutterSecureStorage();
 
   Future<String?> register(

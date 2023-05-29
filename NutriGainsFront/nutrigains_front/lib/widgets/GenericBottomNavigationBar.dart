@@ -22,6 +22,8 @@ class _GenericBottomNavigationBarState
     return BottomNavigationBar(
       backgroundColor: Colors.white,
       currentIndex: widget.currentIndex,
+      //? PARA QUE SE MUESTRE EL LABEL
+      //showUnselectedLabels: true,
       onTap: widget.onTap,
       selectedItemColor: Colors.white,
       items: const <BottomNavigationBarItem>[

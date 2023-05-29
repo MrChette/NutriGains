@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -104,11 +105,18 @@ public class RestRecipe {
 	
 	@GetMapping("/user/getallrecipes")
 	@Operation(summary = "Recibe todas las recetas")
-	public ResponseEntity<?> getAllRecipes(){
-		List<RecipeModel> allRecipes = recipeService.listAll();
-		
-		return ResponseEntity.ok().body(allRecipes);
-		
+	public ResponseEntity<?> getAllRecipes() {
+	    List<RecipeModel> allRecipes = recipeService.listAll();
+	    
+	    System.out.println(allRecipes);
+
+	    List<RecipeModel> publicRecipes = allRecipes.stream()
+	            .filter(recipe -> recipe.getBePublic()==1)
+	            .collect(Collectors.toList());
+	    
+	    System.out.println(publicRecipes);
+
+	    return ResponseEntity.ok().body(publicRecipes);
 	}
 	
 	@GetMapping("/user/getrecipelist")
@@ -168,9 +176,9 @@ public class RestRecipe {
 			return ResponseEntity.noContent().build();
 		}else {
 			System.out.println(recipe.getId());
-//			recipe.setId(null);
 			RecipeModel recipeModel = recipeService.transformToModel(recipe);
 			recipeModel.setId(0);
+			recipeModel.setBePublic(0);
 			recipeModel.setIdUser(userId);
 			System.out.println(recipeModel);
 			recipeService.addEntity(recipeModel);

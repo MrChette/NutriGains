@@ -5,15 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:nutrigains_front/models/meal_model.dart';
 import 'package:nutrigains_front/models/onlyNutriment_mode.dart';
 
+import '../widgets/ip.dart';
 import 'auth_service.dart';
 
 import 'package:http/http.dart' as http;
 
 class MealService extends ChangeNotifier {
-  final String _baseUrl = '192.168.1.135:8080';
+  final String _baseUrl = '${getIp().ip}:8080';
   bool isLoading = true;
 
-  Future newFoodMeal(List<int> foodIds, List<int> grams) async {
+  Future<String> newFoodMeal(List<int> foodIds, List<int> grams) async {
     final url = Uri.http(_baseUrl, '/api/user/newfoodmeal', {
       'foodId': foodIds.map((id) => id.toString()).join(','),
       'grams': grams.map((gram) => gram.toString()).join(','),
@@ -45,42 +46,33 @@ class MealService extends ChangeNotifier {
         );
       }).toList();
 
-      print(mealModels);
-      print('OK - FOODMEAL CREATED');
-      return mealModels;
+      return 'FOOD ADDED TO MEAL';
     } else {
-      print('BAD REQUEST - FOODMEAL NOT CREATED');
-      print(resp.statusCode);
+      return 'Opps, something wrong happened';
     }
   }
 
-  Future newRecipeMeal(int idRecipe) async {
+  Future<String> newRecipeMeal(int idRecipe) async {
     final url = Uri.http(_baseUrl, '/api/user/newrecipemeal/$idRecipe');
     String? token = await AuthService().getToken();
 
     isLoading = true;
     notifyListeners();
 
-    print(token);
-    final resp =
-        await http.post(url, headers: {"Authorization": "Bearer $token"});
+    final resp = await http.post(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization": "Bearer $token"
+    });
 
     isLoading = false;
     notifyListeners();
 
     if (resp.statusCode == 201) {
-      final mealResponse = MealModel.fromJson(json.decode(resp.body));
-      final mealModel = MealModel(
-        id: mealResponse.id,
-        user_id: mealResponse.user_id,
-        date: DateTime.parse(mealResponse.date).toString(),
-      );
-      print(mealModel.toString());
-      print('OK - RECIPEMEAL CREATED');
-      return mealModel;
+      return 'RECIPE MEAL CREATED';
     } else {
-      print('BAD REQUEST - RECIPEMEAL NOT CREATED');
       print(resp.statusCode);
+      return 'Opps, something wrong happened';
     }
   }
 
@@ -172,7 +164,7 @@ class MealService extends ChangeNotifier {
     }
   }
 
-  Future<bool> deleteMeal(int id) async {
+  Future<String> deleteMeal(int id) async {
     final url = Uri.http(_baseUrl, '/api/user/deletemeal/$id');
     String? token = await AuthService().getToken();
     isLoading = true;
@@ -188,9 +180,9 @@ class MealService extends ChangeNotifier {
     notifyListeners();
 
     if (resp.statusCode == 200) {
-      return true;
+      return 'Meal deleted successfully';
     } else {
-      return false;
+      return 'Opps, something wrong happened';
     }
   }
 }

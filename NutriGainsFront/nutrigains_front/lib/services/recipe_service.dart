@@ -2,11 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import '../models/recipe_model.dart';
+import '../widgets/ip.dart';
 import 'auth_service.dart';
 import 'package:http/http.dart' as http;
 
 class RecipeService extends ChangeNotifier {
-  final String _baseUrl = '192.168.1.135:8080';
+  final String _baseUrl = '${getIp().ip}:8080';
   bool isLoading = true;
   Future newRecipe(String name) async {
     final url = Uri.http(_baseUrl, '/api/user/newrecipe');
@@ -58,7 +59,7 @@ class RecipeService extends ChangeNotifier {
       print('OK - RECIPES RECEIVED');
       return recipes;
     } else {
-      print('BAD REQUEST - RECIPES NOT RECEIVED');
+      print('getalluserrecipe BAD REQUEST - RECIPES NOT RECEIVED');
       print(resp.statusCode);
       return recipeJsonList;
     }
@@ -85,7 +86,7 @@ class RecipeService extends ChangeNotifier {
       print('OK - RECIPE RECIBED $recipe');
       return recipe;
     } else {
-      print('BAD REQUEST - RECIPE NOT RECIBED');
+      print(' getRecipe BAD REQUEST - RECIPE NOT RECIBED');
       print(resp.statusCode);
     }
   }
@@ -117,7 +118,7 @@ class RecipeService extends ChangeNotifier {
       return recipes;
     } else {
       List<RecipeModel> recipes = [];
-      print('BAD REQUEST - RECIPES NOT RECEIVED');
+      print('getRecipes BAD REQUEST - RECIPES NOT RECEIVED');
       print(resp.statusCode);
       return recipes;
     }
@@ -151,6 +152,32 @@ class RecipeService extends ChangeNotifier {
       print('BAD REQUEST - RECIPES NOT RECEIVED');
       print(resp.statusCode);
       return recipes;
+    }
+  }
+
+  Future<String> addexternalRecipe(int idRecipe) async {
+    final url = Uri.http(_baseUrl, '/api/user/externalrecipe/$idRecipe');
+    String? token = await AuthService().getToken();
+
+    final stopwatch = Stopwatch(); // Crear una instancia de Stopwatch
+    stopwatch.start(); //
+
+    final resp = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+
+    stopwatch.stop(); // Detener el cronómetro
+    print('Tiempo de ejecución: ${stopwatch.elapsedMilliseconds} ms');
+
+    if (resp.statusCode == 200) {
+      print('OK - RECIPED ADDE TO OWN RECIPES RECIPES RECEIVED');
+      return 'ok';
+    } else {
+      print('BAD REQUEST - RECIPES NOT ADDED TO OWN TECIPES NOT RECEIVED');
+      print(resp.statusCode);
+      return 'not ok';
     }
   }
 }

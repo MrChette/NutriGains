@@ -90,31 +90,24 @@ public class RestMeal {
 	@Operation(summary = "Crear una comida (desayuno, almuerzo, cena)", description = "...")
 	public ResponseEntity<?> newFoodMeal(@RequestParam List<Long> foodId,
 											@RequestParam List<Long> grams){
-	
-		System.out.println("Watafak");
 	    // Obtiene la fecha actual
 	    LocalDateTime localDateTime = LocalDateTime.now();
 	    ZoneId zoneId = ZoneId.systemDefault();
 	    Instant instant = localDateTime.atZone(zoneId).toInstant();
 	    Date date = Date.from(instant);
 
-	    // Crea una lista para almacenar los modelos de comidas
 	    List<MealModel> mealModels = new ArrayList<>();
 
-	    // Itera sobre los objetos FoodMeal y los valores de gramos para crear los modelos de comidas
 	    for (int i = 0; i < foodId.size(); i++) {
 	        MealModel mealModel = new MealModel();
 	        mealModel.setIdUser(userService.getUserId());
 	        mealModel.setDate(date);
 	        mealModel.setIdFood(foodId.get(i));
 	        mealModel.setGrams(grams.get(i));
-	        System.out.println(mealModel);
 	        mealModels.add(mealModel);
 	    }
 
-	    // Transforma los modelos de comidas en entidades Meal y guárdalas en la base de datos
 	    List<Meal> mealEntities = mealService.transformList(mealModels);
-	    System.out.println(mealEntities);
 	    mealRepository.saveAll(mealEntities);
 
 

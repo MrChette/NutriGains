@@ -4,16 +4,16 @@ import 'dart:convert';
 
 class CommentModel {
   CommentModel({
-    required this.id,
+    this.id,
     required this.comment,
     required this.recipe_id,
-    required this.user_id,
+    this.user_id,
   });
 
-  int id;
+  int? id;
   String comment;
   int recipe_id;
-  int user_id;
+  int? user_id;
 
   factory CommentModel.fromRawJson(String str) =>
       CommentModel.fromJson(json.decode(str));

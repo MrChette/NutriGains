@@ -77,6 +77,7 @@ public class RestRecipeList {
 	    recipeModel.setName(name);
 	    recipeModel.setIdUser(userService.getUserId());
 	    recipeModel.setId(0);
+	    recipeModel.setBePublic(1);
 	    for (int i = 0; i < idFoods.size(); i++) {
 	        Long idFood = idFoods.get(i);
 	        long grams = gramsList.get(i);

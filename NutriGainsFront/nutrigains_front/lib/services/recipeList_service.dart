@@ -1,13 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../widgets/ip.dart';
 import 'auth_service.dart';
 
 class RecipeListService extends ChangeNotifier {
-  final String _baseUrl = '192.168.1.135:8080';
+  final String _baseUrl = '${getIp().ip}:8080';
   bool isLoading = true;
 
-  Future foodtorecipe(
+  Future<String> foodtorecipe(
       List<int> idFoods, List<int> gramsList, String name) async {
     final url = Uri.http(_baseUrl, '/api/user/foodtorecipe');
     String? token = await AuthService().getToken();
@@ -35,10 +36,9 @@ class RecipeListService extends ChangeNotifier {
     isLoading = false;
     notifyListeners();
     if (resp.statusCode == 201) {
-      print('OK - FOOD ADDED TO RECIPE');
+      return ('RECIPE CREATED SUCCESFULY');
     } else {
-      print('BAD REQUEST - CANT ADD FOOD TO RECIPE');
-      print(resp.statusCode);
+      return ('Opps, something wrong happened');
     }
   }
 }

@@ -6,6 +6,7 @@ import 'package:nutrigains_front/services/recipe_service.dart';
 import '../models/comment_model.dart';
 import '../models/recipe_model.dart';
 import '../services/comment_service.dart';
+import '../widgets/CustomIconButton.dart';
 import '../widgets/GenericBottomNavigationBar.dart';
 
 class CommentScreen extends StatefulWidget {
@@ -19,6 +20,8 @@ class _CommentsScreenState extends State<CommentScreen> {
   List<CommentModel> listaComments = [];
   List<RecipeModel> recipeList = [];
   bool isLoading = true;
+  bool areCommentsVisible = false;
+  List<TextEditingController> textControllers = [];
 
   int _currentIndex = 3;
   void _onNavBarItemTapped(int index) {
@@ -60,8 +63,24 @@ class _CommentsScreenState extends State<CommentScreen> {
     await getComments();
     await getRecipes();
     setState(() {
+      textControllers =
+          List.generate(recipeList.length, (_) => TextEditingController());
       isLoading = false;
     });
+  }
+
+  void addComment(String comment, int recipeId) {
+    CommentModel newComment =
+        CommentModel(comment: comment, recipe_id: recipeId);
+    setState(() {
+      listaComments.add(newComment);
+    });
+  }
+
+  @override
+  void dispose() {
+    TextEditingController().dispose();
+    super.dispose();
   }
 
   @override
@@ -110,12 +129,26 @@ class _CommentsScreenState extends State<CommentScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Nombre de la receta
-                          Text(
-                            recipe.name,
-                            style: const TextStyle(
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                            ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  recipe.name,
+                                  style: const TextStyle(
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              CustomIconButton(
+                                icon: Icons.add_shopping_cart_sharp,
+                                padding: EdgeInsets.all(3),
+                                onPressed: () {
+                                  RecipeService().addexternalRecipe(recipe.id);
+                                  // Acción a realizar cuando se presiona el botón
+                                },
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 20),
                           // Divider para separar la receta del comentario
@@ -128,33 +161,59 @@ class _CommentsScreenState extends State<CommentScreen> {
                           const SizedBox(height: 20),
                           // Comentario
                           commentsForRecipe.isNotEmpty
-                              ? ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: commentsForRecipe.length,
-                                  itemBuilder: (context, commentIndex) {
-                                    CommentModel comment =
-                                        commentsForRecipe[commentIndex];
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: Colors.amber,
-                                          width: 1.0,
+                              ? Column(
+                                  children: [
+                                    if (areCommentsVisible)
+                                      ListView.builder(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemCount: commentsForRecipe.length,
+                                        itemBuilder: (context, commentIndex) {
+                                          CommentModel comment =
+                                              commentsForRecipe[commentIndex];
+                                          return Container(
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: Colors.amber,
+                                                width: 1.0,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                            margin: const EdgeInsets.only(
+                                                bottom: 30),
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 10, 0, 10),
+                                            child: ListTile(
+                                              leading: const Icon(Icons
+                                                  .comment), // Ícono a la izquierda
+                                              title: Text(comment.comment),
+                                              // Otros detalles del comentario
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          areCommentsVisible =
+                                              !areCommentsVisible;
+                                        });
+                                      },
+                                      child: Center(
+                                        child: Text(
+                                          areCommentsVisible
+                                              ? 'Hide Comments'
+                                              : 'Show Comments',
+                                          style: const TextStyle(
+                                            color: Colors.amber,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
                                       ),
-                                      margin: const EdgeInsets.only(bottom: 30),
-                                      padding: const EdgeInsets.fromLTRB(
-                                          0, 10, 0, 10),
-                                      child: ListTile(
-                                        leading: Icon(Icons
-                                            .comment), // Ícono a la izquierda
-                                        title: Text(comment.comment),
-                                        // Otros detalles del comentario
-                                      ),
-                                    );
-                                  },
+                                    ),
+                                  ],
                                 )
                               : const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 8),
@@ -167,6 +226,29 @@ class _CommentsScreenState extends State<CommentScreen> {
                                   ),
                                 ),
                           const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: textControllers[recipeIndex],
+                                  decoration: const InputDecoration(
+                                    labelText: 'Comment',
+                                  ),
+                                ),
+                              ),
+                              CustomIconButton(
+                                icon: Icons.send,
+                                padding: const EdgeInsets.all(1),
+                                onPressed: () {
+                                  addComment(textControllers[recipeIndex].text,
+                                      recipe.id);
+                                  CommentService().newComment(recipe.id,
+                                      textControllers[recipeIndex].text);
+                                  textControllers[recipeIndex].clear();
+                                },
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: 16),
                         ],
                       ),

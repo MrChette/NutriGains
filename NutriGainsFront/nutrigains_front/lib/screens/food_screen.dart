@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -69,7 +71,6 @@ class _FoodScreenState extends State<FoodScreen> {
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'Cancel', true, ScanMode.BARCODE);
-      print(barcodeScanRes);
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
@@ -96,11 +97,11 @@ class _FoodScreenState extends State<FoodScreen> {
             await scanBarcodeNormal();
             var result = await FoodService().findFoodinBbdd(_scanBarcode);
             if (result == null) {
-              await FoodService().newFoodByApi(_scanBarcode);
+              CustomToast.customToast(
+                  await FoodService().newFoodByApi(_scanBarcode), context);
               Navigator.pop(context);
               initializeData();
             } else {
-              // ignore: use_build_context_synchronously
               CustomToast.customToast('You already have this food', context);
             }
           },
@@ -256,7 +257,7 @@ class _FoodScreenState extends State<FoodScreen> {
                           label: 'ADD TO MEAL',
                           padding: const EdgeInsets.symmetric(
                               horizontal: 3.0, vertical: 8.0),
-                          onPressed: () {
+                          onPressed: () async {
                             List<int> foodIds = elementosSeleccionados
                                 .map((element) => element.id)
                                 .where((id) => id != null)
@@ -266,7 +267,10 @@ class _FoodScreenState extends State<FoodScreen> {
                                 .map((controller) =>
                                     int.tryParse(controller.text) ?? 0)
                                 .toList();
-                            MealService().newFoodMeal(foodIds, gramsList);
+                            CustomToast.customToast(
+                                await MealService()
+                                    .newFoodMeal(foodIds, gramsList),
+                                context);
                             Navigator.of(context).pop();
                           },
                         ),
@@ -295,7 +299,7 @@ class _FoodScreenState extends State<FoodScreen> {
                                   ),
                                   actions: [
                                     ElevatedButton(
-                                      onPressed: () {
+                                      onPressed: () async {
                                         if (recipeName.isNotEmpty) {
                                           List<int> foodIds =
                                               elementosSeleccionados
@@ -310,8 +314,11 @@ class _FoodScreenState extends State<FoodScreen> {
                                                   0)
                                               .toList();
 
-                                          RecipeListService().foodtorecipe(
-                                              foodIds, gramsList, recipeName);
+                                          CustomToast.customToast(
+                                              await RecipeListService()
+                                                  .foodtorecipe(foodIds,
+                                                      gramsList, recipeName),
+                                              context);
                                           Navigator.of(alertDialogContext)
                                               .pop();
                                           Navigator.of(context).pop();
@@ -366,8 +373,6 @@ class _FoodScreenState extends State<FoodScreen> {
                   );
                 },
               );
-
-              print('Botón presionado');
             },
           ),
         ));
@@ -389,7 +394,7 @@ class _FoodScreenState extends State<FoodScreen> {
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: const Text("Create Product"),
+                  title: const Text("Create Product /100g"),
                   content: SingleChildScrollView(
                     child: SizedBox(
                       height: 350,
@@ -509,7 +514,9 @@ class _FoodScreenState extends State<FoodScreen> {
                             ),
                             child: TextButton(
                               onPressed: () async {
-                                await FoodService().newFood(foodModel);
+                                CustomToast.customToast(
+                                    await FoodService().newFood(foodModel),
+                                    context);
                                 Navigator.pop(context);
                                 initializeData();
                               },

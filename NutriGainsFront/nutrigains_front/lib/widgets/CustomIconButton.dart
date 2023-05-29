@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 
 class CustomIconButton extends StatelessWidget {
   final IconData? icon;
-  final String label;
+  final String? label;
   final VoidCallback onPressed;
   final EdgeInsetsGeometry padding;
 
   const CustomIconButton({
     Key? key,
     this.icon,
-    required this.label,
+    this.label,
     required this.onPressed,
     this.padding = const EdgeInsets.symmetric(vertical: 12),
   }) : super(key: key);
@@ -36,7 +36,7 @@ class CustomIconButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            label,
+            label ?? '',
             style: const TextStyle(
               color: Colors.black,
               // Otros estilos de texto
