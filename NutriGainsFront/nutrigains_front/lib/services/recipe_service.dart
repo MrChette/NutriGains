@@ -37,6 +37,27 @@ class RecipeService extends ChangeNotifier {
     }
   }
 
+  Future<String> deleteRecipe(int idRecipe) async {
+    final url = Uri.http(_baseUrl, '/api/user/deleterecipe/$idRecipe');
+    String? token = await AuthService().getToken();
+
+    final resp = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        "Authorization": "Bearer $token"
+      },
+    );
+    isLoading = false;
+    notifyListeners();
+    if (resp.statusCode == 201) {
+      return ('RECIPED DELETED');
+    } else {
+      return ('Oops, somethin went wrong');
+    }
+  }
+
   Future getalluserrecipe() async {
     final url = Uri.http(_baseUrl, '/api/user/getalluserrecipe');
     String? token = await AuthService().getToken();
@@ -159,25 +180,18 @@ class RecipeService extends ChangeNotifier {
     final url = Uri.http(_baseUrl, '/api/user/externalrecipe/$idRecipe');
     String? token = await AuthService().getToken();
 
-    final stopwatch = Stopwatch(); // Crear una instancia de Stopwatch
-    stopwatch.start(); //
-
     final resp = await http.get(url, headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'Authorization': 'Bearer $token',
     });
 
-    stopwatch.stop(); // Detener el cronómetro
-    print('Tiempo de ejecución: ${stopwatch.elapsedMilliseconds} ms');
-
     if (resp.statusCode == 200) {
-      print('OK - RECIPED ADDE TO OWN RECIPES RECIPES RECEIVED');
-      return 'ok';
+      return 'RECIPE ADDED TO OWN RECIPES';
     } else {
       print('BAD REQUEST - RECIPES NOT ADDED TO OWN TECIPES NOT RECEIVED');
       print(resp.statusCode);
-      return 'not ok';
+      return 'Looks like you already have this recipe';
     }
   }
 }

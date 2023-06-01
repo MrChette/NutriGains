@@ -3,10 +3,11 @@ package com.nutrigainsapi.controller;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,10 +16,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -34,10 +32,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.nutrigainsapi.apirest.Product;
 import com.nutrigainsapi.entity.Food;
 import com.nutrigainsapi.model.FoodModel;
-import com.nutrigainsapi.model.RecipeModel;
-import com.nutrigainsapi.model.User;
 import com.nutrigainsapi.repository.FoodRepository;
 import com.nutrigainsapi.service.GenericService;
+import com.nutrigainsapi.serviceImpl.RecipeServiceImpl;
 import com.nutrigainsapi.serviceImpl.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -110,6 +107,15 @@ public class RestFood {
 			return ResponseEntity.noContent().build();
 	}
 	
+	@GetMapping("/user/getfoodbyid/{id}")
+	@Operation(summary = "Traer todos los alimentos de un usuario" , description = " ... ")
+	public ResponseEntity<?> getfoodbyid(@PathVariable long id){
+		FoodModel food = foodService.findModelById(id);
+		
+		return ResponseEntity.ok(food);
+		
+	}
+	
 	//Traer todos los alimentos de un usuario
 	@GetMapping("/user/getalluserfood")
 	@Operation(summary = "Traer todos los alimentos de un usuario" , description = " ... ")
@@ -142,6 +148,27 @@ public class RestFood {
 		}
 		else
 			return ResponseEntity.noContent().build();
+	}
+	
+	@GetMapping("/user/getfoodsbyids")
+	@Operation(summary = "List all foods by IDs", description = "...")
+	public ResponseEntity<?> listAll(@RequestParam List<Integer> ids) {
+		List<FoodModel> foodList = new ArrayList<>();
+		System.out.println(ids);
+		List<Long> idFoodLong = ids.stream()
+		        .filter(Objects::nonNull) // Filtrar elementos no nulos
+		        .map(Long::valueOf)
+		        .collect(Collectors.toList());
+		if (idFoodLong.isEmpty()) {
+		    // Manejar el caso cuando la lista está vacía
+		    // Por ejemplo, devolver una respuesta con estado 400 Bad Request
+		    return ResponseEntity.badRequest().body("La lista de ID de recetas está vacía");
+		}
+		for (Long FoodL : idFoodLong) {
+			foodList.add(foodService.findModelById(FoodL));
+			    // Realiza las operaciones necesarias con los datos de recipe y food
+			}
+		return ResponseEntity.ok().body(foodList);
 	}
 	
 	//Comprobar si el alimento con ese codigo de barra existe en la bbdd
@@ -193,5 +220,6 @@ public class RestFood {
 			
 			return ResponseEntity.noContent().build();		
 		}
+		
 }
       

@@ -1,26 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:nutrigains_front/models/food_model.dart';
 import 'package:nutrigains_front/models/recipe_model.dart';
+import 'package:nutrigains_front/models/recipeList_model.dart';
+import 'package:nutrigains_front/services/food_service.dart';
 import 'package:nutrigains_front/services/meal_service.dart';
 import 'package:nutrigains_front/services/recipeList_service.dart';
+import 'package:nutrigains_front/services/recipe_service.dart';
+import 'package:nutrigains_front/widgets/CustomIconButton.dart';
 import 'package:nutrigains_front/widgets/CustomToast.dart';
-
-import '../services/recipe_service.dart';
-import '../widgets/CustomIconButton.dart';
 import '../widgets/GenericBottomNavigationBar.dart';
 
 class RecipeScreen extends StatefulWidget {
   const RecipeScreen({Key? key}) : super(key: key);
 
   @override
-  State<RecipeScreen> createState() => _recipeScreen();
+  State<RecipeScreen> createState() => _RecipeScreenState();
 }
 
-class _recipeScreen extends State<RecipeScreen> {
+class _RecipeScreenState extends State<RecipeScreen> {
   List<RecipeModel> recipeList = [];
+  List<RecipeListModel> recipeListM = [];
+  List<FoodModel> foodList = [];
+
+  List<int> foodIds = [];
+  List<int> recipeIds = [];
   bool isLoading = true;
   List<RecipeModel> elementosSeleccionados = [];
 
   int _currentIndex = 1;
+
   void _onNavBarItemTapped(int index) {
     setState(() {
       _currentIndex = index;
@@ -36,13 +44,22 @@ class _recipeScreen extends State<RecipeScreen> {
     }
   }
 
+  final Map<int, FoodModel> cachedFoods = {};
+
   @override
   void initState() {
     super.initState();
     initializeData();
   }
 
-  getAllUserRecipes() async {
+  Future<void> initializeData() async {
+    await getAllUserRecipes();
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  Future<void> getAllUserRecipes() async {
     List<RecipeModel> list = await RecipeService().getalluserrecipe();
     setState(() {
       recipeList = list;
@@ -50,14 +67,71 @@ class _recipeScreen extends State<RecipeScreen> {
     });
   }
 
-  Future<void> initializeData() async {
-    getAllUserRecipes();
-    setState(() {
-      isLoading = false;
-    });
+  Future<FoodModel> getFoodByid(int idfood) async {
+    if (cachedFoods.containsKey(idfood)) {
+      return cachedFoods[idfood]!;
+    } else {
+      FoodModel food = await FoodService().getFoodById(idfood);
+      cachedFoods[idfood] = food;
+      return food;
+    }
   }
 
+  Future<List<RecipeListModel>> getFoods(int recipeId) async {
+    List<RecipeListModel> foods =
+        await FoodService().getFoodsByIdRecipe(recipeId);
+    return foods;
+  }
+
+  Widget buildFoodFutureBuilder(RecipeListModel food) {
+    return FutureBuilder<FoodModel>(
+      future: getFoodByid(food.idFood),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (snapshot.hasData) {
+          FoodModel foodModel = snapshot.data!;
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '${food.grams}g ',
+                textAlign: TextAlign.left,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                  // Agrega otros estilos según tus preferencias
+                ),
+              ),
+              Text(
+                foodModel.name,
+                textAlign: TextAlign.left,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                  // Agrega otros estilos según tus preferencias
+                ),
+              ),
+            ],
+          );
+        } else {
+          return const Text('No food available');
+        }
+      },
+    );
+  }
+
+  Widget _buildLoadingScreen() {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final bool isSelectedEmpty = elementosSeleccionados.isEmpty;
     return Scaffold(
       backgroundColor: Theme.of(context).canvasColor,
       body: isLoading
@@ -70,10 +144,10 @@ class _recipeScreen extends State<RecipeScreen> {
                     child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 20),
                       child: GridView.count(
-                        crossAxisCount: 2,
-                        crossAxisSpacing:
-                            20.0, // Espacio vertical entre los elementos
+                        crossAxisCount: 1,
+                        crossAxisSpacing: 20.0,
                         mainAxisSpacing: 20.0,
+                        childAspectRatio: 3,
                         children: recipeList.map((data) {
                           bool isSelected =
                               elementosSeleccionados.contains(data);
@@ -92,17 +166,73 @@ class _recipeScreen extends State<RecipeScreen> {
                                   ? Colors.amber
                                   : Theme.of(context).cardColor,
                               child: ListTile(
-                                title: Text(data.name),
+                                title: Text(
+                                  data.name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20.0,
+                                    // Agrega otros estilos según tus preferencias
+                                  ),
+                                ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                        'Kcal: ${data.kcal.toStringAsFixed(0)}'),
-                                    Text(
-                                        'Carbohydrates: ${data.carbohydrates.toStringAsFixed(0)}'),
-                                    Text(
-                                        'Protein: ${data.protein.toStringAsFixed(0)}'),
-                                    // Agrega más widgets Text o cualquier otro widget necesario para mostrar la información adicional
+                                    const SizedBox(
+                                      height: 10.0,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Kcal: ${data.kcal.toStringAsFixed(0)}',
+                                              ),
+                                              Text(
+                                                'Carbohydrates: ${data.carbohydrates.toStringAsFixed(0)}',
+                                              ),
+                                              Text(
+                                                'Protein: ${data.protein.toStringAsFixed(0)}',
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Builder(builder: (context) {
+                                          return FutureBuilder<
+                                              List<RecipeListModel>>(
+                                            future: getFoods(data.id),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState ==
+                                                  ConnectionState.waiting) {
+                                                return const CircularProgressIndicator();
+                                              } else if (snapshot.hasError) {
+                                                return Text(
+                                                    'Error: ${snapshot.error}');
+                                              } else if (snapshot.hasData) {
+                                                List<RecipeListModel> foods =
+                                                    snapshot.data!;
+                                                return Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    for (var food in foods)
+                                                      buildFoodFutureBuilder(
+                                                          food),
+                                                  ],
+                                                );
+                                              } else {
+                                                return const Text(
+                                                    'No foods available');
+                                              }
+                                            },
+                                          );
+                                        }),
+                                      ],
+                                    ),
                                   ],
                                 ),
                               ),
@@ -120,28 +250,29 @@ class _recipeScreen extends State<RecipeScreen> {
         onTap: _onNavBarItemTapped,
       ),
       floatingActionButton: Align(
-          alignment: Alignment.bottomCenter,
+        alignment: Alignment.bottomCenter,
+        child: Visibility(
+          visible:
+              !isSelectedEmpty, // Mostrar solo cuando isSelectedEmpty es falso
           child: Container(
+            width: double.infinity, // Ocupar todo el ancho disponible
             margin: const EdgeInsets.symmetric(horizontal: 100.0),
-            width: MediaQuery.of(context).size.width * 1,
             child: CustomIconButton(
               icon: Icons.add,
               label: 'ADD MEAL',
               onPressed: () async {
                 for (var element in elementosSeleccionados) {
                   CustomToast.customToast(
-                      await MealService().newRecipeMeal(element.id), context);
+                    await MealService().newRecipeMeal(element.id),
+                    context,
+                  );
                 }
               },
             ),
-          )),
+          ),
+        ),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-    );
-  }
-
-  Widget _buildLoadingScreen() {
-    return const Center(
-      child: CircularProgressIndicator(),
     );
   }
 }

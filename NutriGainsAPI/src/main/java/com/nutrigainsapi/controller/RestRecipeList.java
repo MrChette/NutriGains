@@ -3,6 +3,7 @@ package com.nutrigainsapi.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +11,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nutrigainsapi.entity.Food;
 import com.nutrigainsapi.entity.Recipe;
+import com.nutrigainsapi.entity.RecipeList;
 import com.nutrigainsapi.model.FoodModel;
 import com.nutrigainsapi.model.RecipeListModel;
 import com.nutrigainsapi.model.RecipeModel;
@@ -111,6 +116,7 @@ public class RestRecipeList {
 	}
 	
 	
+	
 	//Borrar alimentos de una receta (que busque que coincidan el id recipe y el  id food)
 	@DeleteMapping("/user/delfoodofrecipe/{idrecipe}/{idfood}")
 	@Operation(summary = "Borrar alimentos de una receta" , description = " ... ")
@@ -118,7 +124,17 @@ public class RestRecipeList {
 			@PathVariable(name="idfood",required = true) long idfood){
 		RecipeListModel food = new RecipeListModel();
 		food = recipeListService.findModelById(null);
-	return null;
+	return ResponseEntity.ok(food);
+	}
+	
+	
+	@GetMapping("/user/getfoodsbyidrecipe/{idRecipe}")
+	@Operation(summary= "Devuelve la lista de recipelist que contienen esa lista de idRecipe")
+	public ResponseEntity<?> getfoodsbyidrecipe(@PathVariable(name="idRecipe",required = true) long idrecipe) {
+		List<RecipeListModel> recipeL = recipeListService.getListRecipesByRecipeId(idrecipe);
+
+		return ResponseEntity.ok(recipeL);
+		
 	}
 		
 

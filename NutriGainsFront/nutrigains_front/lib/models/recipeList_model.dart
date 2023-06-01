@@ -6,13 +6,15 @@ import 'dart:ffi';
 class RecipeListModel {
   RecipeListModel({
     required this.id,
-    required this.food_id,
-    required this.recipe_id,
+    required this.grams,
+    required this.idFood,
+    required this.idRecipe,
   });
 
-  Long id;
-  Long food_id;
-  Long recipe_id;
+  int id;
+  int grams;
+  int idFood;
+  int idRecipe;
 
   factory RecipeListModel.fromRawJson(String str) =>
       RecipeListModel.fromJson(json.decode(str));
@@ -22,13 +24,15 @@ class RecipeListModel {
   factory RecipeListModel.fromJson(Map<String, dynamic> json) =>
       RecipeListModel(
         id: json["id"],
-        food_id: json["food_id"],
-        recipe_id: json["recipe_id"],
+        grams: json["grams"],
+        idFood: json["idFood"],
+        idRecipe: json["idRecipe"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "food_id": food_id,
-        "recipe_id": recipe_id,
+        "grams": grams,
+        "idFood": idFood,
+        "idRecipe": idRecipe,
       };
 }

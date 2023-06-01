@@ -76,5 +76,10 @@ public class RecipeListServiceImpl implements GenericService<RecipeList,RecipeLi
 		return recipeListRepository.findAll().stream()
 				.map(c->transformToModel(c)).collect(Collectors.toList());
 	}
+	
+	public List<RecipeListModel> getListRecipesByRecipeId(long idRecipe) {
+        return recipeListRepository.findByidRecipe(idRecipe).stream()
+				.map(c->transformToModel(c)).collect(Collectors.toList());
+    }
 
 }

@@ -112,6 +112,8 @@ class _FoodScreenState extends State<FoodScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isSelectedEmpty = elementosSeleccionados.isEmpty;
+
     return Scaffold(
       body: isLoading
           ? _buildLoadingScreen()
@@ -120,49 +122,101 @@ class _FoodScreenState extends State<FoodScreen> {
               child: Column(
                 children: [
                   Expanded(
-                    child: FractionallySizedBox(
-                      heightFactor: 0.89,
-                      child: ListView.builder(
-                        itemCount: foodList.length,
-                        itemBuilder: (context, index) {
-                          final data = foodList[index];
-                          bool isSelected =
-                              elementosSeleccionados.contains(data);
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 8.0, horizontal: 16.0),
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  if (isSelected) {
-                                    elementosSeleccionados.remove(data);
-                                  } else {
-                                    elementosSeleccionados.add(data);
-                                  }
-                                });
-                              },
-                              child: Card(
-                                color: isSelected
-                                    ? Colors.amber
-                                    : Theme.of(context).cardColor,
-                                child: ListTile(
-                                  title: Text(data.name),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text('Kcal: ${data.kcal}'),
-                                      Text(
-                                          'Carbohydrates: ${data.carbohydrates}'),
-                                      Text('Protein: ${data.protein}'),
-                                    ],
+                    child: GridView.count(
+                      crossAxisCount: 1,
+                      crossAxisSpacing: 10.0,
+                      mainAxisSpacing: 10.0,
+                      childAspectRatio: 2,
+                      children:
+                          List.generate((foodList.length / 2).ceil(), (index) {
+                        final startIndex = index * 2;
+                        final endIndex = startIndex + 1;
+                        final rowData =
+                            foodList.sublist(startIndex, endIndex + 1);
+                        return Row(
+                          children: rowData.map((data) {
+                            bool isSelected =
+                                elementosSeleccionados.contains(data);
+                            return Expanded(
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    if (isSelected) {
+                                      elementosSeleccionados.remove(data);
+                                    } else {
+                                      elementosSeleccionados.add(data);
+                                    }
+                                  });
+                                },
+                                child: Card(
+                                  color: isSelected
+                                      ? Colors.amber
+                                      : Theme.of(context).cardColor,
+                                  child: ListTile(
+                                    title: Text(
+                                      data.name,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                    subtitle: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const SizedBox(
+                                              height: 30,
+                                            ),
+                                            Text(
+                                              "${data.kcal} - Kcal",
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                                // Otros atributos de estilo que desees aplicar
+                                              ),
+                                            ),
+                                            Text(
+                                              '${data.carbohydrates}  - Carbs',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                                // Otros atributos de estilo que desees aplicar
+                                              ),
+                                            ),
+                                            Text(
+                                              '${data.protein}  - Protein',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                                // Otros atributos de estilo que desees aplicar
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 15,
+                                        ),
+                                        Center(
+                                          child: IconButton(
+                                            icon: const Icon(Icons.delete),
+                                            onPressed: () {
+                                              // Aquí puedes agregar la lógica para el botón delete
+                                            },
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
+                            );
+                          }).toList(),
+                        );
+                      }),
                     ),
                   ),
                 ],
@@ -176,13 +230,9 @@ class _FoodScreenState extends State<FoodScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
-                  child: addSetGrams(context),
-                ),
+                if (!isSelectedEmpty) Expanded(child: addSetGrams(context)),
                 const SizedBox(width: 10.0),
-                Expanded(
-                  child: addMealButton(context),
-                ),
+                Expanded(child: addMealButton(context)),
               ],
             ),
           ],

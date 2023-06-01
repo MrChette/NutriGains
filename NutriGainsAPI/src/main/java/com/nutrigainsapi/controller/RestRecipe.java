@@ -171,10 +171,27 @@ public class RestRecipe {
 	@Operation(summary = "Añade una receta que no ha creado el usuario añadiendola a la lista de recetas del usuario")
 	public ResponseEntity<?> externalRecipe(@PathVariable(name="idrecipe", required = true) long idrecipe){
 		Recipe recipe = recipeService.findEntityById(idrecipe);
+		
+		
 		Long userId = userService.getUserId();
-		if(recipe.getUser().getId() == userId) {
-			return ResponseEntity.noContent().build();
-		}else {
+		
+		List<Recipe> userRecipes = recipeRepository.findByUserId(userId);
+		
+		boolean recipeExists = userRecipes.stream()
+	            .anyMatch(r -> r.getName().equals(recipe.getName()) &&
+	                    Double.compare(r.getKcal(), recipe.getKcal()) == 0 &&
+	                    Double.compare(r.getProtein(), recipe.getProtein()) == 0 &&
+	                    Double.compare(r.getFat(), recipe.getFat()) == 0 &&
+	                    Double.compare(r.getCarbohydrates(), recipe.getCarbohydrates()) == 0 &&
+	                    Double.compare(r.getSugar(), recipe.getSugar()) == 0 &&
+	                    Double.compare(r.getSalt(), recipe.getSalt()) == 0);
+		
+		
+		
+		if (recipeExists || recipe.getUser().getId() == userId) {
+	        // La receta con los mismos datos ya existe para el usuario actual, devuelve un error
+	        return ResponseEntity.badRequest().body("Ya existe una receta con los mismos datos para este usuario.");
+	    }else {
 			System.out.println(recipe.getId());
 			RecipeModel recipeModel = recipeService.transformToModel(recipe);
 			recipeModel.setId(0);

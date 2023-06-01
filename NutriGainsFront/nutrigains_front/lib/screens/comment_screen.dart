@@ -7,6 +7,7 @@ import '../models/comment_model.dart';
 import '../models/recipe_model.dart';
 import '../services/comment_service.dart';
 import '../widgets/CustomIconButton.dart';
+import '../widgets/CustomToast.dart';
 import '../widgets/GenericBottomNavigationBar.dart';
 
 class CommentScreen extends StatefulWidget {
@@ -117,10 +118,8 @@ class _CommentsScreenState extends State<CommentScreen> {
                 List<CommentModel> commentsForRecipe = listaComments
                     .where((comment) => comment.recipe_id == recipe.id)
                     .toList();
-                print('quepasaaa $recipeList');
-                print('quepasaaa $commentsForRecipe');
                 return Container(
-                  margin: EdgeInsets.fromLTRB(
+                  margin: const EdgeInsets.fromLTRB(
                       20, 10, 20, 10), // Utiliza el EdgeInsets personalizado
                   child: Card(
                     child: Padding(
@@ -143,8 +142,12 @@ class _CommentsScreenState extends State<CommentScreen> {
                               CustomIconButton(
                                 icon: Icons.add_shopping_cart_sharp,
                                 padding: EdgeInsets.all(3),
-                                onPressed: () {
-                                  RecipeService().addexternalRecipe(recipe.id);
+                                onPressed: () async {
+                                  CustomToast.customToast(
+                                      await RecipeService()
+                                          .addexternalRecipe(recipe.id),
+                                      context);
+
                                   // Acción a realizar cuando se presiona el botón
                                 },
                               ),

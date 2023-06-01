@@ -4,6 +4,7 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:nutrigains_front/models/food_model.dart';
 import 'package:nutrigains_front/models/meal_model.dart';
+import 'package:nutrigains_front/models/recipeList_model.dart';
 
 import '../widgets/ip.dart';
 import 'auth_service.dart';
@@ -150,6 +151,71 @@ class FoodService extends ChangeNotifier {
       return food;
     } else {
       throw Exception('Failed to load food');
+    }
+  }
+
+  Future<List<RecipeListModel>> getFoodsByIdRecipe(int idRecipe) async {
+    final url = Uri.http(_baseUrl, '/api/user/getfoodsbyidrecipe/$idRecipe');
+
+    String? token = await AuthService().getToken();
+
+    final response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      return List<RecipeListModel>.from(
+          jsonResponse.map((data) => RecipeListModel.fromJson(data)));
+    } else {
+      print(response.statusCode);
+      throw Exception('Failed to fetch recipes');
+    }
+  }
+
+  Future<FoodModel> getFoodById(int idFood) async {
+    final url = Uri.http(_baseUrl, '/api/user/getfoodbyid/$idFood');
+
+    String? token = await AuthService().getToken();
+
+    final response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      return FoodModel.fromJson(jsonResponse);
+    } else {
+      print(response.statusCode);
+      throw Exception('Failed to fetch food');
+    }
+  }
+
+  Future<List<FoodModel>> getFoodsByIds(List<int> idFood) async {
+    print(idFood);
+    final url = Uri.http(
+        _baseUrl, '/api/user/getfoodsbyids', {'ids': idFood.join(',')});
+
+    String? token = await AuthService().getToken();
+
+    final response = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization": "Bearer $token"
+    });
+
+    if (response.statusCode == 200) {
+      print('ok');
+      final jsonResponse = json.decode(response.body);
+      return List<FoodModel>.from(
+          jsonResponse.map((data) => FoodModel.fromJson(data)));
+    } else {
+      print(response.statusCode);
+      throw Exception('Failed to fetch recipes');
     }
   }
 }

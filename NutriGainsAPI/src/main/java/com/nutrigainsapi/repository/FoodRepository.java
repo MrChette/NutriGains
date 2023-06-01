@@ -15,5 +15,6 @@ public interface FoodRepository extends JpaRepository<Food,Serializable>{
 	public abstract Food findById(long id);
 	public abstract List<Food> findByUserId(Long userId);
 	public abstract Food findByBarcode(long barcode);
+	public abstract List<FoodModel> findAllByIdIn(List<Long> ids);
 
 }

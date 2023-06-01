@@ -67,5 +67,6 @@ public class RecipeServiceImpl implements GenericService<Recipe,RecipeModel,Long
 		return recipeRepository.findAll().stream()
 				.map(c->transformToModel(c)).collect(Collectors.toList());
 		}
+	
 
 }
