@@ -106,7 +106,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                 ),
               ),
               Text(
-                foodModel.name,
+                foodModel.name!,
                 textAlign: TextAlign.left,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,

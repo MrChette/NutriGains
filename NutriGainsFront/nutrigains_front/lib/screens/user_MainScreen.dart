@@ -441,7 +441,7 @@ Widget cardList(
                     children: [
                       Flexible(
                         child: Text(
-                          foodModel.name,
+                          foodModel.name!,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),

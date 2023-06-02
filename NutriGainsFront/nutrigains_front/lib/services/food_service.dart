@@ -124,8 +124,8 @@ class FoodService extends ChangeNotifier {
           foodsJson.map((foodJson) => FoodModel.fromJson(foodJson)).toList();
       return food;
     } else {
-      print(resp.statusCode);
-      throw Exception('Failed to load foods');
+      final List<FoodModel> food = [];
+      return food;
     }
   }
 
@@ -150,7 +150,8 @@ class FoodService extends ChangeNotifier {
       final FoodModel food = FoodModel.fromJson(foodJson);
       return food;
     } else {
-      throw Exception('Failed to load food');
+      final FoodModel food = FoodModel();
+      return food;
     }
   }
 
@@ -170,8 +171,9 @@ class FoodService extends ChangeNotifier {
       return List<RecipeListModel>.from(
           jsonResponse.map((data) => RecipeListModel.fromJson(data)));
     } else {
-      print(response.statusCode);
-      throw Exception('Failed to fetch recipes');
+      List<RecipeListModel> emptyRecipe = [];
+      print('error getfooodsbyidrecipe ${response.statusCode}');
+      return emptyRecipe;
     }
   }
 
@@ -190,7 +192,7 @@ class FoodService extends ChangeNotifier {
       final jsonResponse = json.decode(response.body);
       return FoodModel.fromJson(jsonResponse);
     } else {
-      print(response.statusCode);
+      print('error getfoodbyid ${response.statusCode}');
       throw Exception('Failed to fetch food');
     }
   }
@@ -214,7 +216,7 @@ class FoodService extends ChangeNotifier {
       return List<FoodModel>.from(
           jsonResponse.map((data) => FoodModel.fromJson(data)));
     } else {
-      print(response.statusCode);
+      print('error getfoodsbyids ${response.statusCode}');
       throw Exception('Failed to fetch recipes');
     }
   }

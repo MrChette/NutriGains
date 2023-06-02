@@ -132,8 +132,11 @@ public class RestRecipeList {
 	@Operation(summary= "Devuelve la lista de recipelist que contienen esa lista de idRecipe")
 	public ResponseEntity<?> getfoodsbyidrecipe(@PathVariable(name="idRecipe",required = true) long idrecipe) {
 		List<RecipeListModel> recipeL = recipeListService.getListRecipesByRecipeId(idrecipe);
-
-		return ResponseEntity.ok(recipeL);
+		
+		if(!recipeL.isEmpty())
+			return ResponseEntity.ok(recipeL);
+		else
+			return (ResponseEntity<?>) ResponseEntity.EMPTY;
 		
 	}
 		

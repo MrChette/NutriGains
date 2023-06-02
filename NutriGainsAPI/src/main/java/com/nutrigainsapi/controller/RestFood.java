@@ -42,184 +42,183 @@ import io.swagger.v3.oas.annotations.Operation;
 @RestController
 @RequestMapping("/api")
 public class RestFood {
-	
+
 	@Autowired
 	@Qualifier("foodServiceImpl")
-	private GenericService<Food,FoodModel,Long> foodService;
-	
+	private GenericService<Food, FoodModel, Long> foodService;
+
 	@Autowired
 	@Qualifier("foodRepository")
 	private FoodRepository foodRepository;
-	
+
 	@Autowired
 	@Qualifier("userService")
 	private UserService userService;
-	
-	//Crear un alimento
+
+	// Crear un alimento
 	@PostMapping("/user/newfood")
-	@Operation(summary = "Crear un alimento" , description = " ... ")
-	public ResponseEntity<?> createFood(@RequestBody FoodModel foodModel){
+	@Operation(summary = "Crear un alimento", description = " ... ")
+	public ResponseEntity<?> createFood(@RequestBody FoodModel foodModel) {
 		foodModel.setIdUser(userService.getUserId());
 		System.out.println(foodModel);
 		foodService.addEntity(foodModel);
 		return ResponseEntity.status(HttpStatus.CREATED).body(foodModel);
 	}
-	
-	//Actualizar alimento
+
+	// Actualizar alimento
 	@PutMapping("/user/editfood/{idfood}")
-	@Operation(summary = "Actualizar alimento" , description = " ... ")
-	public ResponseEntity<?> editFood(@PathVariable(name="idfood",required = true)long idfood,
-			@RequestBody FoodModel foodModel){
-		boolean exist = foodService.findEntityById(idfood)!=null;
-		if(exist) {
+	@Operation(summary = "Actualizar alimento", description = " ... ")
+	public ResponseEntity<?> editFood(@PathVariable(name = "idfood", required = true) long idfood,
+			@RequestBody FoodModel foodModel) {
+		boolean exist = foodService.findEntityById(idfood) != null;
+		if (exist) {
 			FoodModel fm = foodService.findModelById(idfood);
-			
+
 			Class<?> claseObjeto2 = foodModel.getClass();
 			Set<String> camposExcluidos = new HashSet<>(Arrays.asList("id", "idUser"));
 			Field[] campos = claseObjeto2.getDeclaredFields();
 			for (Field campo : campos) {
-			    campo.setAccessible(true);
-			    if (!camposExcluidos.contains(campo.getName())) {
-			        try {
-			            Object valor = campo.get(foodModel);
-			            campo.set(fm, valor);
-			        } catch (IllegalAccessException e) {
-			            e.printStackTrace();
-			        }
-			    }
+				campo.setAccessible(true);
+				if (!camposExcluidos.contains(campo.getName())) {
+					try {
+						Object valor = campo.get(foodModel);
+						campo.set(fm, valor);
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					}
+				}
 			}
-			
+
 			foodService.updateEntity(fm);
 			return ResponseEntity.ok(fm);
-		}
-		else
+		} else
 			return ResponseEntity.noContent().build();
 	}
-	
-	//Eliminar alimento
+
+	// Eliminar alimento
 	@DeleteMapping("/user/deletefood/{idfood}")
-	@Operation(summary = "Eliminar alimento" , description = " ... ")
-	public ResponseEntity<?> deleteFood(@PathVariable long idfood){
+	@Operation(summary = "Eliminar alimento", description = " ... ")
+	public ResponseEntity<?> deleteFood(@PathVariable long idfood) {
 		boolean deleted = foodService.removeEntity(idfood);
-		if(deleted)
+		if (deleted)
 			return ResponseEntity.ok().build();
 		else
 			return ResponseEntity.noContent().build();
 	}
-	
+
 	@GetMapping("/user/getfoodbyid/{id}")
-	@Operation(summary = "Traer todos los alimentos de un usuario" , description = " ... ")
-	public ResponseEntity<?> getfoodbyid(@PathVariable long id){
+	@Operation(summary = "Traer todos los alimentos de un usuario", description = " ... ")
+	public ResponseEntity<?> getfoodbyid(@PathVariable long id) {
 		FoodModel food = foodService.findModelById(id);
-		
+
 		return ResponseEntity.ok(food);
-		
+
 	}
-	
-	//Traer todos los alimentos de un usuario
+
+	// Traer todos los alimentos de un usuario
 	@GetMapping("/user/getalluserfood")
-	@Operation(summary = "Traer todos los alimentos de un usuario" , description = " ... ")
-	public ResponseEntity<?> getFoodByUser(){
-		boolean exist = foodRepository.findByUserId(userService.getUserId())!=null;
+	@Operation(summary = "Traer todos los alimentos de un usuario", description = " ... ")
+	public ResponseEntity<?> getFoodByUser() {
+		boolean exist = foodRepository.findByUserId(userService.getUserId()) != null;
 		System.out.println(exist);
 		if (exist) {
-		List<Food> userFoods = foodRepository.findByUserId(userService.getUserId());
-		
-		List<FoodModel> modelFoods = new ArrayList<>();
-		//System.out.println("FOODMODEL");
-		for(Food x : userFoods) {
-			//System.out.println(x.toString());
-			modelFoods.add(foodService.transformToModel(x));
-		}
-		return ResponseEntity.ok(modelFoods);
-		}
-		else
+			List<Food> userFoods = foodRepository.findByUserId(userService.getUserId());
+			if (!userFoods.isEmpty()) {
+				List<FoodModel> modelFoods = new ArrayList<>();
+				// System.out.println("FOODMODEL");
+				for (Food x : userFoods) {
+					// System.out.println(x.toString());
+					modelFoods.add(foodService.transformToModel(x));
+				}
+				return ResponseEntity.ok(modelFoods);
+			} else {
+				System.out.println("Is EMPTY");
+				return ResponseEntity.noContent().build();
+			}
+		} else
 			return ResponseEntity.noContent().build();
-		
+
 	}
-	
+
 	@GetMapping("/user/getfood/{idfood}")
-	@Operation(summary = "Get food by id" , description = " ... ")
-	public ResponseEntity<?> getFood(@PathVariable(name="idfood",required=true) long idfood){
-		boolean exist = foodService.findEntityById(idfood)!=null;
-		if(exist) {
+	@Operation(summary = "Get food by id", description = " ... ")
+	public ResponseEntity<?> getFood(@PathVariable(name = "idfood", required = true) long idfood) {
+		boolean exist = foodService.findEntityById(idfood) != null;
+		if (exist) {
 			FoodModel fm = foodService.findModelById(idfood);
 			return ResponseEntity.accepted().body(fm);
-		}
-		else
+		} else
 			return ResponseEntity.noContent().build();
 	}
-	
+
 	@GetMapping("/user/getfoodsbyids")
 	@Operation(summary = "List all foods by IDs", description = "...")
 	public ResponseEntity<?> listAll(@RequestParam List<Integer> ids) {
 		List<FoodModel> foodList = new ArrayList<>();
 		System.out.println(ids);
-		List<Long> idFoodLong = ids.stream()
-		        .filter(Objects::nonNull) // Filtrar elementos no nulos
-		        .map(Long::valueOf)
-		        .collect(Collectors.toList());
+		List<Long> idFoodLong = ids.stream().filter(Objects::nonNull) // Filtrar elementos no nulos
+				.map(Long::valueOf).collect(Collectors.toList());
 		if (idFoodLong.isEmpty()) {
-		    // Manejar el caso cuando la lista está vacía
-		    // Por ejemplo, devolver una respuesta con estado 400 Bad Request
-		    return ResponseEntity.badRequest().body("La lista de ID de recetas está vacía");
+			// Manejar el caso cuando la lista está vacía
+			// Por ejemplo, devolver una respuesta con estado 400 Bad Request
+			return ResponseEntity.badRequest().body("La lista de ID de recetas está vacía");
 		}
 		for (Long FoodL : idFoodLong) {
 			foodList.add(foodService.findModelById(FoodL));
-			    // Realiza las operaciones necesarias con los datos de recipe y food
-			}
+			// Realiza las operaciones necesarias con los datos de recipe y food
+		}
 		return ResponseEntity.ok().body(foodList);
 	}
-	
-	//Comprobar si el alimento con ese codigo de barra existe en la bbdd
+
+	// Comprobar si el alimento con ese codigo de barra existe en la bbdd
 	@GetMapping("/user/getfoodbybarcode/{barcode}")
-	@Operation(summary = "Comprobar si el alimento con ese codigo de barra existe en la bbdd" , description = " ... ")
-	public ResponseEntity<?> getFoodByBarCode(@PathVariable(name="barcode",required = true) long barcode){
-		boolean exist = foodRepository.findByBarcode(barcode)!=null;
+	@Operation(summary = "Comprobar si el alimento con ese codigo de barra existe en la bbdd", description = " ... ")
+	public ResponseEntity<?> getFoodByBarCode(@PathVariable(name = "barcode", required = true) long barcode) {
+		boolean exist = foodRepository.findByBarcode(barcode) != null;
 		if (exist) {
 			FoodModel food = foodService.transformToModel(foodRepository.findByBarcode(barcode));
 			return ResponseEntity.ok(food);
-		}
-		else {
+		} else {
 			return ResponseEntity.noContent().build();
 		}
-		}
-		
-		
-		//Peticion get API OpenFoodFacts by BARCODE
-		@GetMapping("/user/foodbyapi/{barcode}")
-		@Operation(summary = "Peticion get API OpenFoodFacts by BARCODE y lo añade a la BBDD" , description = " ... ")
-		public ResponseEntity<?> foodbyapi(@PathVariable(name="barcode",required = true) long barcode) throws JsonMappingException, JsonProcessingException{
-			
-			ResponseEntity<?> response = getFoodByBarCode(barcode);
-			if(response.getStatusCodeValue()==204) {
-				RestTemplate restTemplate = new RestTemplate();
-				String apiUrl = "https://world.openfoodfacts.org/api/v2/product/"+barcode+"?fields=product_name,nutriments";
-				//String credentials = "off:off";
-				//String encodedCredentials = new String(Base64.getEncoder().encode(credentials.getBytes()));
-				HttpHeaders headers = new HttpHeaders();
-				//headers.add("Authorization", "Basic " + encodedCredentials);
-				HttpEntity<String> entity = new HttpEntity<>(headers);
-				
-				Product product = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, Product.class).getBody();
-				//System.out.println(product.toString());
-				FoodModel food = new FoodModel();
-				food.setName(product.getProduct().getProduct_name());
-				food.setBarcode(Long.parseLong(product.getCode()));
-				food.setKcal(product.getProduct().getNutriments().getEnergykcal());
-				food.setProtein(product.getProduct().getNutriments().getProteins());
-				food.setFat(product.getProduct().getNutriments().getFat());
-				food.setCarbohydrates(product.getProduct().getNutriments().getCarbohydrates());
-				food.setSugar(product.getProduct().getNutriments().getSugars());
-				food.setSalt(product.getProduct().getNutriments().getSalt());
-				food.setIdUser(userService.getUserId());
-				foodService.addEntity(food);
+	}
+
+	// Peticion get API OpenFoodFacts by BARCODE
+	@GetMapping("/user/foodbyapi/{barcode}")
+	@Operation(summary = "Peticion get API OpenFoodFacts by BARCODE y lo añade a la BBDD", description = " ... ")
+	public ResponseEntity<?> foodbyapi(@PathVariable(name = "barcode", required = true) long barcode)
+			throws JsonMappingException, JsonProcessingException {
+
+		ResponseEntity<?> response = getFoodByBarCode(barcode);
+		if (response.getStatusCodeValue() == 204) {
+			RestTemplate restTemplate = new RestTemplate();
+			String apiUrl = "https://world.openfoodfacts.org/api/v2/product/" + barcode
+					+ "?fields=product_name,nutriments";
+			// String credentials = "off:off";
+			// String encodedCredentials = new
+			// String(Base64.getEncoder().encode(credentials.getBytes()));
+			HttpHeaders headers = new HttpHeaders();
+			// headers.add("Authorization", "Basic " + encodedCredentials);
+			HttpEntity<String> entity = new HttpEntity<>(headers);
+
+			Product product = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, Product.class).getBody();
+			// System.out.println(product.toString());
+			FoodModel food = new FoodModel();
+			food.setName(product.getProduct().getProduct_name());
+			food.setBarcode(Long.parseLong(product.getCode()));
+			food.setKcal(product.getProduct().getNutriments().getEnergykcal());
+			food.setProtein(product.getProduct().getNutriments().getProteins());
+			food.setFat(product.getProduct().getNutriments().getFat());
+			food.setCarbohydrates(product.getProduct().getNutriments().getCarbohydrates());
+			food.setSugar(product.getProduct().getNutriments().getSugars());
+			food.setSalt(product.getProduct().getNutriments().getSalt());
+			food.setIdUser(userService.getUserId());
+			foodService.addEntity(food);
 			return ResponseEntity.ok(food);
-			
-			}	
-			
-			return ResponseEntity.noContent().build();		
+
 		}
-		
+
+		return ResponseEntity.noContent().build();
+	}
+
 }
-      

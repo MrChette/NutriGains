@@ -3,8 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:nutrigains_front/models/food_model.dart';
 import '../services/food_service.dart';
 import '../services/meal_service.dart';
@@ -154,7 +152,7 @@ class _FoodScreenState extends State<FoodScreen> {
                                       : Theme.of(context).cardColor,
                                   child: ListTile(
                                     title: Text(
-                                      data.name,
+                                      data.name!,
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 20,
@@ -197,7 +195,7 @@ class _FoodScreenState extends State<FoodScreen> {
                                             ),
                                           ],
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           height: 15,
                                         ),
                                         Center(
@@ -273,7 +271,7 @@ class _FoodScreenState extends State<FoodScreen> {
                           children: [
                             Expanded(
                               child: Text(
-                                elemento.name,
+                                elemento.name!,
                                 textAlign: TextAlign.left,
                               ),
                             ),

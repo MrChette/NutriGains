@@ -5,7 +5,7 @@ import 'dart:ffi';
 
 class FoodModel {
   int? id;
-  String name;
+  String? name;
   int? barcode;
   double? carbohydrates;
   double? fat;
@@ -16,7 +16,7 @@ class FoodModel {
 
   FoodModel({
     this.id,
-    required this.name,
+    this.name,
     this.barcode,
     this.carbohydrates,
     this.fat,
