@@ -95,14 +95,16 @@ class _FoodScreenState extends State<FoodScreen> {
           label: 'SCAN BARCODE',
           onPressed: () async {
             await scanBarcodeNormal();
-            var result = await FoodService().findFoodinBbdd(_scanBarcode);
-            if (result == null) {
-              CustomToast.customToast(
-                  await FoodService().newFoodByApi(_scanBarcode), context);
-              Navigator.pop(context);
-              initializeData();
-            } else {
-              CustomToast.customToast('You already have this food', context);
+            if (_scanBarcode != -1) {
+              var result = await FoodService().findFoodinBbdd(_scanBarcode);
+              if (result == null) {
+                CustomToast.customToast(
+                    await FoodService().newFoodByApi(_scanBarcode), context);
+                Navigator.pop(context);
+                initializeData();
+              } else {
+                CustomToast.customToast('You already have this food', context);
+              }
             }
           },
         ),
