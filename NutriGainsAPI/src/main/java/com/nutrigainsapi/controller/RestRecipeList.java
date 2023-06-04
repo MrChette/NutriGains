@@ -118,15 +118,15 @@ public class RestRecipeList {
 	
 	
 	//Borrar alimentos de una receta (que busque que coincidan el id recipe y el  id food)
-	@DeleteMapping("/user/delfoodofrecipe/{idrecipe}/{idfood}")
-	@Operation(summary = "Borrar alimentos de una receta" , description = " ... ")
-	public ResponseEntity<?> deleteFoodOfRecipe(@PathVariable(name="idrecipe",required = true) long idrecipe,
-			@PathVariable(name="idfood",required = true) long idfood){
-		RecipeListModel food = new RecipeListModel();
-		food = recipeListService.findModelById(null);
-	return ResponseEntity.ok(food);
-	}
-	
+//	@DeleteMapping("/user/delfoodofrecipe/{idrecipe}/{idfood}")
+//	@Operation(summary = "Borrar alimentos de una receta" , description = " ... ")
+//	public ResponseEntity<?> deleteFoodOfRecipe(@PathVariable(name="idrecipe",required = true) long idrecipe,
+//			@PathVariable(name="idfood",required = true) long idfood){
+//		RecipeListModel food = new RecipeListModel();
+//		food = recipeListService.findModelById(null);
+//	return ResponseEntity.ok(food);
+//	}
+//	
 	
 	@GetMapping("/user/getfoodsbyidrecipe/{idRecipe}")
 	@Operation(summary= "Devuelve la lista de recipelist que contienen esa lista de idRecipe")

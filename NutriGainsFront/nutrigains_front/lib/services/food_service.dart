@@ -80,7 +80,7 @@ class FoodService extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final resp = await http.delete(url, headers: {
+    final resp = await http.put(url, headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       "Authorization": "Bearer $token"

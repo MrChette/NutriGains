@@ -52,7 +52,6 @@ public class RestComment {
 			@RequestBody CommentModel commentModel){
 		commentModel.setIdRecipe(idrecipe);
 		commentModel.setIdUser(userService.getUserId());
-		System.out.println(commentModel);
 		commentService.addEntity(commentModel);
 	return ResponseEntity.status(HttpStatus.CREATED).body(commentModel);		
 	}

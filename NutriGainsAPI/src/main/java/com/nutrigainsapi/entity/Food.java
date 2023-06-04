@@ -32,7 +32,7 @@ public class Food extends NutritionalData{
 	private int visible;
 
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "food",orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "food")
 	private List<RecipeList> recipes = new ArrayList<>();
 	
 	@ManyToOne

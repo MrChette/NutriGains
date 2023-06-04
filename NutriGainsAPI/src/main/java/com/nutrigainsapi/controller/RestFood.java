@@ -96,19 +96,19 @@ public class RestFood {
 	}
 
 	// Eliminar alimento
-	@DeleteMapping("/user/deletefood/{idfood}")
+	@PutMapping("/user/deletefood/{idfood}")
 	@Operation(summary = "Eliminar alimento", description = " ... ")
 	public ResponseEntity<?> deleteFood(@PathVariable long idfood) {
-	    Long id = userService.getUserId();
-	    FoodModel food = foodService.findModelById(idfood);
-	    if (food.getIdUser() == id) {
-	        food.setVisible(0); // Establecer visible en 0 en lugar de eliminar
-	        Food updated = foodService.updateEntity(food); // Actualizar el objeto FoodModel en la base de datos
-	        return ResponseEntity.ok().build();
+		Long id = userService.getUserId();
+		FoodModel food = foodService.findModelById(idfood);
+		if (food.getIdUser() == id) {
+			food.setVisible(0); // Establecer visible en 0 en lugar de eliminar
+			foodService.updateEntity(food); 
+			return ResponseEntity.ok().build();
 
-	    } else {
-	        return ResponseEntity.internalServerError().build();
-	    }
+		} else {
+			return ResponseEntity.internalServerError().build();
+		}
 	}
 
 	@GetMapping("/user/getfoodbyid/{id}")
@@ -125,7 +125,6 @@ public class RestFood {
 	@Operation(summary = "Traer todos los alimentos de un usuario", description = " ... ")
 	public ResponseEntity<?> getFoodByUser() {
 		boolean exist = foodRepository.findByUserId(userService.getUserId()) != null;
-		System.out.println(exist);
 		if (exist) {
 			List<Food> userFoods = foodRepository.findByUserId(userService.getUserId());
 			if (!userFoods.isEmpty()) {
@@ -133,10 +132,10 @@ public class RestFood {
 				// System.out.println("FOODMODEL");
 				for (Food x : userFoods) {
 					// System.out.println(x.toString());
-					if(x.getVisible()==1)
+					if (x.getVisible() == 1)
 						modelFoods.add(foodService.transformToModel(x));
 				}
-				System.out.println("perfecto");
+				System.out.println("getalluserfood perfecto");
 				return ResponseEntity.ok(modelFoods);
 			} else {
 				System.out.println("Is EMPTY");
