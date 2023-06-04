@@ -71,7 +71,7 @@ class _HomeScreenState extends State<userMainScreen> {
       }
       if (recipeIndex != null) {
         print(recipeIndex);
-        recipeList.removeAt(recipeIndex);
+        recipeList.removeAt(recipeIndex - foodList.length);
       }
       todayNutriments = todayNutrimentsEnd;
     });
