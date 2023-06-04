@@ -143,103 +143,114 @@ class _RecipeScreenState extends State<RecipeScreen> {
                   Expanded(
                     child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 20),
-                      child: GridView.count(
-                        crossAxisCount: 1,
-                        crossAxisSpacing: 20.0,
-                        mainAxisSpacing: 20.0,
-                        childAspectRatio: 3,
-                        children: recipeList.map((data) {
-                          bool isSelected =
-                              elementosSeleccionados.contains(data);
-                          return InkWell(
-                            onTap: () {
-                              setState(() {
-                                if (isSelected) {
-                                  elementosSeleccionados.remove(data);
-                                } else {
-                                  elementosSeleccionados.add(data);
-                                }
-                              });
-                            },
-                            child: Card(
-                              color: isSelected
-                                  ? Colors.amber
-                                  : Theme.of(context).cardColor,
-                              child: ListTile(
-                                title: Text(
-                                  data.name,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20.0,
-                                    // Agrega otros estilos según tus preferencias
-                                  ),
-                                ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(
-                                      height: 10.0,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                      child: recipeList.isEmpty
+                          ? Text(
+                              'No hay recetas disponibles') // Mostrar mensaje si recipeList está vacío
+                          : GridView.count(
+                              crossAxisCount: 1,
+                              crossAxisSpacing: 20.0,
+                              mainAxisSpacing: 20.0,
+                              childAspectRatio: 3,
+                              children: recipeList.map((data) {
+                                bool isSelected =
+                                    elementosSeleccionados.contains(data);
+                                return InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      if (isSelected) {
+                                        elementosSeleccionados.remove(data);
+                                      } else {
+                                        elementosSeleccionados.add(data);
+                                      }
+                                    });
+                                  },
+                                  child: Card(
+                                    color: isSelected
+                                        ? Colors.amber
+                                        : Theme.of(context).cardColor,
+                                    child: ListTile(
+                                      title: Text(
+                                        data.name,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20.0,
+                                          // Agrega otros estilos según tus preferencias
+                                        ),
+                                      ),
+                                      subtitle: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(
+                                            height: 10.0,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(
-                                                'Kcal: ${data.kcal.toStringAsFixed(0)}',
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      'Kcal: ${data.kcal.toStringAsFixed(0)}',
+                                                    ),
+                                                    Text(
+                                                      'Carbohydrates: ${data.carbohydrates.toStringAsFixed(0)}',
+                                                    ),
+                                                    Text(
+                                                      'Protein: ${data.protein.toStringAsFixed(0)}',
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                              Text(
-                                                'Carbohydrates: ${data.carbohydrates.toStringAsFixed(0)}',
-                                              ),
-                                              Text(
-                                                'Protein: ${data.protein.toStringAsFixed(0)}',
-                                              ),
+                                              Builder(builder: (context) {
+                                                return FutureBuilder<
+                                                    List<RecipeListModel>>(
+                                                  future: getFoods(data.id),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot
+                                                            .connectionState ==
+                                                        ConnectionState
+                                                            .waiting) {
+                                                      return const CircularProgressIndicator();
+                                                    } else if (snapshot
+                                                        .hasError) {
+                                                      return Text(
+                                                          'Error: ${snapshot.error}');
+                                                    } else if (snapshot
+                                                        .hasData) {
+                                                      List<RecipeListModel>
+                                                          foods =
+                                                          snapshot.data!;
+                                                      return Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          for (var food
+                                                              in foods)
+                                                            buildFoodFutureBuilder(
+                                                                food),
+                                                        ],
+                                                      );
+                                                    } else {
+                                                      return const Text(
+                                                          'No foods available');
+                                                    }
+                                                  },
+                                                );
+                                              }),
                                             ],
                                           ),
-                                        ),
-                                        Builder(builder: (context) {
-                                          return FutureBuilder<
-                                              List<RecipeListModel>>(
-                                            future: getFoods(data.id),
-                                            builder: (context, snapshot) {
-                                              if (snapshot.connectionState ==
-                                                  ConnectionState.waiting) {
-                                                return const CircularProgressIndicator();
-                                              } else if (snapshot.hasError) {
-                                                return Text(
-                                                    'Error: ${snapshot.error}');
-                                              } else if (snapshot.hasData) {
-                                                List<RecipeListModel> foods =
-                                                    snapshot.data!;
-                                                return Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: [
-                                                    for (var food in foods)
-                                                      buildFoodFutureBuilder(
-                                                          food),
-                                                  ],
-                                                );
-                                              } else {
-                                                return const Text(
-                                                    'No foods available');
-                                              }
-                                            },
-                                          );
-                                        }),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ],
-                                ),
-                              ),
+                                  ),
+                                );
+                              }).toList(),
                             ),
-                          );
-                        }).toList(),
-                      ),
                     ),
                   ),
                 ],

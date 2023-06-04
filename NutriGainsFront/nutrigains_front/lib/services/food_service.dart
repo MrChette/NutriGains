@@ -73,6 +73,29 @@ class FoodService extends ChangeNotifier {
     }
   }
 
+  Future<String> deleteFood(int id) async {
+    final url = Uri.http(_baseUrl, '/api/user/deletefood/$id');
+    String? token = await AuthService().getToken();
+
+    isLoading = true;
+    notifyListeners();
+
+    final resp = await http.delete(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization": "Bearer $token"
+    });
+
+    isLoading = false;
+    notifyListeners();
+    if (resp.statusCode == 200) {
+      return 'FOOD DELETED';
+    } else {
+      print(resp.statusCode);
+      return 'Opps, something wrong happened';
+    }
+  }
+
   Future findFoodinBbdd(int barcode) async {
     final url = Uri.http(_baseUrl, '/api/user/getfoodbybarcode/$barcode');
     String? token = await AuthService().getToken();

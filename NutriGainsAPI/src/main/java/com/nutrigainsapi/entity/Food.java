@@ -24,8 +24,12 @@ public class Food extends NutritionalData{
 	
 	@Column(name="barcode", unique = true, nullable = true)
 	private Long barcode;
+	
 	@Column(name="name", unique = true, nullable = false)
 	private String name;
+
+	@Column(name="visible", unique = false, nullable = false)
+	private int visible;
 
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "food",orphanRemoval = true)
@@ -39,14 +43,31 @@ public class Food extends NutritionalData{
 		super();
 	}
 
-	public Food(long id, Long barcode, String name,double kcal, double protein, double fat, double carbohydrates, 
-			double sugar, double salt,  List<RecipeList> recipes, User user) {
+	
+	
+	
+
+	public Food(double kcal, double protein, double fat, double carbohydrates, double sugar, double salt, long id,
+			Long barcode, String name, int visible, List<RecipeList> recipes, User user) {
 		super(kcal, protein, fat, carbohydrates, sugar, salt);
 		this.id = id;
 		this.barcode = barcode;
 		this.name = name;
+		this.visible = visible;
 		this.recipes = recipes;
 		this.user = user;
+	}
+
+
+
+
+
+	public int getVisible() {
+		return visible;
+	}
+
+	public void setVisible(int visible) {
+		this.visible = visible;
 	}
 
 	public long getId() {

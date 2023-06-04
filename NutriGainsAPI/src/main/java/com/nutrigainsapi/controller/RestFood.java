@@ -34,7 +34,6 @@ import com.nutrigainsapi.entity.Food;
 import com.nutrigainsapi.model.FoodModel;
 import com.nutrigainsapi.repository.FoodRepository;
 import com.nutrigainsapi.service.GenericService;
-import com.nutrigainsapi.serviceImpl.RecipeServiceImpl;
 import com.nutrigainsapi.serviceImpl.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,6 +59,7 @@ public class RestFood {
 	@Operation(summary = "Crear un alimento", description = " ... ")
 	public ResponseEntity<?> createFood(@RequestBody FoodModel foodModel) {
 		foodModel.setIdUser(userService.getUserId());
+		foodModel.setVisible(1);
 		System.out.println(foodModel);
 		foodService.addEntity(foodModel);
 		return ResponseEntity.status(HttpStatus.CREATED).body(foodModel);
@@ -99,11 +99,16 @@ public class RestFood {
 	@DeleteMapping("/user/deletefood/{idfood}")
 	@Operation(summary = "Eliminar alimento", description = " ... ")
 	public ResponseEntity<?> deleteFood(@PathVariable long idfood) {
-		boolean deleted = foodService.removeEntity(idfood);
-		if (deleted)
-			return ResponseEntity.ok().build();
-		else
-			return ResponseEntity.noContent().build();
+	    Long id = userService.getUserId();
+	    FoodModel food = foodService.findModelById(idfood);
+	    if (food.getIdUser() == id) {
+	        food.setVisible(0); // Establecer visible en 0 en lugar de eliminar
+	        Food updated = foodService.updateEntity(food); // Actualizar el objeto FoodModel en la base de datos
+	        return ResponseEntity.ok().build();
+
+	    } else {
+	        return ResponseEntity.internalServerError().build();
+	    }
 	}
 
 	@GetMapping("/user/getfoodbyid/{id}")
@@ -128,8 +133,10 @@ public class RestFood {
 				// System.out.println("FOODMODEL");
 				for (Food x : userFoods) {
 					// System.out.println(x.toString());
-					modelFoods.add(foodService.transformToModel(x));
+					if(x.getVisible()==1)
+						modelFoods.add(foodService.transformToModel(x));
 				}
+				System.out.println("perfecto");
 				return ResponseEntity.ok(modelFoods);
 			} else {
 				System.out.println("Is EMPTY");

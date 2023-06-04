@@ -55,6 +55,12 @@ class _FoodScreenState extends State<FoodScreen> {
     });
   }
 
+  deleteFood(int foodid, int index) async {
+    String response = await FoodService().deleteFood(foodid);
+    CustomToast.customToast(response, context);
+    getAllUserFood();
+  }
+
   Future<void> initializeData() async {
     await getAllUserFood();
 
@@ -72,10 +78,6 @@ class _FoodScreenState extends State<FoodScreen> {
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
     if (!mounted) return;
 
     setState(() {
@@ -119,102 +121,116 @@ class _FoodScreenState extends State<FoodScreen> {
               padding: const EdgeInsets.only(bottom: 40.0),
               child: Column(
                 children: [
-                  Expanded(
-                    child: GridView.count(
-                      crossAxisCount: 1,
-                      crossAxisSpacing: 10.0,
-                      mainAxisSpacing: 10.0,
-                      childAspectRatio: 2,
-                      children:
-                          List.generate((foodList.length / 2).ceil(), (index) {
-                        final startIndex = index * 2;
-                        final endIndex = startIndex + 1;
-                        final rowData =
-                            foodList.sublist(startIndex, endIndex + 1);
-                        return Row(
-                          children: rowData.map((data) {
-                            bool isSelected =
-                                elementosSeleccionados.contains(data);
-                            return Expanded(
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    if (isSelected) {
-                                      elementosSeleccionados.remove(data);
-                                    } else {
-                                      elementosSeleccionados.add(data);
-                                    }
-                                  });
-                                },
-                                child: Card(
-                                  color: isSelected
-                                      ? Colors.amber
-                                      : Theme.of(context).cardColor,
-                                  child: ListTile(
-                                    title: Text(
-                                      data.name!,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20,
+                  Visibility(
+                    visible: foodList.isNotEmpty,
+                    child: Expanded(
+                      child: GridView.count(
+                        crossAxisCount: 1,
+                        crossAxisSpacing: 10.0,
+                        mainAxisSpacing: 10.0,
+                        childAspectRatio: 2,
+                        children: List.generate((foodList.length / 2).ceil(),
+                            (index) {
+                          final startIndex = index * 2;
+                          final endIndex = startIndex + 1 < foodList.length
+                              ? startIndex + 1
+                              : startIndex;
+                          final rowData =
+                              foodList.sublist(startIndex, endIndex + 1);
+                          return Row(
+                            children: rowData.map((data) {
+                              bool isSelected =
+                                  elementosSeleccionados.contains(data);
+                              return Expanded(
+                                child: InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      if (isSelected) {
+                                        elementosSeleccionados.remove(data);
+                                      } else {
+                                        elementosSeleccionados.add(data);
+                                      }
+                                    });
+                                  },
+                                  child: Card(
+                                    color: isSelected
+                                        ? Colors.amber
+                                        : Theme.of(context).cardColor,
+                                    child: ListTile(
+                                      title: Text(
+                                        data.name!,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                        ),
                                       ),
-                                    ),
-                                    subtitle: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const SizedBox(
-                                              height: 30,
-                                            ),
-                                            Text(
-                                              "${data.kcal} - Kcal",
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                                // Otros atributos de estilo que desees aplicar
+                                      subtitle: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const SizedBox(
+                                                height: 30,
                                               ),
-                                            ),
-                                            Text(
-                                              '${data.carbohydrates}  - Carbs',
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                                // Otros atributos de estilo que desees aplicar
+                                              Text(
+                                                "${data.id} - - ${data.kcal} - Kcal",
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  // Otros atributos de estilo que desees aplicar
+                                                ),
                                               ),
-                                            ),
-                                            Text(
-                                              '${data.protein}  - Protein',
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                                // Otros atributos de estilo que desees aplicar
+                                              Text(
+                                                '${data.carbohydrates}  - Carbs',
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  // Otros atributos de estilo que desees aplicar
+                                                ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(
-                                          height: 15,
-                                        ),
-                                        Center(
-                                          child: IconButton(
-                                            icon: const Icon(Icons.delete),
-                                            onPressed: () {
-                                              // Aquí puedes agregar la lógica para el botón delete
-                                            },
+                                              Text(
+                                                '${data.protein}  - Protein',
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  // Otros atributos de estilo que desees aplicar
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        )
-                                      ],
+                                          const SizedBox(
+                                            height: 15,
+                                          ),
+                                          Center(
+                                            child: IconButton(
+                                              icon: const Icon(Icons.delete),
+                                              onPressed: () {
+                                                print(index + 1);
+                                                deleteFood(data.id!, index + 1);
+                                              },
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            );
-                          }).toList(),
-                        );
-                      }),
+                              );
+                            }).toList(),
+                          );
+                        }),
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: foodList.isEmpty,
+                    child: const Center(
+                      child: Text(
+                        "",
+                      ),
                     ),
                   ),
                 ],

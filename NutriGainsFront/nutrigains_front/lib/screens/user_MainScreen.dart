@@ -422,43 +422,46 @@ Widget cardList(
     shrinkWrap: true,
     itemCount: foodList.length + recipeList.length,
     itemBuilder: (context, index) {
+      int mealIndex;
       if (index < foodList.length) {
         final foodModel = foodList[index];
+        mealIndex =
+            todaymeals.indexWhere((meal) => meal.food_id == foodModel.id);
         return FractionallySizedBox(
-          widthFactor: 0.85, // 85% del ancho disponible
+          widthFactor: 0.85,
           child: Card(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
             ),
-            margin: const EdgeInsets.symmetric(
-                vertical: 10), // Separación vertical entre las tarjetas
+            margin: const EdgeInsets.symmetric(vertical: 10),
             child: SizedBox(
-              height: 90, // Ajusta la altura según tus necesidades
+              height: 90,
               child: ListTile(
                 contentPadding: const EdgeInsets.fromLTRB(16, 19, 16, 0),
                 title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          foodModel.name!,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        foodModel.name!,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(
-                        width: 11,
-                      ),
-                      Text("${foodModel.kcal!.toStringAsFixed(0)} Kcal")
-                    ]),
+                    ),
+                    const SizedBox(width: 11),
+                    Text(
+                      todaymeals[mealIndex].grams != null
+                          ? "${(foodModel.kcal! * todaymeals[mealIndex].grams! / 100).toStringAsFixed(0)} Kcal"
+                          : "Grams is null",
+                    ),
+                  ],
+                ),
                 trailing: IconButton(
                   icon: const Icon(Icons.delete),
                   onPressed: () {
-                    onDeleteMeal(todaymeals[index].id!, index,
-                        null); //! Logica del que llame al deleteMeals */
+                    onDeleteMeal(todaymeals[mealIndex].id!, index, null);
                   },
                 ),
-                //** */: Para mas widgets
               ),
             ),
           ),
@@ -466,40 +469,39 @@ Widget cardList(
       } else {
         final recipeIndex = index - foodList.length;
         final recipeModel = recipeList[recipeIndex];
+        mealIndex =
+            todaymeals.indexWhere((meal) => meal.recipe_id == recipeModel.id);
         return FractionallySizedBox(
-          widthFactor: 0.85, // 85% del ancho disponible
+          widthFactor: 0.85,
           child: Card(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
             ),
             margin: const EdgeInsets.symmetric(vertical: 10),
             child: SizedBox(
-              height: 90, // Ajusta la altura según tus necesidades
+              height: 90,
               child: ListTile(
                 contentPadding: const EdgeInsets.fromLTRB(16, 19, 16, 0),
                 title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          recipeModel.name,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        recipeModel.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(
-                        width: 11,
-                      ),
-                      Text("${recipeModel.kcal.toStringAsFixed(0)} Kcal")
-                    ]),
+                    ),
+                    const SizedBox(width: 11),
+                    Text("${recipeModel.kcal.toStringAsFixed(0)} Kcal"),
+                  ],
+                ),
                 trailing: IconButton(
                   icon: const Icon(Icons.delete),
                   onPressed: () {
-                    onDeleteMeal(todaymeals[index].id!, null,
-                        index); //! Logica del que llame al deleteMeals */
+                    onDeleteMeal(todaymeals[mealIndex].id!, null, index);
                   },
                 ),
-                //** */: Para mas widgets
               ),
             ),
           ),
