@@ -214,11 +214,13 @@ public class RestRecipe {
 	                    Double.compare(r.getFat(), recipe.getFat()) == 0 &&
 	                    Double.compare(r.getCarbohydrates(), recipe.getCarbohydrates()) == 0 &&
 	                    Double.compare(r.getSugar(), recipe.getSugar()) == 0 &&
-	                    Double.compare(r.getSalt(), recipe.getSalt()) == 0);
+	                    Double.compare(r.getSalt(), recipe.getSalt()) == 0 &&
+	                    Double.compare(r.getVisible(), recipe.getVisible()) == 1)
+	            ;
 		
 		
 		
-		if (recipeExists || recipe.getUser().getId() == userId) {
+		if (recipeExists && recipe.getUser().getId() == userId) {
 	        // La receta con los mismos datos ya existe para el usuario actual, devuelve un error
 	        return ResponseEntity.badRequest().body("Ya existe una receta con los mismos datos para este usuario.");
 	    }else {
