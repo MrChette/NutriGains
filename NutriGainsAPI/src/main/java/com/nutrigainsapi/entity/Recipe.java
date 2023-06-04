@@ -30,7 +30,10 @@ public class Recipe extends NutritionalData {
     @Column(name = "bepublic", nullable = false)
     private int bePublic;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe",orphanRemoval = true)
+    @Column(name="visible", unique = false, nullable = false)
+	private int visible;
+    
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "recipe")
 	private List<RecipeList> recipes = new ArrayList<>();
 
 
@@ -38,21 +41,27 @@ public class Recipe extends NutritionalData {
 		super();
 	}
 	
-	
 
 	public Recipe(double kcal, double protein, double fat, double carbohydrates, double sugar, double salt, long id,
-			String name, User user, List<RecipeList> recipes) {
+			String name, User user, int bePublic, int visible, List<RecipeList> recipes) {
 		super(kcal, protein, fat, carbohydrates, sugar, salt);
 		this.id = id;
 		this.name = name;
 		this.user = user;
-		this.bePublic = 1;
+		this.bePublic = bePublic;
+		this.visible = visible;
 		this.recipes = recipes;
+	}
+	
+	
+	public int getVisible() {
+		return visible;
 	}
 
 
-	
-
+	public void setVisible(int visible) {
+		this.visible = visible;
+	}
 
 
 

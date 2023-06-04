@@ -7,6 +7,7 @@ public class RecipeModel extends NutritionalDataModel {
 	private String name;
 	private long idUser;
 	private int bePublic;
+	private int visible;
 	
 	public RecipeModel() {
 		super();
@@ -14,14 +15,29 @@ public class RecipeModel extends NutritionalDataModel {
 	
 	
 
-	public RecipeModel(long id, String name, double kcal, double protein, 
-			double fat, double carbohydrates, double sugar, double salt,long idUser) {
+	public RecipeModel(double kcal, double protein, double fat, double carbohydrates, double sugar, double salt,
+			long id, String name, long idUser, int bePublic, int visible) {
 		super(kcal, protein, fat, carbohydrates, sugar, salt);
 		this.id = id;
 		this.name = name;
 		this.idUser = idUser;
-		this.bePublic = 1;
+		this.bePublic = bePublic;
+		this.visible = visible;
 	}
+
+	
+
+	public int getVisible() {
+		return visible;
+	}
+
+
+
+	public void setVisible(int visible) {
+		this.visible = visible;
+	}
+
+
 
 	public long getId() {
 		return id;

@@ -1,9 +1,7 @@
 package com.nutrigainsapi.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.nutrigainsapi.entity.Comment;
 import com.nutrigainsapi.model.CommentModel;
-import com.nutrigainsapi.model.RecipeModel;
 import com.nutrigainsapi.service.GenericService;
 import com.nutrigainsapi.serviceImpl.RecipeServiceImpl;
 import com.nutrigainsapi.serviceImpl.UserService;

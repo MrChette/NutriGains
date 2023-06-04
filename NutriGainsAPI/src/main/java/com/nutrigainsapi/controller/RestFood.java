@@ -16,7 +16,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -95,14 +94,14 @@ public class RestFood {
 			return ResponseEntity.noContent().build();
 	}
 
-	// Eliminar alimento
+	// SoftDelete alimento
 	@PutMapping("/user/deletefood/{idfood}")
 	@Operation(summary = "Eliminar alimento", description = " ... ")
 	public ResponseEntity<?> deleteFood(@PathVariable long idfood) {
 		Long id = userService.getUserId();
 		FoodModel food = foodService.findModelById(idfood);
 		if (food.getIdUser() == id) {
-			food.setVisible(0); // Establecer visible en 0 en lugar de eliminar
+			food.setVisible(0); 
 			foodService.updateEntity(food); 
 			return ResponseEntity.ok().build();
 

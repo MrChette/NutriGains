@@ -31,7 +31,6 @@ public class Food extends NutritionalData{
 	@Column(name="visible", unique = false, nullable = false)
 	private int visible;
 
-	
 	@OneToMany(cascade = CascadeType.PERSIST, mappedBy = "food")
 	private List<RecipeList> recipes = new ArrayList<>();
 	

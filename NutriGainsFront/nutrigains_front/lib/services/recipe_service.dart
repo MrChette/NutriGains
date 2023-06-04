@@ -41,7 +41,7 @@ class RecipeService extends ChangeNotifier {
     final url = Uri.http(_baseUrl, '/api/user/deleterecipe/$idRecipe');
     String? token = await AuthService().getToken();
 
-    final resp = await http.post(
+    final resp = await http.put(
       url,
       headers: {
         'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ class RecipeService extends ChangeNotifier {
     );
     isLoading = false;
     notifyListeners();
-    if (resp.statusCode == 201) {
+    if (resp.statusCode == 200) {
       return ('RECIPED DELETED');
     } else {
       return ('Oops, somethin went wrong');
@@ -60,6 +60,34 @@ class RecipeService extends ChangeNotifier {
 
   Future getalluserrecipe() async {
     final url = Uri.http(_baseUrl, '/api/user/getalluserrecipe');
+    String? token = await AuthService().getToken();
+
+    isLoading = true;
+    notifyListeners();
+
+    final resp = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization": "Bearer $token"
+    });
+    List<dynamic> recipeJsonList = [];
+    isLoading = false;
+    notifyListeners();
+    if (resp.statusCode == 200) {
+      recipeJsonList = jsonDecode(resp.body);
+      final List<RecipeModel> recipes =
+          recipeJsonList.map((json) => RecipeModel.fromJson(json)).toList();
+      print('OK - RECIPES RECEIVED');
+      return recipes;
+    } else {
+      print('getalluserrecipe BAD REQUEST - RECIPES NOT RECEIVED');
+      print(resp.statusCode);
+      return recipeJsonList;
+    }
+  }
+
+  Future getalluserrecipevisible() async {
+    final url = Uri.http(_baseUrl, '/api/user/getalluserrecipevisible');
     String? token = await AuthService().getToken();
 
     isLoading = true;

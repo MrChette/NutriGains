@@ -60,7 +60,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
   }
 
   Future<void> getAllUserRecipes() async {
-    List<RecipeModel> list = await RecipeService().getalluserrecipe();
+    List<RecipeModel> list = await RecipeService().getalluserrecipevisible();
     setState(() {
       recipeList = list;
       elementosSeleccionados = [];
@@ -75,6 +75,12 @@ class _RecipeScreenState extends State<RecipeScreen> {
       cachedFoods[idfood] = food;
       return food;
     }
+  }
+
+  deleteRecipe(int recipeId) async {
+    String response = await RecipeService().deleteRecipe(recipeId);
+    CustomToast.customToast(response, context);
+    getAllUserRecipes();
   }
 
   Future<List<RecipeListModel>> getFoods(int recipeId) async {
@@ -144,13 +150,12 @@ class _RecipeScreenState extends State<RecipeScreen> {
                     child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 20),
                       child: recipeList.isEmpty
-                          ? Text(
-                              'No hay recetas disponibles') // Mostrar mensaje si recipeList está vacío
+                          ? const Text('')
                           : GridView.count(
                               crossAxisCount: 1,
                               crossAxisSpacing: 20.0,
                               mainAxisSpacing: 20.0,
-                              childAspectRatio: 3,
+                              childAspectRatio: 2.3,
                               children: recipeList.map((data) {
                                 bool isSelected =
                                     elementosSeleccionados.contains(data);
@@ -169,13 +174,27 @@ class _RecipeScreenState extends State<RecipeScreen> {
                                         ? Colors.amber
                                         : Theme.of(context).cardColor,
                                     child: ListTile(
-                                      title: Text(
-                                        data.name,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20.0,
-                                          // Agrega otros estilos según tus preferencias
-                                        ),
+                                      title: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            data.name,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20.0,
+                                              // Otros estilos según tus preferencias
+                                            ),
+                                          ),
+                                          const Text(
+                                            'Ingredients',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20.0,
+                                              // Otros estilos según tus preferencias
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                       subtitle: Column(
                                         crossAxisAlignment:
@@ -244,6 +263,16 @@ class _RecipeScreenState extends State<RecipeScreen> {
                                               }),
                                             ],
                                           ),
+                                          Center(
+                                            child: IconButton(
+                                              icon: const Icon(Icons.delete),
+                                              onPressed: () {
+                                                deleteRecipe(data.id);
+                                                //print(index + 1);
+                                                //deleteFood(data.id!, index + 1);
+                                              },
+                                            ),
+                                          )
                                         ],
                                       ),
                                     ),

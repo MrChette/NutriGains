@@ -88,6 +88,30 @@ public class RestRecipe {
 		else
 			return ResponseEntity.noContent().build();
 	}
+	
+	@GetMapping("/user/getalluserrecipevisible")
+	@Operation(summary = "Actualizar una receta (solo tiene nombre)" , description = " ... ")
+	public ResponseEntity<?> getalluserrecipvisible() {
+		
+	 boolean exist = recipeRepository.findByUserId(userService.getUserId())!=null;
+
+			
+		if (exist) {
+		List<Recipe> recipes = recipeRepository.findByUserId(userService.getUserId());
+		
+		List<RecipeModel> modelRecipes = new ArrayList<>();
+		System.out.println("RECIPEMODEL");
+		for(Recipe x : recipes) {;
+			if(x.getVisible()==1) {
+				modelRecipes.add(recipeService.transformToModel(x));
+			}
+		}
+		System.out.println(modelRecipes);
+		return ResponseEntity.ok(modelRecipes);
+		}
+		else
+			return ResponseEntity.noContent().build();
+	}
 
 	
 	@GetMapping("/user/getrecipe/{idmeal}")
@@ -157,14 +181,20 @@ public class RestRecipe {
 	
 	
 	//Borra una receta
-	@DeleteMapping("/user/deleterecipe/{idrecipe}")
-	@Operation(summary = "Borra una receta" , description = " ... ")
+	@PutMapping("/user/deleterecipe/{idrecipe}")
+	@Operation(summary = "Softdelete sobre una receta" , description = " ... ")
 	public ResponseEntity<?> deleteRecipe(@PathVariable(name="idrecipe",required=true) long idrecipe){
-		boolean deleted = recipeService.removeEntity(idrecipe);
-		if(deleted)
+		Long id = userService.getUserId();
+		RecipeModel recipe = recipeService.findModelById(idrecipe);
+		
+		if (recipe.getIdUser() == id) {
+			recipe.setVisible(0); 
+			recipeService.updateEntity(recipe); 
 			return ResponseEntity.ok().build();
-		else
-			return ResponseEntity.noContent().build();
+
+		} else {
+			return ResponseEntity.internalServerError().build();
+		}
 	}	
 	
 	@GetMapping("/user/externalrecipe/{idrecipe}")
@@ -194,6 +224,8 @@ public class RestRecipe {
 	    }else {
 			System.out.println(recipe.getId());
 			RecipeModel recipeModel = recipeService.transformToModel(recipe);
+			if(recipeModel.getVisible() == 0)
+				recipeModel.setVisible(1);
 			recipeModel.setId(0);
 			recipeModel.setBePublic(0);
 			recipeModel.setIdUser(userId);
