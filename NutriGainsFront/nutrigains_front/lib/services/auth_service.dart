@@ -93,4 +93,33 @@ class AuthService extends ChangeNotifier {
   Future<String> getId() async {
     return await storage.read(key: 'id') ?? '';
   }
+
+  Future<int> getLimitKcal() async {
+    final url = Uri.http(_baseUrl, '/api/user/getLimitKcal');
+    String? token = await AuthService().getToken();
+
+    final resp = await http.get(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization": "Bearer $token"
+    });
+
+    if (resp.statusCode == 200) {
+      return int.parse(resp.body);
+    } else {
+      throw Exception('Error al obtener el límite de calorías');
+    }
+  }
+
+  Future<void> setLimitKcal(int setKcal) async {
+    final url = Uri.http(_baseUrl, '/api/user/setlimitkcal/$setKcal');
+    String? token = await AuthService().getToken();
+
+    final resp = await http.post(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      "Authorization": "Bearer $token"
+    });
+  }
 }
+// /api/user/getLimitKcal

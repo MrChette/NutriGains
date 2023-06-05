@@ -23,6 +23,7 @@ public class User {
 	private boolean enabled;
 	private String role;
 	private String token;
+	private int limitKcal;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
 	private List<Food> foods = new ArrayList<>();
@@ -97,6 +98,16 @@ public class User {
 	public void setToken(String token) {
 		this.token = token;
 	}
+
+	public int getLimitKcal() {
+		return limitKcal;
+	}
+
+	public void setLimitKcal(int limitKcal) {
+		this.limitKcal = limitKcal;
+	}
+	
+	
 
 	
 

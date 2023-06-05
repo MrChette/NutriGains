@@ -26,6 +26,8 @@ class userMainScreen extends StatefulWidget {
 class _HomeScreenState extends State<userMainScreen> {
   final AuthService authService = AuthService();
   String username = '';
+  int limitKcal = 0;
+  TextEditingController _textEditingController = TextEditingController();
 
   List<MealModel> todaymeals = [];
   late onlyNutriment todayNutriments;
@@ -51,11 +53,12 @@ class _HomeScreenState extends State<userMainScreen> {
   }
 
   getUsername() async {
+    int userlimitKcal = await authService.getLimitKcal();
     String user = await authService.getUserName();
     setState(() {
       username = user;
+      limitKcal = userlimitKcal;
     });
-    print("hecho");
   }
 
   void deleteMeal(int mealId, int? foodIndex, int? recipeIndex) async {
@@ -70,7 +73,6 @@ class _HomeScreenState extends State<userMainScreen> {
         foodList.removeAt(foodIndex);
       }
       if (recipeIndex != null) {
-        print(recipeIndex);
         recipeList.removeAt(recipeIndex - foodList.length);
       }
       todayNutriments = todayNutrimentsEnd;
@@ -94,7 +96,6 @@ class _HomeScreenState extends State<userMainScreen> {
         recipesId.add(meal.recipe_id!);
       }
     }
-    print(recipesId);
     List<RecipeModel> theRecipe = await RecipeService().getRecipes(recipesId);
     recipeList = theRecipe;
     setState(() {
@@ -117,6 +118,55 @@ class _HomeScreenState extends State<userMainScreen> {
     setState(() {
       isLoading = false;
     });
+
+    if (limitKcal == 0) {
+      // Muestra el cuadro de diálogo si limitKcal es igual a 0
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return WillPopScope(
+            onWillPop: () async =>
+                false, // Evitar el cierre al presionar el botón de retroceso
+            child: AlertDialog(
+              title: const Text('Welcome!'),
+              contentPadding: const EdgeInsets.symmetric(vertical: 24.0),
+              content: FractionallySizedBox(
+                widthFactor: 0.8,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('Please set your daily calorie limit.'),
+                    TextFormField(
+                      controller: _textEditingController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Calorie Limit',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Save'),
+                  onPressed: () async {
+                    // Aquí puedes añadir la lógica para guardar el límite de calorías
+                    String calorieLimit = _textEditingController.text;
+                    await authService.setLimitKcal(int.parse(calorieLimit));
+                    // Realiza la lógica necesaria con el valor ingresado
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context)
+                        .pop(); // Cerrar el cuadro de diálogo manualmente
+                    initializeData();
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -152,7 +202,8 @@ class _HomeScreenState extends State<userMainScreen> {
                       ),
                       const SizedBox(height: 25.0),
                       Center(
-                        child: circularStats(context, todayNutriments, 2500),
+                        child: circularStats(
+                            context, todayNutriments, limitKcal.toDouble()),
                       ),
                       const SizedBox(height: 25.0),
                     ],

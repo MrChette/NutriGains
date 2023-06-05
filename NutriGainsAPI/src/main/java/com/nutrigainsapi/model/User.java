@@ -8,13 +8,14 @@ public class User {
 		private boolean enabled;
 		private String role;
 		private String token;
+		private int limitKcal;
 
 		
 		public User() {
 			super();
 		}
 		
-		public User(long id, String username, String password, boolean enabled, String role, String token) {
+		public User(long id, String username, String password, boolean enabled, String role, String token, int limitKcal) {
 			super();
 			this.id = id;
 			this.username = username;
@@ -22,6 +23,7 @@ public class User {
 			this.enabled = enabled;
 			this.role = role;
 			this.token = token;
+			this.limitKcal = limitKcal;
 		}
 
 		public long getId() {
@@ -60,6 +62,15 @@ public class User {
 		public void setToken(String token) {
 			this.token = token;
 		}
+		
+		public int getLimitKcal() {
+			return limitKcal;
+		}
+
+		public void setLimitKcal(int limitKcal) {
+			this.limitKcal = limitKcal;
+		}
+
 		@Override
 		public String toString() {
 			return "User [id=" + id + ", username=" + username + ", password=" + password + ", enabled=" + enabled

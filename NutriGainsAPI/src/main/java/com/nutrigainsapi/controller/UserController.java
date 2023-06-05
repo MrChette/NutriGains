@@ -1,6 +1,7 @@
 package com.nutrigainsapi.controller;
 
 import java.sql.Date;
+import java.text.ParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,11 +15,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nutrigainsapi.model.User;
 import com.nutrigainsapi.serviceImpl.UserService;
 
 import io.jsonwebtoken.Jwts;
@@ -35,6 +39,25 @@ public class UserController {
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
+	
+	@GetMapping("/api/user/getLimitKcal")
+	@Operation(summary = "Obtener limitkcal del usuario")
+	public ResponseEntity<?> getLimitKcal(){
+		Long userid = userService.getUserId();
+		com.nutrigainsapi.entity.User user = userService.finById(userid);
+		System.out.println(user.getLimitKcal());
+		return ResponseEntity.ok(user.getLimitKcal());
+	}
+	
+	@PostMapping("/api/user/setlimitkcal/{kcal}")
+	@Operation(summary = "Obtener limitkcal del usuario")
+	public ResponseEntity<?> getLimitKcal(@PathVariable(name="kcal",required = true) int kcal) throws ParseException{
+		Long userid = userService.getUserId();
+		com.nutrigainsapi.entity.User user = userService.finById(userid);
+		user.setLimitKcal(kcal);
+		userService.updateUser(user);
+		return ResponseEntity.ok(user);
+	}
 		
 	@PostMapping("/login")
 	@Operation(summary = "Login usuario" , description = " ... ")
@@ -59,6 +82,7 @@ public class UserController {
 		if(exist) {
 			return ResponseEntity.internalServerError().body(null);
 		}else {
+			user.setLimitKcal(0);
 			return ResponseEntity.status(HttpStatus.CREATED).body(userService.registrar(user));
 		}
 	}

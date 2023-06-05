@@ -18,6 +18,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.nutrigainsapi.entity.Comment;
+import com.nutrigainsapi.model.CommentModel;
 import com.nutrigainsapi.repository.UserRepository;
 
 
@@ -76,6 +78,14 @@ public class UserService implements UserDetailsService {
 
 	public com.nutrigainsapi.entity.User findUsuario(String username) {
 		return userRepository.findByUsername(username);
+	}
+	
+	public com.nutrigainsapi.entity.User finById(Long id) {
+		return userRepository.findById(id);
+	}
+	
+	public com.nutrigainsapi.entity.User updateUser(com.nutrigainsapi.entity.User user) {
+		return userRepository.save(user);
 	}
 	
 
