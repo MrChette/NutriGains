@@ -2,10 +2,10 @@
 
 import 'package:circular_seek_bar/circular_seek_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:intl/intl.dart';
 import 'package:nutrigains_front/models/onlyNutriment_mode.dart';
 import 'package:nutrigains_front/services/recipe_service.dart';
+import 'package:nutrigains_front/widgets/CustomIconButton.dart';
 import 'package:provider/provider.dart';
 import '../models/food_model.dart';
 import '../models/meal_model.dart';
@@ -29,12 +29,67 @@ class _HomeScreenState extends State<userMainScreen> {
   int limitKcal = 0;
   TextEditingController _textEditingController = TextEditingController();
 
+  final List<String> items = ['Change Limit Kcal'];
+  String? selectedValue;
+
   List<MealModel> todaymeals = [];
   late onlyNutriment todayNutriments;
   bool isLoading = true;
 
   List<FoodModel> foodList = [];
   List<RecipeModel> recipeList = [];
+
+  void _showSelectedOption(String option, BuildContext context) {
+    if (option == 'Change calorie limit') {
+      final TextEditingController dialogController =
+          TextEditingController(text: limitKcal.toString());
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return GestureDetector(
+            onTap: () {
+              // Cierra el cuadro de diálogo al hacer clic fuera
+              Navigator.of(context).pop();
+            },
+            child: AlertDialog(
+              contentPadding: const EdgeInsets.symmetric(vertical: 24.0),
+              content: FractionallySizedBox(
+                widthFactor: 0.8,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('Modify your daily calorie limit.'),
+                    TextFormField(
+                      controller: dialogController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Calorie Limit',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                CustomIconButton(
+                  onPressed: () async {
+                    String calorieLimit = dialogController.text;
+                    await authService.setLimitKcal(int.parse(calorieLimit));
+                    // ignore: use_build_context_synchronously
+                    CustomToast.customToast('Daily calories updated!', context);
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pop();
+                    initializeData();
+                  },
+                  icon: Icons.save,
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+  }
 
   int _currentIndex = 0;
   void _onNavBarItemTapped(int index) {
@@ -267,6 +322,18 @@ class _HomeScreenState extends State<userMainScreen> {
                 textAlign: TextAlign.center,
               ),
             ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: PopupMenuButton<String>(
+                onSelected: (option) => _showSelectedOption(option, context),
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                  const PopupMenuItem<String>(
+                    value: 'Change calorie limit',
+                    child: Text('Change calorie limit'),
+                  ),
+                ],
+              ),
+            )
           ],
         ),
       ),
