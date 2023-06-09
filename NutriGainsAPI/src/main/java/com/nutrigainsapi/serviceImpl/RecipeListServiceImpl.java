@@ -82,4 +82,5 @@ public class RecipeListServiceImpl implements GenericService<RecipeList,RecipeLi
 				.map(c->transformToModel(c)).collect(Collectors.toList());
     }
 
+
 }

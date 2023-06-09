@@ -180,6 +180,9 @@ class _HomeScreenState extends State<userMainScreen> {
       showDialog(
         context: context,
         builder: (BuildContext context) {
+          final formKey =
+              GlobalKey<FormState>(); // Crear un GlobalKey<FormState> local
+
           return WillPopScope(
             onWillPop: () async =>
                 false, // Evitar el cierre al presionar el botón de retroceso
@@ -188,32 +191,41 @@ class _HomeScreenState extends State<userMainScreen> {
               contentPadding: const EdgeInsets.symmetric(vertical: 24.0),
               content: FractionallySizedBox(
                 widthFactor: 0.8,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('Please set your daily calorie limit.'),
-                    TextFormField(
-                      controller: _textEditingController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: 'Calorie Limit',
+                child: Form(
+                  key:
+                      formKey, // Asignar el GlobalKey<FormState> local al formulario
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('Please set your daily calorie limit.'),
+                      TextFormField(
+                        controller: _textEditingController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: 'Calorie Limit',
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a calorie limit.';
+                          }
+                          return null;
+                        },
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               actions: <Widget>[
                 TextButton(
                   child: const Text('Save'),
                   onPressed: () async {
-                    // Aquí puedes añadir la lógica para guardar el límite de calorías
-                    String calorieLimit = _textEditingController.text;
-                    await authService.setLimitKcal(int.parse(calorieLimit));
-                    // Realiza la lógica necesaria con el valor ingresado
-                    // ignore: use_build_context_synchronously
-                    Navigator.of(context)
-                        .pop(); // Cerrar el cuadro de diálogo manualmente
-                    initializeData();
+                    if (formKey.currentState?.validate() ?? false) {
+                      String calorieLimit = _textEditingController.text;
+                      await authService.setLimitKcal(int.parse(calorieLimit));
+                      Navigator.of(context)
+                          .pop(); // Cerrar el cuadro de diálogo manualmente
+                      initializeData();
+                    }
                   },
                 ),
               ],

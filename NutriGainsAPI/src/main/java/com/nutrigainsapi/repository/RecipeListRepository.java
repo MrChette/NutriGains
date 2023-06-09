@@ -18,4 +18,5 @@ public interface RecipeListRepository extends JpaRepository<RecipeList,Serializa
 		
 		@Query("SELECT r FROM RecipeList r WHERE r.recipe.id = :idRecipe")
 	    List<RecipeList> findByidRecipe(@Param("idRecipe") long idRecipe);
+		
 }

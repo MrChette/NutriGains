@@ -56,9 +56,57 @@ class _FoodScreenState extends State<FoodScreen> {
   }
 
   deleteFood(int foodid, int index) async {
-    String response = await FoodService().deleteFood(foodid);
-    CustomToast.customToast(response, context);
-    getAllUserFood();
+    String response = '';
+
+    final result = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmation'),
+          content: const Text('Are you sure you want to delete this element?'),
+          actions: [
+            TextButton(
+              child: const Text(
+                'No',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context)
+                    .pop(false); // Cierra el cuadro de diálogo y retorna false
+              },
+            ),
+            TextButton(
+              child: const Text(
+                'Yes',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
+              ),
+              onPressed: () async {
+                Navigator.of(context)
+                    .pop(true); // Cierra el cuadro de diálogo y retorna true
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result == true) {
+      response = await FoodService().deleteFood(foodid);
+
+      if (response.isNotEmpty) {
+        CustomToast.customToast(response, context);
+      }
+
+      getAllUserFood();
+    }
   }
 
   Future<void> initializeData() async {

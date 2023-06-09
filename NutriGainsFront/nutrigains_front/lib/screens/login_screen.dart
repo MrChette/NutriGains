@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -129,7 +131,8 @@ class _LoginForm extends StatelessWidget {
                       if (spliter?[1] == 'ROLE_ADMIN') {
                         Navigator.pushReplacementNamed(context, '');
                       } else {
-                        Navigator.pushReplacementNamed(context, 'recipeScreen');
+                        Navigator.pushReplacementNamed(
+                            context, 'userMainScreen');
                       }
                     } else {
                       CustomToast.customToast(

@@ -267,9 +267,59 @@ class _RecipeScreenState extends State<RecipeScreen> {
                                             child: IconButton(
                                               icon: const Icon(Icons.delete),
                                               onPressed: () {
-                                                deleteRecipe(data.id);
-                                                //print(index + 1);
-                                                //deleteFood(data.id!, index + 1);
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: const Text(
+                                                          'Confirmation'),
+                                                      content: const Text(
+                                                          'Are you sure you want to delete this element?'),
+                                                      actions: [
+                                                        TextButton(
+                                                          child: const Text(
+                                                            'No',
+                                                            style: TextStyle(
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.green,
+                                                            ),
+                                                          ),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(); // Cierra el cuadro de diálogo
+                                                          },
+                                                        ),
+                                                        TextButton(
+                                                          child: const Text(
+                                                            'Yes',
+                                                            style: TextStyle(
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: Colors.red,
+                                                            ),
+                                                          ),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(); // Cierra el cuadro de diálogo
+                                                            deleteRecipe(
+                                                                data.id);
+                                                            //print(index + 1);
+                                                            //deleteFood(data.id!, index + 1);
+                                                          },
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
                                               },
                                             ),
                                           )

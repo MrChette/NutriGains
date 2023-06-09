@@ -218,6 +218,7 @@ public class RestFood {
 			food.setSugar(product.getProduct().getNutriments().getSugars());
 			food.setSalt(product.getProduct().getNutriments().getSalt());
 			food.setIdUser(userService.getUserId());
+			food.setVisible(1);
 			foodService.addEntity(food);
 			return ResponseEntity.ok(food);
 

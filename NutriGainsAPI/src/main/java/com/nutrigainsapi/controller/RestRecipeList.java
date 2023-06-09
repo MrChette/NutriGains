@@ -125,7 +125,7 @@ public class RestRecipeList {
 //	
 	
 	@GetMapping("/user/getfoodsbyidrecipe/{idRecipe}")
-	@Operation(summary= "Devuelve la lista de recipelist que contienen esa lista de idRecipe")
+	@Operation(summary= "Devuelve la lista de recipelist que contienen ese idRecipe")
 	public ResponseEntity<?> getfoodsbyidrecipe(@PathVariable(name="idRecipe",required = true) long idrecipe) {
 		List<RecipeListModel> recipeL = recipeListService.getListRecipesByRecipeId(idrecipe);
 		for(RecipeListModel r : recipeL)
