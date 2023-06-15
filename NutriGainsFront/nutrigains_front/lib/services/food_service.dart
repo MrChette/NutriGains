@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:nutrigains_front/models/food_model.dart';
-import 'package:nutrigains_front/models/meal_model.dart';
 import 'package:nutrigains_front/models/recipeList_model.dart';
 
 import '../widgets/ip.dart';

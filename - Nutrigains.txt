@@ -1,0 +1,80 @@
+- Nutrigains:
+
+
+	***INTRODUCCION***
+
+	-Este proyecto se penso hara ya unos meses debido a que el usar aplicaciones ya existentes terminada aburrido de tantas opciones que no iba a llegar a usar realmente y 
+	queria una interfaz mas basica y minimalsita con las utilidades basicas y necesarias
+
+	-La idea principal de la aplicacion es sencilla, facilitar el seguimiento de macronutrientes de tus comidas diarias, a base de comidas o recetas.
+	
+	-La funcionalidad de la aplicacion es la siguiente, se ha basado la aplicacion en un grafico circular en el apartado principal de la aplicacion donde podras hacer el seguimiento de tus kcal
+	y ver informacion de los macronutrientes, del dia, en el resto de apartados esta la posibilidad de crear alimentos, tanto de manera manual como escaneando un codigo de barras,
+	crear recetas a partir de dichos alimentos, añadir recetas de otros usuarios a tu lista de recetas, y poder añadir tanto los alimentos como las recetas a tu comida del dia.
+
+
+	***DISEÑO***
+	
+	-Como he comentado, la idea del diseño era tener una interfaz sencilla, y en su mayoria generica para todos los elementos que son iguales, con la finalidad de facilitar el uso de la aplicacion
+	sin tener elemtnos que nunca se van a usar, las tarjetas tienen todo el mismo estilo y solo cambiaria el tamaño de esta ademas de tener la opcion de 
+	borrar (que es realmente un softdelete en el caso de las comidas y las recetas), los botones y el navbar de donde se accede 
+	al resto de pestañas.
+
+	***FUNCIONALIDAD***
+
+
+	- main_screen:
+		En caso de que el usuario sea nuevo lo primero que podra ver es una tarjeta donde el usuario puede establecer su limite de calorias diario.
+		
+		Una vez ese valor ya esta establecido, podra acceder a las funcionalidades de la aplicacion
+
+		En el main screen hay varios elementos, una barra superior que te saluda, la opcion de cerrar sesion y un menu desplegable que por el momento solo estaria la opcion de modificar el
+		limite de calorias diario.
+		
+		En el card de estadisticas nutricionales podremos ver las kcal que llevamos hasta el momento y visualizarlo en el grafico circular, y ademas podremos ver otros macronutrientes necesarios
+		en este caso, proteinas, carbohidratos y grasas.
+
+		Debajo se visualizan unos cards de las comidas que hemos añadido al dia y que tendremos la opcion de borrarlas.
+
+	-food_screen:
+		
+		La funcion principal de este apartado es añadir tus alimentos, donde tendremos dos opciones, mediante un formulario, donde deberiamos añadir los datos nutricionales x 100g de producto y
+		a partir de un scanner de codigo de barras que accede a una base de datos de unos 3 millones de alimentos.
+
+		Los alimentos se visualizan en tarjetas donde se puede ver el nombre del alimento y los valores nutricionales de este.
+		
+		Tanto a la hora de añadir los alimentos a las comidas o de crear las recetas lo primero sera que indiques los gramos de los alimentos, dicho boton solo aparecera en caso de seleccionar al 			menos un almiento, en caso de crear una receta te pedira tambien
+		el nombre que le quieres dar a la receta
+
+	-recipe_screen:
+
+		Este apartado se puede visualizar tu lista de recetas, donde puedes ver, el nombre de la receta, los alimentos que necesita y sus valores nutricionales, estas recetas tienen la posibilidad de 			ser borradas o añadidas a tus comidas diarias, dicho boton que te permite hacer esa accion, al igual que en las comidas solo aparecera en caso de que
+		selecciones al menos una receta.
+
+	-comment_screen:
+		
+		Aqui podemos visualizar todas las recetas que han sido creadas, tanto tuyas como de otros usuarios, dentro de cada tarjeta podemos ver varias cosas, el nombre de la receta, 
+		(**los valores nutricionales y los alimentos de esta) y los comentarios que otros usuarios han puesto y la posibilidad de poner tu comentarios, ademas tendremos un boton que sera
+		el que nos permite agregar dicha receta a nuestra lista de recetas, solo se añadira la receta, no los alimentos de la misma.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

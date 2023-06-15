@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:nutrigains_front/services/recipe_service.dart';
 
 import '../models/comment_model.dart';
+import '../models/food_model.dart';
+import '../models/recipeList_model.dart';
 import '../models/recipe_model.dart';
 import '../services/comment_service.dart';
+import '../services/food_service.dart';
 import '../widgets/CustomIconButton.dart';
 import '../widgets/CustomToast.dart';
 import '../widgets/GenericBottomNavigationBar.dart';
@@ -23,6 +26,63 @@ class _CommentsScreenState extends State<CommentScreen> {
   bool isLoading = true;
   bool areCommentsVisible = false;
   List<TextEditingController> textControllers = [];
+
+  Widget buildFoodFutureBuilder(RecipeListModel food) {
+    return FutureBuilder<FoodModel>(
+      future: getFoodByid(food.idFood),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (snapshot.hasData) {
+          FoodModel foodModel = snapshot.data!;
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                '${food.grams}g ',
+                textAlign: TextAlign.left,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                  // Agrega otros estilos según tus preferencias
+                ),
+              ),
+              Text(
+                foodModel.name!,
+                textAlign: TextAlign.left,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                  // Agrega otros estilos según tus preferencias
+                ),
+              ),
+            ],
+          );
+        } else {
+          return const Text('No food available');
+        }
+      },
+    );
+  }
+
+  final Map<int, FoodModel> cachedFoods = {};
+  Future<FoodModel> getFoodByid(int idfood) async {
+    if (cachedFoods.containsKey(idfood)) {
+      return cachedFoods[idfood]!;
+    } else {
+      FoodModel food = await FoodService().getFoodById(idfood);
+      cachedFoods[idfood] = food;
+      return food;
+    }
+  }
+
+  Future<List<RecipeListModel>> getFoods(int recipeId) async {
+    List<RecipeListModel> foods =
+        await FoodService().getFoodsByIdRecipe(recipeId);
+    return foods;
+  }
 
   int _currentIndex = 3;
   void _onNavBarItemTapped(int index) {
@@ -128,31 +188,72 @@ class _CommentsScreenState extends State<CommentScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Nombre de la receta
-                          Row(
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: Text(
-                                  recipe.name,
-                                  style: const TextStyle(
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold,
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    recipe.name,
+                                    style: const TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  CustomIconButton(
+                                    icon: Icons.add_shopping_cart_sharp,
+                                    padding: const EdgeInsets.all(3),
+                                    onPressed: () async {
+                                      CustomToast.customToast(
+                                        await RecipeService()
+                                            .addexternalRecipe(recipe.id),
+                                        context,
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
-                              CustomIconButton(
-                                icon: Icons.add_shopping_cart_sharp,
-                                padding: EdgeInsets.all(3),
-                                onPressed: () async {
-                                  CustomToast.customToast(
-                                      await RecipeService()
-                                          .addexternalRecipe(recipe.id),
-                                      context);
-
-                                  // Acción a realizar cuando se presiona el botón
-                                },
+                              const SizedBox(height: 20),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Builder(builder: (context) {
+                                      return FutureBuilder<
+                                          List<RecipeListModel>>(
+                                        future: getFoods(recipe.id),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const CircularProgressIndicator();
+                                          } else if (snapshot.hasError) {
+                                            return Text(
+                                                'Error: ${snapshot.error}');
+                                          } else if (snapshot.hasData) {
+                                            List<RecipeListModel> foods =
+                                                snapshot.data!;
+                                            return Column(
+                                              children: [
+                                                for (var food in foods)
+                                                  buildFoodFutureBuilder(food),
+                                              ],
+                                            );
+                                          } else {
+                                            return const Text(
+                                                'No foods available');
+                                          }
+                                        },
+                                      );
+                                    }),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
+
                           const SizedBox(height: 20),
                           // Divider para separar la receta del comentario
                           const Divider(

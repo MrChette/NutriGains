@@ -172,116 +172,75 @@ class _FoodScreenState extends State<FoodScreen> {
               child: Column(
                 children: [
                   Expanded(
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      child: foodList.isEmpty
-                          ? const Text('')
-                          : GridView.count(
-                              crossAxisCount: 1,
-                              crossAxisSpacing: 20.0,
-                              mainAxisSpacing: 20.0,
-                              childAspectRatio: 2.1,
-                              children: List.generate(
-                                  (foodList.length / 2).ceil(), (index) {
-                                final startIndex = index * 2;
-                                final endIndex =
-                                    startIndex + 1 < foodList.length
-                                        ? startIndex + 1
-                                        : startIndex;
-                                final rowData =
-                                    foodList.sublist(startIndex, endIndex + 1);
-                                return Row(
-                                  children: rowData.map((data) {
-                                    bool isSelected =
-                                        elementosSeleccionados.contains(data);
-                                    return Expanded(
-                                      child: InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            if (isSelected) {
-                                              elementosSeleccionados
-                                                  .remove(data);
-                                            } else {
-                                              elementosSeleccionados.add(data);
-                                            }
-                                          });
-                                        },
-                                        child: Card(
-                                          color: isSelected
-                                              ? Colors.amber
-                                              : Theme.of(context).cardColor,
-                                          child: ListTile(
-                                            title: Text(
-                                              data.name!,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                              ),
-                                            ),
-                                            subtitle: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    const SizedBox(
-                                                      height: 15,
-                                                    ),
-                                                    Text(
-                                                      "${data.id} - - ${data.kcal} - Kcal",
-                                                      style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 16,
-                                                        // Otros atributos de estilo que desees aplicar
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      '${data.carbohydrates}  - Carbs',
-                                                      style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 16,
-                                                        // Otros atributos de estilo que desees aplicar
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      '${data.protein}  - Protein',
-                                                      style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 16,
-                                                        // Otros atributos de estilo que desees aplicar
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Center(
-                                                  child: IconButton(
-                                                    icon: const Icon(
-                                                        Icons.delete),
-                                                    onPressed: () {
-                                                      print(index + 1);
-                                                      deleteFood(
-                                                          data.id!, index + 1);
-                                                    },
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                );
-                              }),
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      itemCount: foodList.length,
+                      itemBuilder: (context, index) {
+                        final data = foodList[index];
+                        bool isSelected = elementosSeleccionados.contains(data);
+                        return InkWell(
+                          onTap: () {
+                            setState(() {
+                              if (isSelected) {
+                                elementosSeleccionados.remove(data);
+                              } else {
+                                elementosSeleccionados.add(data);
+                              }
+                            });
+                          },
+                          child: Card(
+                            color: isSelected
+                                ? Colors.amber
+                                : Theme.of(context).cardColor,
+                            child: ListTile(
+                              title: Text(
+                                data.name!,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                ),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 15),
+                                  Text(
+                                    "${data.kcal} - Kcal",
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${data.carbohydrates}  - Carbs',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${data.protein}  - Protein',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Center(
+                                    child: IconButton(
+                                      icon: const Icon(Icons.delete),
+                                      onPressed: () {
+                                        print(index + 1);
+                                        deleteFood(data.id!, index + 1);
+                                      },
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
+                          ),
+                        );
+                      },
                     ),
                   )
                 ],

@@ -183,7 +183,7 @@ public class RestFood {
 		if (exist) {
 			FoodModel food = foodService.transformToModel(foodRepository.findByBarcode(barcode));
 			return ResponseEntity.ok(food);
-		} else {
+		}else {
 			return ResponseEntity.noContent().build();
 		}
 	}
