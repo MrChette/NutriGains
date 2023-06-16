@@ -112,7 +112,9 @@ class _RecipeScreenState extends State<RecipeScreen> {
                 ),
               ),
               Text(
-                foodModel.name!,
+                foodModel.name!
+                        .substring(0, foodModel.name!.length.clamp(0, 12)) +
+                    (foodModel.name!.length > 12 ? '...' : ''),
                 textAlign: TextAlign.left,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
