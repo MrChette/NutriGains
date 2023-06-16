@@ -464,6 +464,16 @@ class _FoodScreenState extends State<FoodScreen> {
             FoodModel foodModel = FoodModel(
               name: '',
             );
+            bool _validateFields() {
+              return foodModel.name?.isNotEmpty == true &&
+                  foodModel.kcal != null &&
+                  foodModel.protein != null &&
+                  foodModel.carbohydrates != null &&
+                  foodModel.fat != null &&
+                  foodModel.salt != null &&
+                  foodModel.sugar != null;
+            }
+
             showDialog(
               context: context,
               builder: (BuildContext context) {
@@ -488,7 +498,8 @@ class _FoodScreenState extends State<FoodScreen> {
                           TextFormField(
                             onChanged: (String textTyped) {
                               setState(() {
-                                foodModel.kcal = double.parse(textTyped);
+                                foodModel.kcal =
+                                    double.tryParse(textTyped) ?? 0.0;
                               });
                             },
                             keyboardType: TextInputType.number,
@@ -497,7 +508,8 @@ class _FoodScreenState extends State<FoodScreen> {
                           TextFormField(
                             onChanged: (String textTyped) {
                               setState(() {
-                                foodModel.protein = double.parse(textTyped);
+                                foodModel.protein =
+                                    double.tryParse(textTyped) ?? 0.0;
                               });
                             },
                             keyboardType: TextInputType.number,
@@ -508,7 +520,7 @@ class _FoodScreenState extends State<FoodScreen> {
                             onChanged: (String textTyped) {
                               setState(() {
                                 foodModel.carbohydrates =
-                                    double.parse(textTyped);
+                                    double.tryParse(textTyped) ?? 0.0;
                               });
                             },
                             keyboardType: TextInputType.number,
@@ -518,7 +530,8 @@ class _FoodScreenState extends State<FoodScreen> {
                           TextFormField(
                             onChanged: (String textTyped) {
                               setState(() {
-                                foodModel.fat = double.parse(textTyped);
+                                foodModel.fat =
+                                    double.tryParse(textTyped) ?? 0.0;
                               });
                             },
                             keyboardType: TextInputType.number,
@@ -527,7 +540,8 @@ class _FoodScreenState extends State<FoodScreen> {
                           TextFormField(
                             onChanged: (String textTyped) {
                               setState(() {
-                                foodModel.salt = double.parse(textTyped);
+                                foodModel.salt =
+                                    double.tryParse(textTyped) ?? 0.0;
                               });
                             },
                             keyboardType: TextInputType.number,
@@ -536,7 +550,8 @@ class _FoodScreenState extends State<FoodScreen> {
                           TextFormField(
                             onChanged: (String textTyped) {
                               setState(() {
-                                foodModel.sugar = double.parse(textTyped);
+                                foodModel.sugar =
+                                    double.tryParse(textTyped) ?? 0.0;
                               });
                             },
                             keyboardType: TextInputType.number,
@@ -588,11 +603,16 @@ class _FoodScreenState extends State<FoodScreen> {
                             ),
                             child: TextButton(
                               onPressed: () async {
-                                CustomToast.customToast(
-                                    await FoodService().newFood(foodModel),
-                                    context);
-                                Navigator.pop(context);
-                                initializeData();
+                                if (_validateFields()) {
+                                  CustomToast.customToast(
+                                      await FoodService().newFood(foodModel),
+                                      context);
+                                  Navigator.pop(context);
+                                  initializeData();
+                                } else {
+                                  CustomToast.customToast(
+                                      "Error, MISSING DATA", context);
+                                }
                               },
                               child: const Text(
                                 "Save",
