@@ -22,10 +22,10 @@ public class Food extends NutritionalData{
 	@Column(name="id")
 	private long id;
 	
-	@Column(name="barcode", unique = true, nullable = true)
+	@Column(name="barcode", unique = false, nullable = true)
 	private Long barcode;
 	
-	@Column(name="name", unique = true, nullable = false)
+	@Column(name="name", unique = false, nullable = false)
 	private String name;
 
 	@Column(name="visible", unique = false, nullable = false)
